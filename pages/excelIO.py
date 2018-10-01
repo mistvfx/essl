@@ -89,6 +89,7 @@ def excelExport(date):
     Work_Duration = []
     Total_Duration = []
     Non_Completed_Hours = []
+    Additional_Hours = []
     Remarks = []
 
     for id in cur.fetchall():
@@ -139,10 +140,13 @@ def excelExport(date):
                 Non_Completed_Hours.append(datetime.time())
         if actWrkHrs >= StdWrkHrs :
             Remarks.append('COMPLETED')
+            Additional_Hours.append((datetime.datetime.min + actWrkHrs-StdWrkHrs).time())
         elif actWrkHrs == absent:
             Remarks.append('ABSENT')
+            Additional_Hours.append('ABSENT')
         elif actWrkHrs < StdWrkHrs :
             Remarks.append('NOT COMPLETED')
+            Additional_Hours.append(datetime.time())
         del ios[:]; del timings[:]; del doors[:]
 
     #print(len(Artist_Code))
@@ -153,7 +157,7 @@ def excelExport(date):
     #print(len(Work_Duration))
     #print(len(Total_Duration))
 
-    df = pd.DataFrame({'Artist Code':Artist_Code, 'Artist Name':Artist_Name, 'Department':Department, 'In Time':In_Time, 'Out Time':Out_Time, 'Work Duration':Work_Duration, 'Total Duration':Total_Duration, 'Non Completed Hours':Non_Completed_Hours, 'Remarks':Remarks})
+    df = pd.DataFrame({'Artist Code':Artist_Code, 'Artist Name':Artist_Name, 'Department':Department, 'In Time':In_Time, 'Out Time':Out_Time, 'Work Duration':Work_Duration, 'Total Duration':Total_Duration, 'Non Completed Hours':Non_Completed_Hours, 'Additional Hours':Additional_Hours, 'Remarks':Remarks})
 
     ##writer = pd.ExcelWriter('export_test.xlsx', engine='xlsxwriter')
     #df.to_csv('export_testing.csv')
@@ -192,7 +196,7 @@ def excelExport(date):
         for cell in ws['A'] + ws[1]:
             cell.style = 'Pandas'
 
-        for row in ws['A1:J100']:
+        for row in ws['A1:K100']:
             for cell in row:
                 cell.alignment = Alignment(wrap_text=True, horizontal='center', vertical='center')
                 cell.border = thin_border
@@ -209,12 +213,13 @@ def excelExport(date):
             adjusted_width = (max_length + 2) * 1.2
             ws.column_dimensions[column].width = adjusted_width
 
-        ws['A1:J1'].fill = PatternFill(bgColor="66BB6A", fill_type = "solid")
+        ws['A1'].fill = PatternFill(bgColor="5fff00", fill_type = "solid")
 
-        ws.conditional_formatting.add('E1:J500', rule)
+        ws.conditional_formatting.add('E1:K500', rule)
 
         wb.save('export_test.xlsx')
-    except:
+    except Exception as e:
+        print('ERROR :', e)
         wb = Workbook()
         ws = wb.create_sheet(formatDate(date))
 
@@ -224,7 +229,7 @@ def excelExport(date):
         for cell in ws['A'] + ws[1]:
             cell.style = 'Pandas'
 
-        for row in ws['A1:J100']:
+        for row in ws['A1:K100']:
             for cell in row:
                 cell.alignment = Alignment(wrap_text=True, horizontal='center', vertical='center')
                 cell.border = thin_border
@@ -241,7 +246,7 @@ def excelExport(date):
             adjusted_width = (max_length + 2) * 1.2
             ws.column_dimensions[column].width = adjusted_width
 
-        ws.conditional_formatting.add('E1:J500', rule)
+        ws.conditional_formatting.add('E1:K500', rule)
         ws.sheet_properties.tabColor = "1072BA"
 
         wb.save('export_test.xlsx')
