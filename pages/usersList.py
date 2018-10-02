@@ -13,7 +13,7 @@ id = []
 names = []
 
 class userInfoPopup(BoxLayout):
-    
+    pass
 
 class User(ButtonBehavior, Label):
     def __init__(self, ArtistId, ArtistName):

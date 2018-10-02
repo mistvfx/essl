@@ -8,6 +8,7 @@ from kivy.properties import NumericProperty, ReferenceListProperty
 
 from . import calendar_data as cal_data
 from db import getInfo
+from pages import monthlyPopup
 
 aboveSWH = []
 belowSWH = []
@@ -34,8 +35,14 @@ class CalendarWidget(RelativeLayout):
         self.add_widget(self.left_arrow)
         self.add_widget(self.right_arrow)
 
+        def callback(instance):
+            monthlyPopup.month.append(self.title)
+            monthlyPopup.workTime()
+            monthlyPopup.pop()
+
         # Title
-        self.title_label = Label(text=self.title, pos_hint={"top": 1, "center_x": .5}, size_hint=(None, 0.1), halign=("center"))
+        self.title_label = Button(text=self.title, pos_hint={"top": 1, "center_x": .5}, size_hint=(None, 0.15), halign=("center"))
+        self.title_label.bind(on_press=callback)
         self.add_widget(self.title_label)
 
         # ScreenManager
