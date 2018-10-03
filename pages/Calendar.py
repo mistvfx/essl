@@ -7,7 +7,7 @@ from kivy.core.window import Window
 from kivy.properties import NumericProperty, ReferenceListProperty
 
 from . import calendar_data as cal_data
-from db import getInfo
+from db import getInfo, monthlyWrkHours
 from pages import monthlyPopup
 
 aboveSWH = []
@@ -143,7 +143,7 @@ class CalendarWidget(RelativeLayout):
         if self.as_popup:
             self.parent_popup.dismiss()
 
-        getInfo.getUserInfo()
+        getInfo.openPopup()
 
     def go_prev(self, inst):
         """ Go to screen with previous month """

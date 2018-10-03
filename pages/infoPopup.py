@@ -9,6 +9,7 @@ closeBtn = Button()
 TWH = [0]*1
 AWH = [0]*1
 NCH = [0]*1
+ACH = [0]*1
 
 class infoTab(BoxLayout):
     def __init__(self, **args):
@@ -48,7 +49,7 @@ class infoTab(BoxLayout):
 
         global TWH, AWH
 
-        infoQ = ['Total Hours :', str(TWH[len(TWH)-1]), 'Working Hours :', str(AWH[len(AWH)-1]), 'Non-Completed Hours:', str(NCH[len(NCH)-1])]
+        infoQ = ['Total Hours :', str(TWH[len(TWH)-1]), 'Working Hours :', str(AWH[len(AWH)-1]), 'Non-Completed Hours:', str(NCH[len(NCH)-1]), 'Additional Hours:', str(ACH[len(ACH)-1])]
 
         for i in range(len(infoQ)):
             infoLabels = Label(text=infoQ[i])

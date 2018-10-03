@@ -3,6 +3,7 @@ from kivy.uix.label import Label
 from KivyCalendar import DatePicker
 from kivy.uix.popup import Popup
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.button import Button
 from kivy.uix.recycleview import RecycleView
 from kivy.uix.recycleview.views import RecycleDataViewBehavior
@@ -28,13 +29,16 @@ class AdminPage(Screen):
                 self.excelOpen()
             if(instance.text == 'Excel Export'):
                 excelIO.excelExport(date.text)
+            if(instance.text == 'REFRESH'):
+                print(date.text)
+                usersList.date.append(date.text)
 
         adminLayout = BoxLayout(orientation='vertical', padding=10, spacing=5)
         self.add_widget(adminLayout)
 
         controlLayout = BoxLayout(orientation='horizontal', size_hint=(1, 0.06),
                                     spacing=5)
-        listLayout = BoxLayout(orientation='horizontal', spacing=5)
+        listLayout = FloatLayout(size_hint=(1, 1))
         adminLayout.add_widget(controlLayout)
         adminLayout.add_widget(listLayout)
 
@@ -49,10 +53,15 @@ class AdminPage(Screen):
         excelExportBtn.bind(on_press=callback)
         controlLayout.add_widget(excelExportBtn)
 
+        refreshBtn = Button(text='REFRESH', pos_hint={'right':1, 'bottom':1}, size_hint=(0.1, 0.1))
+        refreshBtn.bind(on_press=callback)
+
         usersListManip.getUserInfo()
+        usersList.date.append(date.text)
         userList = usersList.userList()
         userList.size_hint = (1, 1)
         listLayout.add_widget(userList)
+        listLayout.add_widget(refreshBtn)
 
     def excelOpen(self):
 

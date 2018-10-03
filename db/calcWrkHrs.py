@@ -20,6 +20,25 @@ def calActualWorkingHours(io, time, door):
     return sumTime
     #print(sumTime)
 
+def calMon(id, date):
+    db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
+    cur = db.cursor()
+
+    cur.execute("SELECT IO, MTIME, DOOR FROM essl.`%d` WHERE MDATE = '%s' ORDER BY MTIME ASC" %(id, date))
+
+    ios = []
+    timings = []
+    doors = []
+
+    for data in cur.fetchall():
+        ios.append(data[0])
+        timings.append(data[1])
+        doors.append(data[2])
+
+    ActWorHrs = calActualWorkingHours(ios, timings, doors)
+    return ActWorHrs
+
+
 def getUserTime():
     StdWrkHrs = datetime.timedelta(hours=8, minutes=29, seconds=59)
     db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)

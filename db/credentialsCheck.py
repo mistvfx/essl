@@ -1,6 +1,6 @@
 import pymysql
 from pages import userPage
-from db import getInfo, calcWrkHrs
+from db import getInfo, calcWrkHrs, monthlyWrkHours
 
 def checkCredentials(username, password):
     db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
@@ -17,6 +17,7 @@ def checkCredentials(username, password):
                 userPage.id.append(int(data[0]))
                 getInfo.id.append(int(data[0]))
                 calcWrkHrs.id.append(int(data[0]))
+                monthlyWrkHours.id.append(int(data[0]))
                 userPage.user.append(str(data[1]))
                 userPage.department.append(str(data[2]))
                 calcWrkHrs.getUserTime()

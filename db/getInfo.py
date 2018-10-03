@@ -60,21 +60,27 @@ def getUserInfo():
     sumTime = calActualWorkingHours(ios, timings, doors)
 
     NonWrkHours = StdWrkHrs - sumTime
-
-    popUpCLoseBtn = Button(text='close', size_hint=(0.35, 1))
-    infoPopup.closeBtn = popUpCLoseBtn
+    AdditionalHours = sumTime - StdWrkHrs
 
     infoPopup.TWH.append(totalWorkingHours)
     infoPopup.AWH.append(sumTime)
     if sumTime < StdWrkHrs:
         infoPopup.NCH.append(NonWrkHours)
+        infoPopup.ACH.append(datetime.time())
     else:
         infoPopup.NCH.append(datetime.time())
+        infoPopup.ACH.append(AdditionalHours)
+
+    cur.close()
+    db.close()
+
+def openPopup():
+    popUpCLoseBtn = Button(text='close', size_hint=(0.35, 1))
+    infoPopup.closeBtn = popUpCLoseBtn
+
+    getUserInfo()
 
     tab = infoPopup.infoTab()
     popup = Popup(title="INFORMATION", content=tab, size_hint=(0.85, 0.85))
     popup.open()
     popUpCLoseBtn.bind(on_press=popup.dismiss)
-
-    cur.close()
-    db.close()
