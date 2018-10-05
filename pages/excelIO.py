@@ -55,8 +55,8 @@ def threads(filePath):
     t1 = threading.Thread(target=excelManip, args=(filePath,))
     t2 = threading.Thread(target=excelUpPB)
 
-    t1.start()
     t2.start()
+    t1.start()
 
     t2.join()
     t1.join()

@@ -14,7 +14,7 @@ from kivy.uix.recycleview.layout import LayoutSelectionBehavior
 from kivy.uix.filechooser import FileChooserListView
 from . import excelIO
 import threading
-from pages import usersList
+from pages import usersList, settings
 from db import usersListManip
 
 class AdminPage(Screen):
@@ -30,8 +30,10 @@ class AdminPage(Screen):
             if(instance.text == 'Excel Export'):
                 excelIO.excelExport(date.text)
             if(instance.text == 'REFRESH'):
-                print(date.text)
+                #print(date.text)
                 usersList.date.append(date.text)
+            if(instance.text == 'SETTINGS'):
+                settings.Settings()
 
         adminLayout = BoxLayout(orientation='vertical', padding=10, spacing=5)
         self.add_widget(adminLayout)
@@ -56,12 +58,16 @@ class AdminPage(Screen):
         refreshBtn = Button(text='REFRESH', pos_hint={'right':1, 'bottom':1}, size_hint=(0.1, 0.1))
         refreshBtn.bind(on_press=callback)
 
+        settingsBtn = Button(text='SETTINGS', pos_hint={'left':1, 'bottom':1}, size_hint=(0.1, 0.1))
+        settingsBtn.bind(on_press=callback)
+
         usersListManip.getUserInfo()
         usersList.date.append(date.text)
         userList = usersList.userList()
         userList.size_hint = (1, 1)
         listLayout.add_widget(userList)
         listLayout.add_widget(refreshBtn)
+        listLayout.add_widget(settingsBtn)
 
     def excelOpen(self):
 

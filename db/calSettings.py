@@ -2,16 +2,20 @@ from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.relativelayout import RelativeLayout
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.button import Button
+from kivy.uix.togglebutton import ToggleButton
 from kivy.uix.label import Label
 from kivy.core.window import Window
 from kivy.properties import NumericProperty, ReferenceListProperty
+from kivy.uix.popup import Popup
+from kivy.uix.boxlayout import BoxLayout
+from datetime import datetime
 
-from . import calendar_data as cal_data
-from db import getInfo, monthlyWrkHours
-from pages import monthlyPopup
 
-aboveSWH = []
-belowSWH = []
+from pages import calendar_data as cal_data
+
+selectedDates = []
+holiday = []
+halfday = []
 
 class CalendarWidget(RelativeLayout):
     """ Basic calendar widget """
@@ -21,6 +25,7 @@ class CalendarWidget(RelativeLayout):
 
         self.as_popup = as_popup
         self.touch_switch = touch_switch
+        #self.selectedDates = []
         self.prepare_data()
         self.init_ui()
 
@@ -41,8 +46,7 @@ class CalendarWidget(RelativeLayout):
             monthlyPopup.pop()
 
         # Title
-        self.title_label = Button(text=self.title, pos_hint={"top": 1, "center_x": .5}, size_hint=(None, 0.15), halign=("center"))
-        self.title_label.bind(on_press=callback)
+        self.title_label = Label(text=self.title, pos_hint={"top": 1, "center_x": .5}, size_hint=(None, 0.15), halign=("center"))
         self.add_widget(self.title_label)
 
         # ScreenManager
@@ -72,27 +76,23 @@ class CalendarWidget(RelativeLayout):
 
             grid_layout.add_widget(l)
 
-        global aboveSWH
-        #print(aboveSWH[0][0])
-        #print(self.active_date[1])
+        global holiday, halfday
 
         # Buttons with days numbers
         for week in month:
             for day in week:
                 if day[1] >= 6:  # weekends
-                    self.tbtn = Button(text=str(day[0]), background_color=(1, 0, 0, 1), color=(0, 0, 0, 1))
+                    self.tbtn = ToggleButton(text=str(day[0]), background_color=(1, 0, 0, 1), color=(0, 0, 0, 1))
                 else:
-                    self.tbtn = Button(text=str(day[0]), background_color=(255, 255, 255, 1), color=(0, 0, 0, 1))
-                    for i in range(len(aboveSWH)):
-                        if self.active_date[2] == aboveSWH[i][2]:
-                            if self.active_date[1] == aboveSWH[i][1]:
-                                if self.tbtn.text == str(aboveSWH[i][0]):
-                                    self.tbtn.background_color=(0, 255, 0, 1)
-                    for i in range(len(belowSWH)):
-                        if self.active_date[2] == belowSWH[i][2]:
-                            if self.active_date[1] == belowSWH[i][1]:
-                                if self.tbtn.text == str(belowSWH[i][0]):
-                                    self.tbtn.background_color=(255, 0, 0, 1)
+                    self.tbtn = ToggleButton(text=str(day[0]), background_color=(255, 255, 255, 1), color=(0, 0, 0, 1))
+                    for i in range(len(holiday)):
+                        if self.active_date[1] == holiday[i][1]:
+                            if day[0] == holiday[i][0]:
+                                self.tbtn.background_color=(128, 0, 128, 1)
+                    for i in range(len(halfday)):
+                        if self.active_date[1] == halfday[i][1]:
+                            if day[0] == halfday[i][0]:
+                                self.tbtn.background_color=(0, 255, 255, 0.5)
 
                 self.tbtn.bind(on_press=self.get_btn_value)
 
@@ -104,7 +104,7 @@ class CalendarWidget(RelativeLayout):
                 if day[2] == 0:
                     self.tbtn.text = " "
                     self.tbtn.disabled = True
-                    self.tbtn.background_color = (255, 255, 255, 1)
+                    self.tbtn.background_color = (0, 0, 0, 0.1)
 
                 grid_layout.add_widget(self.tbtn)
 
@@ -140,12 +140,17 @@ class CalendarWidget(RelativeLayout):
 
         self.active_date[0] = int(inst.text)
 
-        getInfo.date.append(self.active_date)
+        #print(inst.text)
+        #print(self.active_date)
+        global selectedDates
+
+        selectedDates.append([self.active_date[0], self.quarter_nums[0][1]+1])
+        print(selectedDates)
 
         if self.as_popup:
             self.parent_popup.dismiss()
 
-        getInfo.openPopup()
+        #getInfo.openPopup()
 
     def go_prev(self, inst):
         """ Go to screen with previous month """
@@ -207,3 +212,56 @@ class CalendarWidget(RelativeLayout):
             # Right - next
             elif touch.dpos[0] > 30:
                 self.go_next(None)
+
+import pymysql
+
+def paintDates():
+    global holiday, halfday
+    db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
+    cur = db.cursor()
+    cur.execute("SELECT DAY, MONTH, DETAIL FROM essl.month_details")
+
+    for data in cur.fetchall():
+        if data[2] == 'HOLIDAY':
+            holiday.append([data[0], data[1]])
+        else:
+            halfday.append([data[0], data[1]])
+
+
+def setup():
+
+    paintDates()
+
+    calSettingsLayout = BoxLayout(orientation='vertical')
+
+    daySetLayout = BoxLayout(orientation='horizontal', size_hint_y=0.2)
+    holidayBtn = ToggleButton(text='HOLIDAY', size_hint_x=0.5, color=(128, 0, 128, 1), bold=True)
+    daySetLayout.add_widget(holidayBtn)
+    halfdayBtn = ToggleButton(text='HALF DAY', size_hint_x=0.5, color=(0, 255, 255, 0.5), bold=True)
+    daySetLayout.add_widget(halfdayBtn)
+    calSettingsLayout.add_widget(daySetLayout)
+
+    cal = CalendarWidget()
+    calSettingsLayout.add_widget(cal)
+
+    def callback(instance):
+        global selectedDates
+        if instance.text == 'SAVE':
+            db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
+            cur = db.cursor()
+            if holidayBtn.state == 'down':
+                for date in selectedDates:
+                    cur.execute("INSERT INTO essl.month_details (DAY, MONTH, DETAIL) VALUES(%d, %d, 'HOLIDAY')" %(date[0], date[1]))
+            elif halfdayBtn.state == 'down':
+                for date in selectedDates:
+                    cur.execute("INSERT INTO essl.month_details (DAY, MONTH, DETAIL) VALUES(%d, %d, 'HALFDAY')" %(date[0], date[1]))
+
+            cur.close()
+            db.close()
+
+    saveBtn = Button(text='SAVE', size_hint_y=0.2)
+    saveBtn.bind(on_press=callback)
+    calSettingsLayout.add_widget(saveBtn)
+
+    popup = Popup(title='date settings', content=calSettingsLayout, size_hint=(0.75, 0.75))
+    popup.open()
