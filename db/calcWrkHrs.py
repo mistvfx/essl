@@ -1,6 +1,7 @@
 import pymysql
 import datetime
 from pages import Calendar
+from db import monthlyWrkHours
 
 id = [0]*1
 def getDayMonthYear(date):
@@ -36,6 +37,8 @@ def calMon(id, date):
         doors.append(data[2])
 
     ActWorHrs = calActualWorkingHours(ios, timings, doors)
+    cur.close()
+    db.close()
     return ActWorHrs
 
 
@@ -63,6 +66,8 @@ def getUserTime():
             Calendar.aboveSWH.append(DMY)
         else:
             Calendar.belowSWH.append(DMY)
+
+    monthlyWrkHours.getHolidays()
 
     cur.close()
     cur1.close()

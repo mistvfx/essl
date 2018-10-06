@@ -12,6 +12,7 @@ from pages import monthlyPopup
 
 aboveSWH = []
 belowSWH = []
+holidays = []
 
 class CalendarWidget(RelativeLayout):
     """ Basic calendar widget """
@@ -72,9 +73,7 @@ class CalendarWidget(RelativeLayout):
 
             grid_layout.add_widget(l)
 
-        global aboveSWH
-        #print(aboveSWH[0][0])
-        #print(self.active_date[1])
+        global aboveSWH, belowSWH, holidays
 
         # Buttons with days numbers
         for week in month:
@@ -93,6 +92,10 @@ class CalendarWidget(RelativeLayout):
                             if self.active_date[1] == belowSWH[i][1]:
                                 if self.tbtn.text == str(belowSWH[i][0]):
                                     self.tbtn.background_color=(255, 0, 0, 1)
+                    for i in range(len(holidays)):
+                        if self.active_date[1] == holidays[i][1]:
+                            if day[0] == holidays[i][0]:
+                                self.tbtn.background_color=(0, 0, 255, 1)
 
                 self.tbtn.bind(on_press=self.get_btn_value)
 

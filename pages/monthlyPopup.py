@@ -9,6 +9,25 @@ from db import monthlyWrkHours
 month = []
 months = ['January ', 'Feburary ', 'March ', 'April ', 'May ', 'June ', 'July ', 'August ', 'September ', 'October ', 'November ', 'December ']
 
+def calTotWorkingDays(totDays, curMonth, givMonth, curDate, givYear):
+    holidays = monthlyWrkHours.getHolidays()
+    days = 0
+    hDays = 0
+    month = calendar.monthcalendar(givYear, givMonth)
+    for week in month:
+        for day in week:
+            for i in range(len(holidays)):
+                if day == holidays[i][0] and givMonth == holidays[i][1]:
+                    hDays += 1
+            if day == 0 or day == week[6]:
+                continue
+            if day == curDate and givMonth == curMonth:
+                return days-hDays
+            days += 1
+
+    return days-hDays
+
+
 def workTime():
     StdWrkHrs = datetime.timedelta(hours=8, minutes=29, seconds=59)
     global month, months
@@ -16,9 +35,12 @@ def workTime():
     mon = month[len(month)-1].split("-")
     workTime.year = int(mon[1])
     workTime.mont = int(months.index(mon[0])+1)
+    date = str(datetime.date.today()).split("-")
+    #print(calendar.monthcalendar(int(mon[1]), months.index(mon[0])+1))
     Sundays = len([1 for i in calendar.monthcalendar(int(mon[1]), months.index(mon[0])+1) if i[6] != 0])
     No_of_days = calendar.monthrange(int(mon[1]), months.index(mon[0])+1)
-    totWorkingdays = (No_of_days[1] - Sundays)
+    totWorkingdays = calTotWorkingDays(No_of_days[1], int(date[1]), workTime.mont, int(date[2]), workTime.year)
+    #totWorkingdays = (No_of_days[1] - Sundays)
     workTime.totWorkingTime = StdWrkHrs * totWorkingdays
 
 def ActualWorkingTime():
@@ -32,7 +54,11 @@ class MonPop(GridLayout):
 
     def popUI(self):
         actWorkingTime = ActualWorkingTime()
-        details = ['Total Working Time : ', workTime.totWorkingTime, 'Actual Working Time :', actWorkingTime, 'Required Work Time :', (workTime.totWorkingTime-actWorkingTime)]
+        if workTime.totWorkingTime-actWorkingTime < datetime.timedelta():
+            reqWorkTime = datetime.timedelta()
+        else:
+            reqWorkTime = (workTime.totWorkingTime-actWorkingTime)
+        details = ['Total Working Time : ', workTime.totWorkingTime, 'Actual Working Time :', actWorkingTime, 'Required Work Time :', reqWorkTime]
         for i in range(len(details)):
             lbl = Label(text=str(details[i]))
             self.add_widget(lbl)
