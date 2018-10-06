@@ -23,6 +23,7 @@ def excelManip(filePath):
         reader_name = df['Reader Name'][i]
         date_time = df['Time'][i]
         door = df['Event Point'][i]
+        event = df['Event Description'][i]
         try:
             reader = reader_name.split(" ")
             io = reader[1]
@@ -32,7 +33,7 @@ def excelManip(filePath):
         time = date_time.time()
         #print(type(time))
 
-        if str(id) != 'nan':
+        if str(id) != 'nan' and event == 'Normal Open':
             try:
                 cur.execute("INSERT INTO essl.%d (IO, MTIME, MDATE, DOOR) VALUES('%s', '%s', '%s', '%s')" %(id, io, time, date, door))
             except:
@@ -42,10 +43,11 @@ def excelManip(filePath):
 
     cur.close()
     db.close()
+    print("EXCEL UPLOAD COMPLETE")
     return 0
 
 def excelUpPB():
-    infoLabel = Label(text='File Will be synced to the database in the background, please do not close the application')
+    infoLabel = Label(text='EXCEL UPLOAD COMPLETE')
     popup = Popup(content=infoLabel, size_hint=(0.5, 0.5))
     popup.open()
 
@@ -60,8 +62,6 @@ def threads(filePath):
 
     t2.join()
     t1.join()
-
-    print("EXCEL UPLOAD COMPLETE")
 
 def formatDate(date):
     Date = date.split(".")
