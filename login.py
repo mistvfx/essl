@@ -7,12 +7,20 @@ from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.textinput import TextInput
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.button import Button
+from kivy.core.image import Image
+from kivy.graphics import *
+from kivy.core.window import Window
+
 from db.credentialsCheck import checkCredentials
 from pages import userPage, adminPage
+
 
 class loginWindow(Screen):
     def __init__(self, **args):
         super(loginWindow, self).__init__(**args)
+        texture = Image('image/logo.png').texture
+        with self.canvas.before:
+            Rectangle(source='image/mist_logo.jpg', pos=self.pos, size=Window.size)
         self.login()
 
     def login(self):
@@ -23,7 +31,7 @@ class loginWindow(Screen):
                             spacing = 10, size_hint=(0.3, 0.3))
         anchorLayout.add_widget(layout)
 
-        loginLabel = Label(text='LOGIN')
+        loginLabel = Label(text='LOGIN', bold=True)
         self.username = TextInput(text='USERNAME', multiline=False,
                                     padding=5)
         self.password = TextInput(text='PASSWORD', multiline=False, password=True)
@@ -65,9 +73,10 @@ class ScreenManagement(ScreenManager):
     #sm.add_widget(userPage.UserPage(name='user'))
     #sm.add_widget(adminPage.AdminPage(name='admin'))
 
-class esslApp(App):
+class mistApp(App):
     def build(self):
+        self.title = 'MIST EMPLOYEE TIME TRACKER'
         return ScreenManagement().sm
 
 if __name__ == '__main__':
-    esslApp().run()
+    mistApp().run()
