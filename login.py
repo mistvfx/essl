@@ -19,7 +19,7 @@ from pages import userPage, adminPage
 Builder.load_string("""
 <loginButton@Button>:
     text: 'LOGIN'
-    color: (255, 255, 255, 1)
+    color: (1, 1, 1, 1)
     background_color: (0, 0, 0, 1)
     Image:
         source: 'icons/login.png'
@@ -116,7 +116,7 @@ class ScreenManagement(ScreenManager):
 
 class mistApp(App):
     def build(self):
-        self.title = 'MIST EMPLOYEE TIME TRACKER'
+        self.title = 'MIST ARTIST TIME TRACKER'
         return ScreenManagement().sm
 
 if __name__ == '__main__':

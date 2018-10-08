@@ -19,7 +19,7 @@ def formatDate(date):
 
 def calActualWorkingHours(io, time, door):
     inTime = datetime.timedelta(); outTime = datetime.timedelta(); sumTime = datetime.timedelta();
-    accDoor = ['MM', 'ROTO', 'PAINT', 'CONFERENCE ROOM']
+    accDoor = ['MM', 'ROTO', 'PAINT', 'CONFERENCE ROOM', 'IT', 'TRAINING-1']
     for i in range(len(io)):
         if door[i] in accDoor:
             if io[i] == 'In':
