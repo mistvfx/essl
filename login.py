@@ -12,18 +12,24 @@ from kivy.graphics import *
 from kivy.core.window import Window
 from kivy.uix.behaviors.touchripple import TouchRippleBehavior
 from kivy.lang import Builder
+from kivy import utils
 
 from db.credentialsCheck import checkCredentials
 from pages import userPage, adminPage
 
 Builder.load_string("""
+<loginScrnBg>:
+    Image:
+        source: 'icons/bg.jpg'
+        allow_stretch: True
+
 <loginButton@Button>:
     text: 'LOGIN'
-    color: (1, 1, 1, 1)
-    background_color: (0, 0, 0, 1)
+    color: (1, 1, 1, 0)
+    background_color: (0, 0, 0, 0)
     Image:
         source: 'icons/login.png'
-        height: dp(35)
+        size: self.parent.size
         y: self.parent.y
         x: self.parent.x
 
@@ -32,17 +38,37 @@ Builder.load_string("""
     write_tab: False
     background_color: (1, 1, 1, 1) if self.focus else (1, 1, 1, 0.5)
 
-<loginScrnBg>:
-    border: (1, 0, 0, 0)
+<loginBG>:
+    size_hint: 1, 0.35
+    orientation: 'vertical'
+    canvas.before:
+        Color:
+            rgb: 1, 1, 1
+        Rectangle:
+            size: self.size
+            pos: self.pos
+
+    padding: 10
+    spacing: 2
+
+
+<loginScrn>:
+    padding: 10
+    orientation: 'horizontal'
+    size_hint: 0.65, 0.75
+    canvas.before:
+        Color:
+            rgb: 1, 1, 1
+        Rectangle:
+            size: self.size
+            pos: self.pos
     Image:
-        canvas.before:
-            Color:
-                rgb: 1, 1, 1
-            Rectangle:
-                size: self.size
-                pos: self.pos
+        size_hint_x: 0.75
         source: 'icons/logo.png'
 """)
+
+class loginScrnBg(AnchorLayout):
+    pass
 
 class loginButton(Button):
     pass
@@ -50,7 +76,10 @@ class loginButton(Button):
 class TextBox(TextInput):
     pass
 
-class loginScrnBg(AnchorLayout):
+class loginBG(BoxLayout):
+    pass
+
+class loginScrn(BoxLayout):
     pass
 
 class loginWindow(Screen):
@@ -61,17 +90,22 @@ class loginWindow(Screen):
         self.login()
 
     def login(self):
-        #anchorLayout = AnchorLayout(anchor_x='center', anchor_y='center')
         anchorLayout = loginScrnBg(anchor_x='center', anchor_y='center')
+        #with anchorLayout.canvas.before:
+        #    Rectangle(source = 'icons/bg.jpg', size = Window.size, pos = self.pos)
         self.add_widget(anchorLayout)
 
-        layout = BoxLayout(orientation='vertical', padding=10, spacing = 2, size_hint=(0.3, 0.3))
-        with layout.canvas.before:
-            Color=(255, 255, 255, 1)
-            pos = self.pos
-        anchorLayout.add_widget(layout)
+        loginSetup = loginScrn()
+        anchorLayout.add_widget(loginSetup)
 
-        loginLabel = Label(text='LOGIN', bold=True)
+        #layout = loginBG(orientation='vertical', padding=10, spacing = 2, size_hint=(0.3, 0.3))
+        loginAnchor = AnchorLayout(anchor_x='center', anchor_y='center', size_hint_x=0.35)
+        loginSetup.add_widget(loginAnchor)
+
+        layout = loginBG()
+        loginAnchor.add_widget(layout)
+
+        loginLabel = Label(text='LOGIN', bold=True, color=(0, 0, 0, 1))
         #self.username = TextInput(text='USERNAME', multiline=False, padding=5)
         self.username = TextBox(hint_text='USERNAME')
         self.password = TextBox(hint_text='PASSWORD', password=True)

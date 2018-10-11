@@ -8,7 +8,7 @@ from kivy.properties import NumericProperty, ReferenceListProperty
 
 from . import calendar_data as cal_data
 from db import getInfo, monthlyWrkHours
-from pages import monthlyPopup
+from pages import monthlyPopup, Dialog
 
 aboveSWH = []
 belowSWH = []
@@ -148,7 +148,16 @@ class CalendarWidget(RelativeLayout):
         if self.as_popup:
             self.parent_popup.dismiss()
 
-        getInfo.openPopup()
+        try:
+            getInfo.openPopup()
+        except:
+            def callback(instance):
+                if instance.text == 'OK':
+                    pop.dismiss()
+            closePopBtn = Button(text="OK", size_hint=(1, 0.25))
+            closePopBtn.bind(on_release=callback)
+            pop = Dialog.dialog("No Data !!!", "No data Available for the selected date !!", closePopBtn)
+            pop.open()
 
     def go_prev(self, inst):
         """ Go to screen with previous month """

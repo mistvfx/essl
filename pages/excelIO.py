@@ -6,8 +6,35 @@ import threading
 from kivy.uix.popup import Popup
 from kivy.uix.label import Label
 from kivy.uix.progressbar import ProgressBar
+from kivy.core.image import Image
+from kivy.uix.button import Button
+
 from db.calcWrkHrs import calActualWorkingHours
+from pages import Dialog
+
 import openpyxl
+
+from kivy.lang import Builder
+
+Builder.load_string("""
+<excelLoading>:
+    Image:
+        source: 'icons/loading.gif'
+        size: self.parent.size
+        y: self.parent.y
+        x: self.parent.x
+        keep_data: True
+""")
+
+class excelLoading(Image):
+    pass
+
+def excelUpPB():
+    exceLoad = excelLoading()
+    popup = Popup(content=exceLoad, size_hint=(0.5, 0.5))
+    popup.open()
+
+    return 0
 
 def excelManip(filePath):
     db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
@@ -46,22 +73,12 @@ def excelManip(filePath):
     print("EXCEL UPLOAD COMPLETE")
     return 0
 
-def excelUpPB():
-    infoLabel = Label(text='EXCEL UPLOAD COMPLETE')
-    popup = Popup(content=infoLabel, size_hint=(0.5, 0.5))
-    popup.open()
-
-    return 0
-
 def threads(filePath):
     t1 = threading.Thread(target=excelManip, args=(filePath,))
     t2 = threading.Thread(target=excelUpPB)
 
     t2.start()
     t1.start()
-
-    t2.join()
-    t1.join()
 
 def formatDate(date):
     Date = date.split(".")
@@ -187,7 +204,67 @@ def excelExport(date):
     rule.formula = ['NOT(ISERROR(SEARCH("ABSENT",E1)))']
 
     try:
-        wb = openpyxl.load_workbook('export_test.xlsx')
+        def callback(inst):
+            if inst.text == 'OK':
+                pop.dismiss()
+
+        btn = Button(text='OK', size_hint=(1, 0.25))
+        pop = Dialog.dialog("Coming Soon !!", "Somethins Unfixed Yet", btn)
+        pop.open()
+        """from openpyxl.workbook import Workbook
+
+        header = [u'Name', u'Email', u'Mobile', u'Current location',]
+        new_data = [[u'name1', u'email1@yahoo.com', 9929283421.0, u'xxxx'],
+                [u'name2', u'email2@xyz.com', 9994191988.0, u'xxxx']]
+
+        wb = Workbook()
+
+        dest_filename = 'empty_book.xlsx'
+
+        ws1 = wb.active
+
+        ws1.title = "range names"
+
+        ws1.append(header)
+
+        for row in new_data:
+            ws1.append(row)
+
+            wb.save(filename = dest_filename)"""
+        """fname = 'export_test.xlsx'
+        ws = formatDate(date)
+        with ExcelWriter(fname, engine='openpyxl') as writer:
+            writer.book = load_workbook(fname)
+            #if ws in writer.book:
+            #    del writer.book[ws]
+
+            df.to_excel(writer, ws)
+
+            for cell in ws['A'] + ws[1]:
+                cell.style = 'Pandas'
+
+            for row in ws['A1:K100']:
+                for cell in row:
+                    cell.alignment = Alignment(wrap_text=True, horizontal='center', vertical='center')
+                    cell.border = thin_border
+
+            for col in ws.columns:
+                max_length = 0
+                column = col[0].column # Get the column name
+                for cell in col:
+                    try: # Necessary to avoid error on empty cells
+                        if len(str(cell.value)) > max_length:
+                            max_length = len(cell.value)
+                    except:
+                        pass
+                adjusted_width = (max_length + 2) * 1.2
+                ws.column_dimensions[column].width = adjusted_width
+
+            ws['A1'].fill = PatternFill(bgColor="5fff00", fill_type = "solid")
+
+            ws.conditional_formatting.add('E1:K500', rule)"""
+
+        """wb = openpyxl.load_workbook('export_test.xlsx')
         ws = wb.create_sheet(formatDate(date))
 
         for r in dataframe_to_rows(df, index=True, header=True):
@@ -217,7 +294,7 @@ def excelExport(date):
 
         ws.conditional_formatting.add('E1:K500', rule)
 
-        wb.save('export_test.xlsx')
+        wb.save('export_test.xlsx')"""
     except Exception as e:
         print('ERROR :', e)
         wb = Workbook()

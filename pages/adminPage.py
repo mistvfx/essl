@@ -12,10 +12,86 @@ from kivy.uix.recyclegridlayout import RecycleGridLayout
 from kivy.uix.behaviors import FocusBehavior
 from kivy.uix.recycleview.layout import LayoutSelectionBehavior
 from kivy.uix.filechooser import FileChooserListView
+from kivy.lang import Builder
+
 from . import excelIO
 import threading
 from pages import usersList, settings
 from db import usersListManip
+
+Builder.load_string("""
+<excelImpButton>:
+    text: "Excel Import"
+    size_hint: (1, 1)
+    color: (1, 1, 1, 0)
+    background_color: (0, 0, 0, 0)
+    Image:
+        source: 'icons/importExcel.png'
+        size: self.parent.size
+        y: self.parent.y
+        x: self.parent.x
+        keep_data: True
+
+<excelExpButton>:
+    text: "Excel Export"
+    size_hint: (1, 1)
+    color: (1, 1, 1, 0)
+    background_color: (0, 0, 0, 0)
+    Image:
+        source: 'icons/importExcel.png'
+        size: self.parent.size
+        y: self.parent.y
+        x: self.parent.x
+        keep_data: True
+
+<ExcelExported>:
+    size_hint: 0.5, 0.5
+    background_color: (0, 0, 0, 0)
+    Image:
+        source: 'icons/export.gif'
+        size: self.parent.size
+        y: self.parent.y
+        x: self.parent.x
+        keep_data: True
+
+<refButton>:
+    text: 'REFRESH'
+    color: (1, 1, 1, 0)
+    background_color: (0, 0, 0, 0)
+    pos_hint: {'right':1, 'bottom':1}
+    size_hint: (0.1, 0.1)
+    Image:
+        source: 'icons/refresh.png'
+        size: self.parent.size
+        y: self.parent.y
+        x: self.parent.x
+
+<setButton>:
+    text: 'SETTINGS'
+    color: (1, 1, 1, 0)
+    background_color: (0, 0, 0, 0)
+    pos_hint: {'left':1, 'bottom':1}
+    size_hint: (0.1, 0.1)
+    Image:
+        source: 'icons/setting.png'
+        size: self.parent.size
+        y: self.parent.y
+        x: self.parent.x
+""")
+class excelImpButton(Button):
+    pass
+
+class excelExpButton(Button):
+    pass
+
+class ExcelExported(Popup):
+    pass
+
+class refButton(Button):
+    pass
+
+class setButton(Button):
+    pass
 
 class AdminPage(Screen):
     def __init__(self, **args):
@@ -29,6 +105,7 @@ class AdminPage(Screen):
                 self.excelOpen()
             if(instance.text == 'Excel Export'):
                 excelIO.excelExport(date.text)
+                ExcelExported().open()
             if(instance.text == 'REFRESH'):
                 #print(date.text)
                 usersList.date.append(date.text)
@@ -44,21 +121,21 @@ class AdminPage(Screen):
         adminLayout.add_widget(controlLayout)
         adminLayout.add_widget(listLayout)
 
-        excelImportBtn = Button(text="Excel Import", size_hint=(1, 1))
+        excelImportBtn = excelImpButton()
         excelImportBtn.bind(on_press=callback)
         controlLayout.add_widget(excelImportBtn)
 
         date = DatePicker(size_hint=(0.7, 1), pHint=(0.35, 0.35))
         controlLayout.add_widget(date)
 
-        excelExportBtn = Button(text="Excel Export", size_hint=(1, 1))
+        excelExportBtn = excelExpButton()
         excelExportBtn.bind(on_press=callback)
         controlLayout.add_widget(excelExportBtn)
 
-        refreshBtn = Button(text='REFRESH', pos_hint={'right':1, 'bottom':1}, size_hint=(0.1, 0.1))
+        refreshBtn = refButton()
         refreshBtn.bind(on_press=callback)
 
-        settingsBtn = Button(text='SETTINGS', pos_hint={'left':1, 'bottom':1}, size_hint=(0.1, 0.1))
+        settingsBtn = setButton()
         settingsBtn.bind(on_press=callback)
 
         usersListManip.getUserInfo()

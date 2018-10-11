@@ -22,6 +22,8 @@ def calActualWorkingHours(io, time, door):
     accDoor = ['MM', 'ROTO', 'PAINT', 'CONFERENCE ROOM', 'IT', 'TRAINING-1']
     for i in range(len(io)):
         if door[i] in accDoor:
+            if io[i] == io[i+1]:
+                print(io[i], io[i+1])
             if io[i] == 'In':
                 inTime = time[i]
             elif io[i] == 'Out':
