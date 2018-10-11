@@ -13,6 +13,11 @@ def calActualWorkingHours(io, time, door):
     accDoor = ['MM', 'ROTO', 'PAINT', 'CONFERENCE ROOM', 'TRAINING-1']
     for i in range(len(io)):
         if door[i] in accDoor:
+            if io[i-1] == io[i] and door[i-1] in accDoor and door[i] in accDoor:
+                print(io[i], door[i], ":", io[i+1], door[i+1])
+                """inCorrectTime = time[i+1] - time[i]
+                sumTime = sumTime - inCorrectTime"""
+                continue
             if io[i] == 'In':
                 inTime = time[i]
             elif io[i] == 'Out':

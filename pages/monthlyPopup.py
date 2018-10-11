@@ -63,7 +63,7 @@ class MonPop(GridLayout):
             reqWorkTime = datetime.timedelta()
         else:
             reqWorkTime = (workTime.tarWorkingTime-actWorkingTime)
-        details = ['Total Working Hours : ', round(totWorkingTime.total_seconds()/3600, 2), 'Actual Working Hours :', round(actWorkingTime.total_seconds()/3600, 2), 'Not Completed Working Hours :', round(reqWorkTime.total_seconds()/3600, 2), 'Total Target Hours :', round(workTime.tarWorkingTime.total_seconds()/3600, 2)]
+        details = ['Total Working Hours (10:00:00): ', round(totWorkingTime.total_seconds()/3600, 2), 'Total Target Actual Working Hours :', round(workTime.tarWorkingTime.total_seconds()/3600, 2), 'Actual Working Hours :', round(actWorkingTime.total_seconds()/3600, 2), 'Not Completed Working Hours :', round(reqWorkTime.total_seconds()/3600, 2)]
         for i in range(len(details)):
             lbl = Label(text=str(details[i]), bold=True)
             self.add_widget(lbl)

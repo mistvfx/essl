@@ -18,12 +18,15 @@ def formatDate(date):
         self.login()"""
 
 def calActualWorkingHours(io, time, door):
-    inTime = datetime.timedelta(); outTime = datetime.timedelta(); sumTime = datetime.timedelta();
+    inTime = datetime.timedelta(); outTime = datetime.timedelta(); sumTime = datetime.timedelta(); inCorrectTime = datetime.timedelta();
     accDoor = ['MM', 'ROTO', 'PAINT', 'CONFERENCE ROOM', 'IT', 'TRAINING-1']
     for i in range(len(io)):
         if door[i] in accDoor:
-            if io[i] == io[i+1]:
-                print(io[i], io[i+1])
+            if io[i-1] == io[i] and door[i-1] in accDoor and door[i] in accDoor:
+                print(io[i], door[i], ":", io[i+1], door[i+1])
+                """inCorrectTime = time[i+1] - time[i]
+                sumTime = sumTime - inCorrectTime"""
+                continue
             if io[i] == 'In':
                 inTime = time[i]
             elif io[i] == 'Out':

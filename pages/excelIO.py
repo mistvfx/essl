@@ -60,7 +60,7 @@ def excelManip(filePath):
         time = date_time.time()
         #print(type(time))
 
-        if str(id) != 'nan' and event == 'Normal Open':
+        if str(id) != 'nan' :
             try:
                 cur.execute("INSERT INTO essl.%d (IO, MTIME, MDATE, DOOR) VALUES('%s', '%s', '%s', '%s')" %(id, io, time, date, door))
             except:
