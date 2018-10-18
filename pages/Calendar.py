@@ -150,7 +150,8 @@ class CalendarWidget(RelativeLayout):
 
         try:
             getInfo.openPopup()
-        except:
+        except Exception as e:
+            print(e)
             def callback(instance):
                 if instance.text == 'OK':
                     pop.dismiss()

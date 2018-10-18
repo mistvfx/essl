@@ -47,9 +47,10 @@ class infoTab(BoxLayout):
         info = GridLayout(cols=2, size_hint=(0.35, 1))
         tableLayout.add_widget(info)
 
-        global TWH, AWH
+        global TWH, AWH, NCH, ACH
 
-        infoQ = ['Total Hours :', str(TWH[len(TWH)-1]), 'Working Hours :', str(AWH[len(AWH)-1]), 'Non-Completed Actual Hours:', str(NCH[len(NCH)-1]), 'Additional Hours:', str(ACH[len(ACH)-1])]
+        infoQ = ['Total Hours :', str(round(TWH[len(TWH)-1].total_seconds()/3600, 2)), 'Working Hours :', str(round(AWH[len(AWH)-1].total_seconds()/3600, 2)), 'Non-Completed Actual Hours:', str(round(NCH[len(NCH)-1].total_seconds()/3600, 2)), 'Additional Hours:',
+                str(round(ACH[len(ACH)-1].total_seconds()/3600, 2))]
 
         for i in range(len(infoQ)):
             infoLabels = Label(text=infoQ[i])

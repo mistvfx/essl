@@ -176,16 +176,8 @@ def excelExport(date):
 
     df = pd.DataFrame({'Artist Code':Artist_Code, 'Artist Name':Artist_Name, 'Department':Department, 'In Time':In_Time, 'Out Time':Out_Time, 'Work Duration':Work_Duration, 'Total Duration':Total_Duration, 'Non Completed Hours':Non_Completed_Hours, 'Additional Hours':Additional_Hours, 'Remarks':Remarks})
 
-    ##writer = pd.ExcelWriter('export_test.xlsx', engine='xlsxwriter')
-    #df.to_csv('export_testing.csv')
-    ##df.to_excel(writer, sheet_name=formatDate(date))
-    ##workbook = writer.book
-    ##worksheet = writer.sheets[formatDate(date)]
-    #timeFormat = workbook.add_format({'num_format': 'hh:mm:ss'})
-    #worksheet.set_column('E:H', None, timeFormat)
-
-    from openpyxl import Workbook
-    from openpyxl.utils.dataframe import dataframe_to_rows
+    from openpyxl import load_workbook
+    #from openpyxl.utils.dataframe import dataframe_to_rows
     from openpyxl.formatting import Rule
     from openpyxl.styles import Font, PatternFill
     from openpyxl.styles.differential import DifferentialStyle
@@ -204,126 +196,41 @@ def excelExport(date):
     rule.formula = ['NOT(ISERROR(SEARCH("ABSENT",E1)))']
 
     try:
-        def callback(inst):
-            if inst.text == 'OK':
-                pop.dismiss()
+        book = load_workbook('export_test.xlsx')
+        writer = pd.ExcelWriter('export_test.xlsx', engine='openpyxl')
+    except:
+        writer = pd.ExcelWriter('export_test.xlsx', engine='openpyxl')
+        book = writer.book
+    #writer = pd.ExcelWriter('export_test.xlsx', engine='openpyxl')
+    #workbook = writer.book
+    writer.book = book
+    df.to_excel(writer, sheet_name=formatDate(date))
+    worksheet = writer.sheets[formatDate(date)]
 
-        btn = Button(text='OK', size_hint=(1, 0.25))
-        pop = Dialog.dialog("Coming Soon !!", "Somethins Unfixed Yet", btn)
-        pop.open()
-        """from openpyxl.workbook import Workbook
+    if worksheet in writer.book:
+        del writer.book[worksheet]
 
-        header = [u'Name', u'Email', u'Mobile', u'Current location',]
-        new_data = [[u'name1', u'email1@yahoo.com', 9929283421.0, u'xxxx'],
-                [u'name2', u'email2@xyz.com', 9994191988.0, u'xxxx']]
+    for row in worksheet['A1:K100']:
+        for cell in row:
+            cell.alignment = Alignment(wrap_text=True, horizontal='center', vertical='center')
+            cell.border = thin_border
 
-        wb = Workbook()
+    for cell in worksheet['A'] + worksheet[1]:
+        cell.style = 'Pandas'
 
-        dest_filename = 'empty_book.xlsx'
+    for col in worksheet.columns:
+        max_length = 0
+        column = col[0].column # Get the column name
+        for cell in col:
+            try: # Necessary to avoid error on empty cells
+                if len(str(cell.value)) > max_length:
+                    max_length = len(cell.value)
+            except:
+                pass
+        adjusted_width = (max_length + 2) * 1.2
+        worksheet.column_dimensions[column].width = adjusted_width
 
-        ws1 = wb.active
+    worksheet.conditional_formatting.add('E1:K500', rule)
+    worksheet.sheet_properties.tabColor = "1072BA"
 
-        ws1.title = "range names"
-
-        ws1.append(header)
-
-        for row in new_data:
-            ws1.append(row)
-
-            wb.save(filename = dest_filename)"""
-        """fname = 'export_test.xlsx'
-        ws = formatDate(date)
-        with ExcelWriter(fname, engine='openpyxl') as writer:
-            writer.book = load_workbook(fname)
-            #if ws in writer.book:
-            #    del writer.book[ws]
-
-            df.to_excel(writer, ws)
-
-            for cell in ws['A'] + ws[1]:
-                cell.style = 'Pandas'
-
-            for row in ws['A1:K100']:
-                for cell in row:
-                    cell.alignment = Alignment(wrap_text=True, horizontal='center', vertical='center')
-                    cell.border = thin_border
-
-            for col in ws.columns:
-                max_length = 0
-                column = col[0].column # Get the column name
-                for cell in col:
-                    try: # Necessary to avoid error on empty cells
-                        if len(str(cell.value)) > max_length:
-                            max_length = len(cell.value)
-                    except:
-                        pass
-                adjusted_width = (max_length + 2) * 1.2
-                ws.column_dimensions[column].width = adjusted_width
-
-            ws['A1'].fill = PatternFill(bgColor="5fff00", fill_type = "solid")
-
-            ws.conditional_formatting.add('E1:K500', rule)"""
-
-        """wb = openpyxl.load_workbook('export_test.xlsx')
-        ws = wb.create_sheet(formatDate(date))
-
-        for r in dataframe_to_rows(df, index=True, header=True):
-            ws.append(r)
-
-        for cell in ws['A'] + ws[1]:
-            cell.style = 'Pandas'
-
-        for row in ws['A1:K100']:
-            for cell in row:
-                cell.alignment = Alignment(wrap_text=True, horizontal='center', vertical='center')
-                cell.border = thin_border
-
-        for col in ws.columns:
-            max_length = 0
-            column = col[0].column # Get the column name
-            for cell in col:
-                try: # Necessary to avoid error on empty cells
-                    if len(str(cell.value)) > max_length:
-                        max_length = len(cell.value)
-                except:
-                    pass
-            adjusted_width = (max_length + 2) * 1.2
-            ws.column_dimensions[column].width = adjusted_width
-
-        ws['A1'].fill = PatternFill(bgColor="5fff00", fill_type = "solid")
-
-        ws.conditional_formatting.add('E1:K500', rule)
-
-        wb.save('export_test.xlsx')"""
-    except Exception as e:
-        print('ERROR :', e)
-        wb = Workbook()
-        ws = wb.create_sheet(formatDate(date))
-
-        for r in dataframe_to_rows(df, index=True, header=True):
-            ws.append(r)
-
-        for cell in ws['A'] + ws[1]:
-            cell.style = 'Pandas'
-
-        for row in ws['A1:K100']:
-            for cell in row:
-                cell.alignment = Alignment(wrap_text=True, horizontal='center', vertical='center')
-                cell.border = thin_border
-
-        for col in ws.columns:
-            max_length = 0
-            column = col[0].column # Get the column name
-            for cell in col:
-                try: # Necessary to avoid error on empty cells
-                    if len(str(cell.value)) > max_length:
-                        max_length = len(cell.value)
-                except:
-                    pass
-            adjusted_width = (max_length + 2) * 1.2
-            ws.column_dimensions[column].width = adjusted_width
-
-        ws.conditional_formatting.add('E1:K500', rule)
-        ws.sheet_properties.tabColor = "1072BA"
-
-        wb.save('export_test.xlsx')
+    writer.save()

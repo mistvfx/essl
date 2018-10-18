@@ -23,7 +23,7 @@ def calActualWorkingHours(io, time, door):
     for i in range(len(io)):
         if door[i] in accDoor:
             if io[i-1] == io[i] and door[i-1] in accDoor and door[i] in accDoor:
-                print(io[i], door[i], ":", io[i+1], door[i+1])
+                #print(io[i], door[i], ":", io[i+1], door[i+1])
                 """inCorrectTime = time[i+1] - time[i]
                 sumTime = sumTime - inCorrectTime"""
                 continue
@@ -33,7 +33,7 @@ def calActualWorkingHours(io, time, door):
                 outTime = time[i]
                 sumTime = (sumTime)+(outTime-inTime)
     #infoPopup.AWH.append(sumTime)
-    print(sumTime)
+    #print(sumTime)
     return sumTime
     #print(sumTime)
 
@@ -71,9 +71,9 @@ def getUserInfo():
     infoPopup.AWH.append(sumTime)
     if sumTime < StdWrkHrs:
         infoPopup.NCH.append(NonWrkHours)
-        infoPopup.ACH.append(datetime.time())
+        infoPopup.ACH.append(datetime.timedelta())
     else:
-        infoPopup.NCH.append(datetime.time())
+        infoPopup.NCH.append(datetime.timedelta())
         infoPopup.ACH.append(AdditionalHours)
 
     cur.close()
