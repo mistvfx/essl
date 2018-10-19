@@ -5,10 +5,26 @@ from kivy.core.window import Window
 from kivy.uix.label import Label
 #from kivy.app import runTouchApp
 from kivy.app import App
+from kivy.lang import Builder
 
 io = ['I/O']*1
 time = ['TIME']*1
 door = ['DOOR']*1
+
+Builder.load_string("""
+<dataLbl>:
+    color: (0, 0, 0, 1)
+    bold: True
+    canvas.before:
+        Color:
+            rgba: (1, 1, 1, 1)
+        Rectangle:
+            size: self.size
+            pos: self.pos
+""")
+
+class dataLbl(Label):
+    pass
 
 class dataTable(ScrollView):
     def __init__(self, **args):
@@ -27,13 +43,13 @@ class dataTable(ScrollView):
 
         i=1; j=1; k=1;
         while i < len(io):
-            lbl = Label(text=str(io[i]), size_hint_y=None, height=40)
+            lbl = dataLbl(text=str(io[i]), size_hint_y=None, height=40)
             layout.add_widget(lbl)
             while j < len(time):
-                lbl = Label(text=str(time[j]), size_hint_y=None, height=40)
+                lbl = dataLbl(text=str(time[j]), size_hint_y=None, height=40)
                 layout.add_widget(lbl)
                 while k < len(door):
-                    lbl = Label(text=str(door[k]), size_hint_y=None, height=40)
+                    lbl = dataLbl(text=str(door[k]), size_hint_y=None, height=40)
                     layout.add_widget(lbl)
                     k+=1
                     break

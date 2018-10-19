@@ -5,6 +5,9 @@ from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.core.window import Window
 from kivy.properties import NumericProperty, ReferenceListProperty
+from kivy.lang import Builder
+from kivy.graphics import Triangle
+from kivy.graphics import Color
 
 from . import calendar_data as cal_data
 from db import getInfo, monthlyWrkHours
@@ -13,6 +16,23 @@ from pages import monthlyPopup, Dialog
 aboveSWH = []
 belowSWH = []
 holidays = []
+
+Builder.load_string("""
+<arrowBtn>:
+    background_color: (0, 0, 0, 0)
+    font_size: 50
+    bold: True
+
+<monthBtn>:
+    background_color: (0, 0, 0, 0)
+    bold: True
+""")
+
+class arrowBtn(Button):
+    pass
+
+class monthBtn(Button):
+    pass
 
 class CalendarWidget(RelativeLayout):
     """ Basic calendar widget """
@@ -27,10 +47,10 @@ class CalendarWidget(RelativeLayout):
 
     def init_ui(self):
 
-        self.left_arrow = Button(text="<", on_press=self.go_prev,
+        self.left_arrow = arrowBtn(text="<", on_press=self.go_prev,
                                       pos_hint={"top": 1, "left": 0}, size_hint=(.1, .1))
 
-        self.right_arrow = Button(text=">", on_press=self.go_next,
+        self.right_arrow = arrowBtn(text=">", on_press=self.go_next,
                                        pos_hint={"top": 1, "right": 1}, size_hint=(.1, .1))
 
         self.add_widget(self.left_arrow)
@@ -42,7 +62,7 @@ class CalendarWidget(RelativeLayout):
             monthlyPopup.pop()
 
         # Title
-        self.title_label = Button(text=self.title, pos_hint={"top": 1, "center_x": .5}, size_hint=(None, 0.15), halign=("center"))
+        self.title_label = monthBtn(text=self.title, pos_hint={"top": 1, "center_x": .5}, size_hint=(None, 0.15), halign=("center"))
         self.title_label.bind(on_press=callback)
         self.add_widget(self.title_label)
 

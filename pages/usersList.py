@@ -9,7 +9,7 @@ from kivy.uix.widget import Widget
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.popup import Popup
 from kivy.uix.tabbedpanel import TabbedPanel, TabbedPanelHeader
-from pages import table, monthlyPopup
+from pages import table, monthlyPopup, Dialog
 from db import getInfo, monthlyWrkHours
 import datetime
 
@@ -41,7 +41,16 @@ class userInformation(TabbedPanel):
 
         def callback(instance):
             if instance.text == 'DAY':
-                getInfo.openPopup()
+                try:
+                    getInfo.openPopup()
+                except:
+                    def callback(instance):
+                        if instance.text == 'OK':
+                            pop.dismiss()
+                    closePopBtn = Button(text="OK", size_hint=(1, 0.25))
+                    closePopBtn.bind(on_release=callback)
+                    pop = Dialog.dialog("No Data !!!", "No data Available for the selected date !!", closePopBtn)
+                    pop.open()
             elif instance.text == 'MONTH':
                 monthlyPopup.workTime()
                 monthlyPopup.pop()

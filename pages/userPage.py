@@ -41,14 +41,13 @@ class UserPage(Screen):
         except:
             pass
 
-        userInfoLayout = BoxLayout(orientation='horizontal', size_hint=(1, 0.25), pos_hint={'left':1, 'top':1})
-        calendarLayout = AnchorLayout(anchor_x='center', anchor_y='center', size_hint=(1, 0.55))
-        #self.timingLayout = BoxLayout(orientation='horizontal', size_hint=(1, 0.35))
-        userPageLayout.add_widget(userInfoLayout)
-        userPageLayout.add_widget(calendarLayout)
+        #calendarLayout = AnchorLayout(anchor_x='center', anchor_y='center', size_hint=(1, 0.55))
+        #userPageLayout.add_widget(calendarLayout)
 
-        userInfoLabel = Label(text='%d : %s : %s' %(id[int(len(id)-1)], user[int(len(user)-1)], department[int(len(department)-1)]), size_hint=(0.5, 0.2))
-        userInfoLayout.add_widget(userInfoLabel)
+        userInfoLabel = Label(text='%d : %s : %s' %(id[int(len(id)-1)], user[int(len(user)-1)], department[int(len(department)-1)]), size_hint_y=0.20, pos_hint={'top':1}, bold=True)
+        userPageLayout.add_widget(userInfoLabel)
 
         calendarWidget = Calendar.CalendarWidget()
-        calendarLayout.add_widget(calendarWidget)
+        calendarWidget.size_hint_y=0.50; calendarWidget.pos_hint={'center_y':0.5}
+        #calendarLayout.add_widget(calendarWidget)
+        userPageLayout.add_widget(calendarWidget)
