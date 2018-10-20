@@ -19,9 +19,16 @@ def formatDate(date):
 
 def calActualWorkingHours(io, time, door):
     inTime = datetime.timedelta(); outTime = datetime.timedelta(); sumTime = datetime.timedelta(); inCorrectTime = datetime.timedelta();
+    after12 = datetime.timedelta(hours=0, minutes=1, seconds=0)
+    after20 = datetime.timedelta(hours=20, minutes=0, seconds=0)
+    before24 = datetime.timedelta(hours=23, minutes=59, seconds=59)
+    ins = []
     accDoor = ['MM', 'ROTO', 'PAINT', 'CONFERENCE ROOM', 'IT', 'TRAINING-1']
     for i in range(len(io)):
         if door[i] in accDoor:
+            #if time[i] > after12:
+            #    if io[i] == 'Out':
+            #        print(time[i], time[i]-after12)
             if io[i-1] == io[i] and door[i-1] in accDoor and door[i] in accDoor:
                 #print(io[i], door[i], ":", io[i+1], door[i+1])
                 """inCorrectTime = time[i+1] - time[i]
@@ -32,10 +39,30 @@ def calActualWorkingHours(io, time, door):
             elif io[i] == 'Out':
                 outTime = time[i]
                 sumTime = (sumTime)+(outTime-inTime)
+            if time[i] > after20 and time[i] < before24:
+                try:
+                    if io[i] == 'In' and io[i+1] != 'Out':
+                        print(time[i])
+                except:
+                    print(before24 - time[i])
+                    sumTime = (sumTime)+(before24 - time[i])
+                    #ins.append(time[i])
     #infoPopup.AWH.append(sumTime)
-    #print(sumTime)
+    #print(max(ins))
     return sumTime
     #print(sumTime)
+
+def calTotalWorkingHours(ios, timings, doors):
+    #times = datetime.timedelta()
+    intimes = []
+    outtimes = []
+    for i, d, j in zip(ios, doors, range(len(ios))):
+        if d == 'MAINDOOR' and i == 'In':
+            intimes.append(timings[j])
+        elif d == 'MAINDOOR' and i == 'Out':
+            outtimes.append(timings[j])
+
+    return max(outtimes)-min(intimes)
 
 def getUserInfo():
     StdWrkHrs = datetime.timedelta(hours=8, minutes=29, seconds=59)
@@ -58,7 +85,7 @@ def getUserInfo():
         timings.append(data[1])
         doors.append(data[3])
 
-    totalWorkingHours = (max(timings)-min(timings))
+    totalWorkingHours = calTotalWorkingHours(ios, timings, doors)
     #infoPopup.TWH.append(totalWorkingHours)
     #print(totalWorkingHours)
 

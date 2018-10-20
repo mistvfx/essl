@@ -20,6 +20,8 @@ Builder.load_string("""
         x: self.parent.x
 
 <deleteAllDBBtn>:
+    Button:
+        text: "TEST"
     TextInput:
         text_hint: 'PASSWORD'
 

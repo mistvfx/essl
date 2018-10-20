@@ -10,6 +10,8 @@ def getDayMonthYear(date):
 def calActualWorkingHours(io, time, door):
     #getDayMonthYear(date)
     inTime = datetime.timedelta(); outTime = datetime.timedelta(); sumTime = datetime.timedelta();
+    after20 = datetime.timedelta(hours=20, minutes=0, seconds=0)
+    before24 = datetime.timedelta(hours=23, minutes=59, seconds=59)
     accDoor = ['MM', 'ROTO', 'PAINT', 'CONFERENCE ROOM', 'TRAINING-1']
     for i in range(len(io)):
         if door[i] in accDoor:
@@ -23,6 +25,13 @@ def calActualWorkingHours(io, time, door):
             elif io[i] == 'Out':
                 outTime = time[i]
                 sumTime = (sumTime)+(outTime-inTime)
+            if time[i] > after20 and time[i] < before24:
+                try:
+                    if io[i] == 'In' and io[i+1] != 'Out':
+                        print(time[i])
+                except:
+                    print(before24 - time[i])
+                    sumTime = (sumTime)+(before24 - time[i])
     return sumTime
     #print(sumTime)
 
