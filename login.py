@@ -12,34 +12,64 @@ from kivy.graphics import *
 from kivy.core.window import Window
 from kivy.uix.behaviors.touchripple import TouchRippleBehavior
 from kivy.lang import Builder
+from kivy.graphics.texture import Texture
 from kivy import utils
 
 from db.credentialsCheck import checkCredentials
 from pages import userPage, adminPage
 
+Window.maximize()
+
 Builder.load_string("""
 <loginScrnBg>:
-    Image:
-        source: 'icons/bg.jpg'
-        allow_stretch: True
+    canvas:
+        Color:
+            hsv: 0.80, 1, 0.85
+        Rectangle:
+            size: self.size
+            pos: self.pos
 
 <loginButton@Button>:
     text: 'LOGIN'
-    color: (1, 1, 1, 0)
+    color: (1, 1, 1, 1)
+    font_name: 'fonts/moon-bold.otf'
+    font_size: 20
     background_color: (0, 0, 0, 0)
-    Image:
-        source: 'icons/login.png'
-        size: self.parent.size
-        y: self.parent.y
-        x: self.parent.x
+    canvas.before:
+        Color:
+            rgba: 0, 0, 0, 1
+        RoundedRectangle:
+            size: self.size
+            pos: self.pos
+            radius: [25, 25, 25, 25]
 
-<TextBox@TextInput>:
+<userNameBox@TextInput>:
     multiline: False
     write_tab: False
-    background_color: (1, 1, 1, 1) if self.focus else (1, 1, 1, 0.5)
+    font_name: 'fonts/moon.otf'
+    padding: [50, 10, 10, 10]
+    cursor_color: (0, 0, 0, 1)
+    background_color: (0.9, 0.9, 0.9, 1) if self.focus else (1, 1, 1, 0.5)
+    canvas.after:
+        Rectangle:
+            source: 'icons/username.png'
+            size: (self.size[1], self.size[1])
+            pos: self.pos
+
+<passwordBox@TextInput>:
+    multiline: False
+    write_tab: False
+    font_name: 'fonts/moon.otf'
+    padding: [50, 10, 10, 10]
+    background_color: (0.9, 0.9, 0.9, 1) if self.focus else (1, 1, 1, 0.5)
+    canvas.after:
+        Rectangle:
+            source: 'icons/password.png'
+            size: (self.size[1], self.size[1])
+            pos: self.pos
 
 <loginBG>:
-    size_hint: 1, 0.35
+    size_hint: 1, 0.40
     orientation: 'vertical'
     canvas.before:
         Color:
@@ -58,10 +88,11 @@ Builder.load_string("""
     size_hint: 0.65, 0.75
     canvas.before:
         Color:
-            rgb: 1, 1, 1
-        Rectangle:
+            hsv: 0, 0, 1
+        RoundedRectangle:
             size: self.size
             pos: self.pos
+            radius: [0, 50, 0, 50]
     Image:
         size_hint_x: 0.75
         source: 'icons/logo.png'
@@ -70,10 +101,13 @@ Builder.load_string("""
 class loginScrnBg(AnchorLayout):
     pass
 
-class loginButton(Button):
+class loginButton(TouchRippleBehavior, Button):
     pass
 
-class TextBox(TextInput):
+class userNameBox(TextInput):
+    pass
+
+class passwordBox(TextInput):
     pass
 
 class loginBG(BoxLayout):
@@ -85,14 +119,10 @@ class loginScrn(BoxLayout):
 class loginWindow(Screen):
     def __init__(self, **args):
         super(loginWindow, self).__init__(**args)
-        #with self.canvas.before:
-        #    Rectangle(source='icons/mist_logo.jpg', pos=self.pos, size=Window.size)
         self.login()
 
     def login(self):
         anchorLayout = loginScrnBg(anchor_x='center', anchor_y='center')
-        #with anchorLayout.canvas.before:
-        #    Rectangle(source = 'icons/bg.jpg', size = Window.size, pos = self.pos)
         self.add_widget(anchorLayout)
 
         loginSetup = loginScrn()
@@ -105,10 +135,10 @@ class loginWindow(Screen):
         layout = loginBG()
         loginAnchor.add_widget(layout)
 
-        loginLabel = Label(text='LOGIN', bold=True, color=(0, 0, 0, 1))
+        loginLabel = Label(text='ARTIST LOGIN', bold=True, color=(0, 0, 0, 1), font_size=25, font_name='fonts/moon-bold.otf')
         #self.username = TextInput(text='USERNAME', multiline=False, padding=5)
-        self.username = TextBox(hint_text='USERNAME')
-        self.password = TextBox(hint_text='PASSWORD', password=True)
+        self.username = userNameBox(hint_text='USERNAME')
+        self.password = passwordBox(hint_text='PASSWORD', password=True)
 
         def callback(instance):
             if(instance.text == 'LOGIN'):
