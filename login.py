@@ -47,7 +47,8 @@ Builder.load_string("""
     multiline: False
     write_tab: False
     font_name: 'fonts/moon.otf'
-    padding: [50, 10, 10, 10]
+    font_size: self.size[1]/3.0
+    padding: [self.size[1], self.size[1]/3.5, 10, 10]
     cursor_color: (0, 0, 0, 1)
     background_color: (0.9, 0.9, 0.9, 1) if self.focus else (1, 1, 1, 0.5)
     canvas.after:
@@ -60,7 +61,8 @@ Builder.load_string("""
     multiline: False
     write_tab: False
     font_name: 'fonts/moon.otf'
-    padding: [50, 10, 10, 10]
+    font_size: self.size[1]/3.0
+    padding: [self.size[1], self.size[1]/3.5, 10, 10]
     background_color: (0.9, 0.9, 0.9, 1) if self.focus else (1, 1, 1, 0.5)
     canvas.after:
         Rectangle:
@@ -180,7 +182,7 @@ class ScreenManagement(ScreenManager):
 
 class mistApp(App):
     def build(self):
-        self.title = 'MIST ARTIST TIME TRACKER'
+        self.title = 'MIST TIME TRACKER'
         return ScreenManagement().sm
 
 if __name__ == '__main__':

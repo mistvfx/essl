@@ -9,6 +9,10 @@ from kivy.uix.widget import Widget
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.popup import Popup
 from kivy.uix.tabbedpanel import TabbedPanel, TabbedPanelHeader
+from kivy.properties import *
+from kivy.graphics import *
+from kivy.lang import Builder
+
 from pages import table, monthlyPopup, Dialog
 from db import getInfo, monthlyWrkHours
 import datetime
@@ -17,6 +21,52 @@ id = []
 names = []
 date = []
 months = ['January ', 'Feburary ', 'March ', 'April ', 'May ', 'June ', 'July ', 'August ', 'September ', 'October ', 'November ', 'December ']
+
+Builder.load_string("""
+<dayBtn>:
+    text: 'Day'
+    size_hint_x: 0.1
+    size_hint_y: 0.5
+    color: (1, 1, 1, 1)
+    background_color: (0, 0, 0, 1)
+
+<monthInfoBtn>:
+    text: 'Month'
+    size_hint_x: 0.1
+    background_color: (0, 0, 0, 0)
+    canvas.before:
+        Color:
+            rgba: (0, 0, 0, 1)
+
+<user>:
+    size_hint_y: None
+    BoxLayout:
+        orientation: 'horizontal'
+        pos: root.pos
+        size: root.size
+
+        canvas.before:
+            Color:
+                rgba: (1, 1, 1, 1)
+            RoundedRectangle:
+                size: self.size
+                pos: self.pos
+                radius: [25, 0, 0, 25]
+
+        Label:
+            id: artistLabel
+            text: root.Artist
+            font_name: 'fonts/moon-bold.otf'
+            color: (0, 0, 0, 1)
+            size_hint_x: 0.7
+        dayBtn:
+            on_press: self.getDayInfo(artistLabel.text)
+        monthInfoBtn:
+            on_press: self.getMonthInfo(artistLabel.text)
+        Button:
+            text: 'Settings'
+            size_hint_x: 0.1
+""")
 
 def formatDate(date):
     #datetime.datetime.strptime(date[len(date)-1], '%d.%m.%Y').date()
@@ -27,74 +77,50 @@ def formatDateTitle(date):
     global months
     dt = date.split(".")
     yr = months[int(dt[1])-1] + "-" + str(dt[2])
-    #return (months[dt[1]] + "-" + str(dt[2]))
     return yr
 
-class userInformation(TabbedPanel):
-    def __init__(self):
-        super(userInformation, self).__init__()
-        self.tabsUI()
-
-    def tabsUI(self):
-        atdTab = TabbedPanelHeader(text='ATTENDANCE')
-        self.add_widget(atdTab)
-
-        def callback(instance):
-            if instance.text == 'DAY':
-                try:
-                    getInfo.openPopup()
-                except:
-                    def callback(instance):
-                        if instance.text == 'OK':
-                            pop.dismiss()
-                    closePopBtn = Button(text="OK", size_hint=(1, 0.25))
-                    closePopBtn.bind(on_release=callback)
-                    pop = Dialog.dialog("No Data !!!", "No data Available for the selected date !!", closePopBtn)
-                    pop.open()
-            elif instance.text == 'MONTH':
-                monthlyPopup.workTime()
-                monthlyPopup.pop()
-
-        btnsLayout = BoxLayout(orientation='vertical', size_hint=(1, 1))
-
-        dayBtn = Button(text='DAY')
-        dayBtn.bind(on_press=callback)
-        btnsLayout.add_widget(dayBtn)
-
-        weekBtn = Button(text='WEEK')
-        weekBtn.bind(on_press=callback)
-        btnsLayout.add_widget(weekBtn)
-
-        monthBtn = Button(text='MONTH')
-        monthBtn.bind(on_press=callback)
-        btnsLayout.add_widget(monthBtn)
-        atdTab.content = btnsLayout
-
-class userInfoPopup(BoxLayout):
-    pass
-
-class User(ButtonBehavior, Label):
+class user(Widget):
+    Artist = StringProperty("")
     def __init__(self, ArtistId, ArtistName):
-        super(User, self).__init__()
+        super(user, self).__init__()
         self.ArtistId = ArtistId
         self.ArtistName = ArtistName
-        texts = (str(ArtistId) + " : " + ArtistName)
-        self.text = texts
+        texts = (str(ArtistId) + ":" + ArtistName)
+        self.Artist = texts
 
-    def on_press(self):
+class dayBtn(Button):
+    def __init__(self, **args):
+        super(dayBtn, self).__init__(**args)
+
+    def getDayInfo(self, artistID):
         global date
 
-        getInfo.id.append(int(self.ArtistId))
+        getInfo.id.append(int(artistID.split(":")[0]))
         getInfo.date.append(formatDate(date[len(date)-1]))
 
-        monthlyWrkHours.id.append(int(self.ArtistId))
+        try:
+            getInfo.openPopup()
+        except:
+            def callback(instance):
+                if instance.text == 'OK':
+                    pop.dismiss()
+            closePopBtn = Button(text="OK", size_hint=(1, 0.25))
+            closePopBtn.bind(on_release=callback)
+            pop = Dialog.dialog("No Data !!!", "No data Available for the selected date !!", closePopBtn)
+            pop.open()
+
+class monthInfoBtn(Button):
+    def __init__(self, **args):
+        super(monthInfoBtn, self).__init__(**args)
+
+    def getMonthInfo(self, artistID):
+        global date
+
+        monthlyWrkHours.id.append(int(artistID.split(":")[0]))
         monthlyPopup.month.append(formatDateTitle(date[len(date)-1]))
 
-        popup = Popup(title=self.ArtistName, content=userInformation(), size_hint=(0.75, 0.75))
-        popup.open()
-
-    def on_release(self):
-        pass
+        monthlyPopup.workTime()
+        monthlyPopup.pop()
 
 class userList(ScrollView):
     def __init__(self):
@@ -108,9 +134,7 @@ class userList(ScrollView):
         layout.bind(minimum_height=layout.setter('height'))
 
         for i in range(len(id)):
-            #listLbl = (str(id[i]) + " : " + names[i])
-            lbl = User(id[i], names[i])
-            lbl.size_hint_y=None
+            lbl = user(id[i], names[i])
             layout.add_widget(lbl)
 
         self.add_widget(layout)
