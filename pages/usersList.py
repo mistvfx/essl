@@ -26,14 +26,14 @@ Builder.load_string("""
 <dayBtn>:
     text: 'Day'
     size_hint_x: 0.1
-    size_hint_y: 0.5
+    size_hint_y: 1
     color: (1, 1, 1, 1)
     background_color: (0, 0, 0, 1)
 
 <monthInfoBtn>:
     text: 'Month'
     size_hint_x: 0.1
-    background_color: (0, 0, 0, 0)
+    background_color: (0, 0, 0, 1)
     canvas.before:
         Color:
             rgba: (0, 0, 0, 1)
@@ -42,8 +42,9 @@ Builder.load_string("""
     size_hint_y: None
     BoxLayout:
         orientation: 'horizontal'
+        size_hint_y: 0.1
         pos: root.pos
-        size: root.size
+        size: [root.size[0], root.size[1]*0.75]
 
         canvas.before:
             Color:
@@ -130,7 +131,7 @@ class userList(ScrollView):
     def listUI(self):
         global id, names
 
-        layout = GridLayout(cols=1, spacing=5, size_hint=(1, None))
+        layout = GridLayout(cols=1, spacing=0, size_hint=(1, None))
         layout.bind(minimum_height=layout.setter('height'))
 
         for i in range(len(id)):

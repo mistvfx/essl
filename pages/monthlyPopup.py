@@ -64,21 +64,13 @@ class MonPop(GridLayout):
         else:
             reqWorkTime = (workTime.tarWorkingTime-actWorkingTime)
 
-        twt = str(round(totWorkingTime.total_seconds()/3600, 2)).split(".")
-        twt[1]= str(round((int(twt[1])/100)*60))
-        twt = ".".join(twt)
+        twt = ("%.2f"%(round(totWorkingTime.total_seconds()/3600, 2)))
 
-        tawt = str(round(workTime.tarWorkingTime.total_seconds()/3600, 2)).split(".")
-        tawt[1]= str(round((int(tawt[1])/100)*60))
-        tawt = ".".join(tawt)
+        tawt = ("%.2f"%(round(workTime.tarWorkingTime.total_seconds()/3600, 2)))
 
-        awt = str(round(actWorkingTime.total_seconds()/3600, 2)).split(".")
-        awt[1]= str(round((int(awt[1])/100)*60))
-        awt = ".".join(awt)
+        awt = ("%.2f"%(round(actWorkingTime.total_seconds()/3600, 2)))
 
-        rwt = str(round(reqWorkTime.total_seconds()/3600, 2)).split(".")
-        rwt[1]= str(round((int(rwt[1])/100)*60))
-        rwt = ".".join(rwt)
+        rwt = ("%.2f"%(round(reqWorkTime.total_seconds()/3600, 2)))
 
         details = ['Total Working Hours (10:00:00): ', twt, 'Total Target Actual Working Hours :', tawt, 'Actual Working Hours :', awt, 'Not Completed Working Hours :', rwt]
         for i in range(len(details)):

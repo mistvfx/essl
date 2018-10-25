@@ -93,21 +93,13 @@ class infoTab(BoxLayout):
 
         global TWH, AWH, NCH, ACH
 
-        tw = str(round(TWH[len(TWH)-1].total_seconds()/3600, 2)).split(".")
-        tw[1]= str(round((int(tw[1])/100)*60))
-        tw = ".".join(tw)
+        tw = ("%.2f"%(round(TWH[len(TWH)-1].total_seconds()/3600, 2)))
 
-        aw = str(round(AWH[len(AWH)-1].total_seconds()/3600, 2)).split(".")
-        aw[1]= str(round((int(aw[1])/100)*60))
-        aw = ".".join(aw)
+        aw = ("%.2f"%(round(AWH[len(AWH)-1].total_seconds()/3600, 2)))
 
-        nc = str(round(NCH[len(NCH)-1].total_seconds()/3600, 2)).split(".")
-        nc[1]= str(round((int(nc[1])/100)*60))
-        nc = ".".join(nc)
+        nc = ("%.2f"%(round(NCH[len(NCH)-1].total_seconds()/3600, 2)))
 
-        ac = str(round(ACH[len(ACH)-1].total_seconds()/3600, 2)).split(".")
-        ac[1]= str(round((int(ac[1])/100)*60))
-        ac = ".".join(ac)
+        ac = ("%.2f"%(round(ACH[len(ACH)-1].total_seconds()/3600, 2)))
 
         infoQ = ['Total Hours :', tw, 'Working Hours :', aw, 'Non-Completed Actual Hours:', nc, 'Additional Hours:', ac]
 
