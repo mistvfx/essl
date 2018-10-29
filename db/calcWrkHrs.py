@@ -12,9 +12,15 @@ def calActualWorkingHours(io, time, door):
     inTime = datetime.timedelta(); outTime = datetime.timedelta(); sumTime = datetime.timedelta();
     after20 = datetime.timedelta(hours=20, minutes=0, seconds=0)
     before24 = datetime.timedelta(hours=23, minutes=59, seconds=59)
+    after24 = datetime.timedelta(hours=0, minutes=0, seconds=59)
+    before5 = datetime.timedelta(hours=6, minutes=0, seconds=0)
     accDoor = ['MM', 'ROTO', 'PAINT', 'CONFERENCE ROOM', 'TRAINING-1']
     for i in range(len(io)):
         if door[i] in accDoor:
+            if time[i] > after24 and io[i] == 'Out' and door[i] in accDoor:
+                #print(time[i], io[i], door[i])
+                sumTime = sumTime + time[i]
+                outT = 1
             if io[i-1] == io[i] and door[i-1] in accDoor and door[i] in accDoor:
                 #print(io[i], door[i], ":", io[i+1], door[i+1])
                 """inCorrectTime = time[i+1] - time[i]

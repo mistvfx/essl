@@ -14,7 +14,7 @@ from kivy.graphics import *
 from kivy.lang import Builder
 
 from pages import table, monthlyPopup, Dialog
-from db import getInfo, monthlyWrkHours
+from db import getInfo, monthlyWrkHours, userSettings
 import datetime
 
 id = []
@@ -37,6 +37,10 @@ Builder.load_string("""
     canvas.before:
         Color:
             rgba: (0, 0, 0, 1)
+
+<settingsBtn>:
+    text: 'Settings'
+    size_hint_x: 0.1
 
 <user>:
     size_hint_y: None
@@ -64,9 +68,8 @@ Builder.load_string("""
             on_press: self.getDayInfo(artistLabel.text)
         monthInfoBtn:
             on_press: self.getMonthInfo(artistLabel.text)
-        Button:
-            text: 'Settings'
-            size_hint_x: 0.1
+        settingsBtn:
+            on_release: self.settingsPop(artistLabel.text)
 """)
 
 def formatDate(date):
@@ -101,7 +104,8 @@ class dayBtn(Button):
 
         try:
             getInfo.openPopup()
-        except:
+        except Exception as e:
+            print(e)
             def callback(instance):
                 if instance.text == 'OK':
                     pop.dismiss()
@@ -109,6 +113,14 @@ class dayBtn(Button):
             closePopBtn.bind(on_release=callback)
             pop = Dialog.dialog("No Data !!!", "No data Available for the selected date !!", closePopBtn)
             pop.open()
+
+class settingsBtn(Button):
+    def __init__(self, **args):
+        super(settingsBtn, self).__init__(**args)
+
+    def settingsPop(self, artistID):
+        global date
+        userSettings.userSettingPop(artistID, date[len(date)-1]).open()
 
 class monthInfoBtn(Button):
     def __init__(self, **args):

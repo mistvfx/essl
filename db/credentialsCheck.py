@@ -8,7 +8,7 @@ def checkCredentials(username, password):
     cur.execute("SELECT ID, Name, Department, Password FROM essl.user_master WHERE Status = 'OPEN' ")
 
     for data in cur.fetchall():
-        if username == "" and password == "":
+        if username == "" or password == "":
             return 0
         if username in str(data[0]) and password in str(data[3]):
             if str(data[2]) == 'ADMIN':

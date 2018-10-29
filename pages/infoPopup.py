@@ -4,6 +4,7 @@ from kivy.uix.label import Label
 from kivy.uix.button import Button
 from kivy.uix.popup import Popup
 from kivy.lang import Builder
+import datetime
 
 from pages import table
 
@@ -53,6 +54,16 @@ class tblLayout(BoxLayout):
 class infoLbl(Label):
     pass
 
+def formatTime(time):
+    #gTime = ("%.2f"%(time.total_seconds()/3600)).split(".")
+    #mins = str((int(gTime[1])/100)*60).split(".")
+    #oTime = (gTime[0] + "." + mins[0])
+    #retTime = ("%.2f"%float(oTime))
+    #print(gTime, mins, oTime, retTime)
+    #return str(retTime)
+    #(datetime.datetime.min + time).time()
+    return str((datetime.datetime.min + time).time())
+
 class infoTab(BoxLayout):
     def __init__(self, **args):
         super(infoTab, self).__init__(**args)
@@ -93,13 +104,17 @@ class infoTab(BoxLayout):
 
         global TWH, AWH, NCH, ACH
 
-        tw = ("%.2f"%(round(TWH[len(TWH)-1].total_seconds()/3600, 2)))
+        #tw = ("%.2f"%(round(TWH[len(TWH)-1].total_seconds()/3600, 2)))
+        tw = formatTime(TWH[len(TWH)-1])
 
-        aw = ("%.2f"%(round(AWH[len(AWH)-1].total_seconds()/3600, 2)))
+        #aw = ("%.2f"%(round(AWH[len(AWH)-1].total_seconds()/3600, 2)))
+        aw = formatTime(AWH[len(AWH)-1])
 
-        nc = ("%.2f"%(round(NCH[len(NCH)-1].total_seconds()/3600, 2)))
+        #nc = ("%.2f"%(round(NCH[len(NCH)-1].total_seconds()/3600, 2)))
+        nc = formatTime(NCH[len(NCH)-1])
 
-        ac = ("%.2f"%(round(ACH[len(ACH)-1].total_seconds()/3600, 2)))
+        #ac = ("%.2f"%(round(ACH[len(ACH)-1].total_seconds()/3600, 2)))
+        ac = formatTime(ACH[len(ACH)-1])
 
         infoQ = ['Total Hours :', tw, 'Working Hours :', aw, 'Non-Completed Actual Hours:', nc, 'Additional Hours:', ac]
 

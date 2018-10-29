@@ -144,7 +144,10 @@ class CalendarWidget(RelativeLayout):
         #print(self.active_date)
         global selectedDates
 
-        selectedDates.append([self.active_date[0], self.quarter_nums[0][1]+1])
+        if [self.active_date[0], self.quarter_nums[0][1]+1] in selectedDates:
+            pass
+        else:
+            selectedDates.append([self.active_date[0], self.quarter_nums[0][1]+1])
         print(selectedDates)
 
         if self.as_popup:
