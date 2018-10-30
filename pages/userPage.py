@@ -14,7 +14,9 @@ from kivy.uix.behaviors import FocusBehavior
 from kivy.uix.recycleview.layout import LayoutSelectionBehavior
 from kivy.uix.filechooser import FileChooserListView
 from kivy.core.window import Window
-from kivy.graphics import Color, Rectangle
+from kivy.graphics import *
+from kivy.lang import Builder
+
 from db import getInfo
 from pages import Calendar, table
 
@@ -22,6 +24,27 @@ logoutButton = Button()
 id = [0]*1
 user = [None]*1
 department = [None]*1
+
+Builder.load_string("""
+<UserPage>:
+    canvas.before:
+        Color:
+            hsv: 0, 0, 0.80
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+<userLabel>:
+    size_hint_y: 0.10
+    pos_hint: {'top':1}
+    bold: True
+    color: (0, 0, 0, 1)
+    font_name: 'fonts/moon-bold.otf'
+    font_size: 25
+""")
+
+class userLabel(Label):
+    pass
 
 class UserPage(Screen):
     def __init__(self, **args):
@@ -41,13 +64,12 @@ class UserPage(Screen):
         except:
             pass
 
-        #calendarLayout = AnchorLayout(anchor_x='center', anchor_y='center', size_hint=(1, 0.55))
-        #userPageLayout.add_widget(calendarLayout)
-
-        userInfoLabel = Label(text='%d : %s : %s' %(id[int(len(id)-1)], user[int(len(user)-1)], department[int(len(department)-1)]), size_hint_y=0.20, pos_hint={'top':1}, bold=True)
+        userInfoLabel = userLabel(text='%d : %s : %s' %(id[int(len(id)-1)], user[int(len(user)-1)], department[int(len(department)-1)]))
         userPageLayout.add_widget(userInfoLabel)
 
         calendarWidget = Calendar.CalendarWidget()
-        calendarWidget.size_hint_y=0.50; calendarWidget.pos_hint={'center_y':0.5}
-        #calendarLayout.add_widget(calendarWidget)
+        calendarWidget.size_hint=(0.75, 0.75); calendarWidget.pos_hint={'center_y':0.5, 'center_x':0.5}
+        """with calendarWidget.canvas.before:
+            Color(rbga=(1, 1, 1, 1))
+            Rectangle(pos=)"""
         userPageLayout.add_widget(calendarWidget)

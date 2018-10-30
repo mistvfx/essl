@@ -9,6 +9,8 @@ from kivy.lang import Builder
 from kivy.graphics import Triangle
 from kivy.graphics import Color
 
+from datetime import datetime
+
 from . import calendar_data as cal_data
 from db import getInfo, monthlyWrkHours
 from pages import monthlyPopup, Dialog
@@ -16,22 +18,49 @@ from pages import monthlyPopup, Dialog
 aboveSWH = []
 belowSWH = []
 holidays = []
+artistHolidays = 0
 
 Builder.load_string("""
+<CalendarWidget>:
+    canvas:
+        Color:
+            rgba: (1, 1, 1, 1)
+        Rectangle:
+            pos: [self.pos[1]-self.size[1]/6.0, self.pos[1]-self.size[1]/6.0]
+            size: self.size
 <arrowBtn>:
     background_color: (0, 0, 0, 0)
     font_size: 50
     bold: True
 
 <monthBtn>:
+    color: (0, 0, 0, 1)
     background_color: (0, 0, 0, 0)
+    font_name: 'fonts/moon-bold.otf'
     bold: True
+
+<WrkDayLabel>:
+    color: (0.1, 0.1, 0.1, 1)
+    text_size: [self.size[0], None]
+    font_name: 'fonts/moon.otf'
+    halign: "center"
+
+<WeekEndLabel>:
+    color: (1, 0.26, 0.21, 1)
+    font_name: 'fonts/moon.otf'
+
 """)
 
 class arrowBtn(Button):
     pass
 
 class monthBtn(Button):
+    pass
+
+class WrkDayLabel(Label):
+    pass
+
+class WeekEndLabel(Label):
     pass
 
 class CalendarWidget(RelativeLayout):
@@ -87,22 +116,23 @@ class CalendarWidget(RelativeLayout):
         # Days abbrs
         for i in range(7):
             if i >= 5:  # weekends
-                l = Label(text=self.days_abrs[i], color=(1, 0, 0, 1))
+                l = WeekEndLabel(text=self.days_abrs[i])
             else:  # work days
-                l = Label(text=self.days_abrs[i], text_size=(self.size[0], None), halign="center")
+                l = WrkDayLabel(text=self.days_abrs[i])
 
             grid_layout.add_widget(l)
 
-        global aboveSWH, belowSWH, holidays
+        global aboveSWH, belowSWH, holidays, artistHolidays
 
         # Buttons with days numbers
         for week in month:
             for day in week:
                 if day[1] >= 6:  # weekends
-                    self.tbtn = Button(text=str(day[0]), background_color=(1, 0, 0, 1), color=(0, 0, 0, 1))
+                    self.tbtn = Button(text=str(day[0]), background_color=(0.5, 0.5, 0.5, 1), color=(1, 1, 1, 1))
                 else:
                     self.tbtn = Button(text=str(day[0]), background_color=(255, 255, 255, 1), color=(0, 0, 0, 1))
-                    if day[0] < self.active_date[0]:
+                    if day[0] < self.active_date[0] and self.active_date[1] == datetime.now().month:
+                        print(artistHolidays)
                         self.tbtn.background_color=(255, 255, 0, 1)
                     for i in range(len(aboveSWH)):
                         if self.active_date[2] == aboveSWH[i][2]:

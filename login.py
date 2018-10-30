@@ -7,6 +7,7 @@ from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.textinput import TextInput
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.button import Button
+from kivy.animation import *
 from kivy.core.image import Image
 from kivy.graphics import *
 from kivy.core.window import Window

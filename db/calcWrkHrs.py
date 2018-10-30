@@ -17,7 +17,7 @@ def calActualWorkingHours(io, time, door):
     accDoor = ['MM', 'ROTO', 'PAINT', 'CONFERENCE ROOM', 'TRAINING-1']
     for i in range(len(io)):
         if door[i] in accDoor:
-            if time[i] > after24 and io[i] == 'Out' and door[i] in accDoor:
+            if time[i] > after24 and time[i] < before5 and io[i] == 'Out' and door[i] in accDoor:
                 #print(time[i], io[i], door[i])
                 sumTime = sumTime + time[i]
                 outT = 1
