@@ -21,13 +21,7 @@ holidays = []
 artistHolidays = 0
 
 Builder.load_string("""
-<CalendarWidget>:
-    canvas:
-        Color:
-            rgba: (1, 1, 1, 1)
-        Rectangle:
-            pos: [self.pos[1]-self.size[1]/6.0, self.pos[1]-self.size[1]/6.0]
-            size: self.size
+
 <arrowBtn>:
     background_color: (0, 0, 0, 0)
     font_size: 50

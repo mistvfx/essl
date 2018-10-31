@@ -8,6 +8,9 @@ from kivy.uix.spinner import Spinner
 from kivy.graphics import *
 from kivy.properties import *
 
+Date = ""
+id = 0
+
 Builder.load_string("""
 <TimingFix>:
     orientation: 'vertical'
@@ -79,7 +82,19 @@ class SettingsTabs(TabbedPanel):
     pass
 
 class TimingFix(BoxLayout):
-    pass
+    def Dept(self, dept):
+        self.door = dept
+
+    def IO(self, io):
+        self.io = io
+
+    def Time(self, time):
+        global Date, id
+        db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
+        cur = db.cursor()
+        cur.execute("INSERT INTO essl.%d (IO, MTIME, MDATE, DOOR) VALUES('%s', '%s', '%s', '%s')" %(int(id), self.io, time, Date, self.door))
+        cur.close()
+        db.close()
 
 class Permission(AnchorLayout):
     pass
@@ -94,23 +109,10 @@ def formatDate(date):
 class userSettingPop(Popup):
     def __init__(self, artistID, date):
         super().__init__()
+        global Date, id
         self.date = formatDate(date)
+        Date = formatDate(date)
         self.id = artistID.split(":")[0]
+        id = artistID.split(":")[0]
         self.title = (artistID.split(":")[1] + " || " + date)
         self.font_name = 'fonts/moon-bold.otf'
-    #def __init__(self, **args):
-    #    super(userSettingPop, self).__init__(**args)
-
-    def Dept(self, dept):
-        self.door = dept
-
-    def IO(self, io):
-        self.io = io
-
-    def Time(self, time):
-        print(self.id, self.door, self.io, time, self.date)
-        db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
-        cur = db.cursor()
-        cur.execute("INSERT INTO essl.%d (IO, MTIME, MDATE, DOOR) VALUES('%s', '%s', '%s', '%s')" %(int(self.id), self.io, time, self.date, self.door))
-        cur.close()
-        db.close()
