@@ -57,7 +57,6 @@ class CalendarWidget(RelativeLayout):
 
     def create_month_scr(self, month, toogle_today=False):
         """ Screen with calendar for one month """
-        #print(self.active_date[0], self.active_date[1], self.active_date[2])
 
         scr = Screen()
         m = self.month_names_eng[self.active_date[1] - 1]
@@ -140,15 +139,12 @@ class CalendarWidget(RelativeLayout):
 
         self.active_date[0] = int(inst.text)
 
-        #print(inst.text)
-        #print(self.active_date)
         global selectedDates
 
         if [self.active_date[0], self.quarter_nums[0][1]+1] in selectedDates:
             pass
         else:
             selectedDates.append([self.active_date[0], self.quarter_nums[0][1]+1])
-        print(selectedDates)
 
         if self.as_popup:
             self.parent_popup.dismiss()

@@ -103,7 +103,7 @@ class CalendarWidget(RelativeLayout):
 
     def create_month_scr(self, month, toogle_today=False):
         """ Screen with calendar for one month """
-        #print(self.active_date[0], self.active_date[1], self.active_date[2])
+        #self.active_date[0] = day, self.active_date[1] = month, self.active_date[2] = year
 
         scr = Screen()
         m = self.month_names_eng[self.active_date[1] - 1]
@@ -132,7 +132,6 @@ class CalendarWidget(RelativeLayout):
                 else:
                     self.tbtn = Button(text=str(day[0]), background_color=(255, 255, 255, 1), color=(0, 0, 0, 1))
                     if day[0] < self.active_date[0] and self.active_date[1] == datetime.now().month:
-                        print(artistHolidays)
                         self.tbtn.background_color=(255, 255, 0, 1)
                     for i in range(len(aboveSWH)):
                         if self.active_date[2] == aboveSWH[i][2]:

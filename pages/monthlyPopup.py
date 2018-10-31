@@ -12,6 +12,7 @@ months = ['January ', 'Feburary ', 'March ', 'April ', 'May ', 'June ', 'July ',
 
 def calTotWorkingDays(totDays, curMonth, givMonth, curDate, givYear):
     holidays = monthlyWrkHours.getHolidays()
+    artistLeaves = monthlyWrkHours.calArtistLeave(givYear, givMonth, curDate)
     days = 0
     hDays = 0
     month = calendar.monthcalendar(givYear, givMonth)
@@ -23,10 +24,10 @@ def calTotWorkingDays(totDays, curMonth, givMonth, curDate, givYear):
             if day == 0 or day == week[6]:
                 continue
             if day == curDate and givMonth == curMonth:
-                return days-hDays
+                return days-hDays-artistLeaves
             days += 1
 
-    return days-hDays
+    return days-hDays-artistLeaves
 
 
 def workTime():

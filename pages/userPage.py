@@ -64,12 +64,15 @@ class UserPage(Screen):
         except:
             pass
 
-        userInfoLabel = userLabel(text='%d : %s : %s' %(id[int(len(id)-1)], user[int(len(user)-1)], department[int(len(department)-1)]))
+        userInfoLabel = userLabel(text='%d | %s | %s' %(id[int(len(id)-1)], user[int(len(user)-1)], department[int(len(department)-1)]))
         userPageLayout.add_widget(userInfoLabel)
 
         calendarWidget = Calendar.CalendarWidget()
         calendarWidget.size_hint=(0.75, 0.75); calendarWidget.pos_hint={'center_y':0.5, 'center_x':0.5}
-        """with calendarWidget.canvas.before:
-            Color(rbga=(1, 1, 1, 1))
-            Rectangle(pos=)"""
         userPageLayout.add_widget(calendarWidget)
+
+        otherInfoLayout = BoxLayout(orientation='horizontal', size_hint=(0.1, 0.1), pos_hint={'center_y':0.1, 'center_x':0.5})
+        userPageLayout.add_widget(otherInfoLayout)
+
+        info1 = Label(text= 'LEAVES :', color=(0, 0, 0, 1))
+        otherInfoLayout.add_widget(info1)

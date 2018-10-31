@@ -30,16 +30,12 @@ def calActualWorkingHours(io, time, door):
     for i in range(len(io)):
         if door[i] in accDoor:
             if time[i] > after24 and time[i] < before5 and io[i] == 'Out' and door[i] in accDoor and outT == 0:
-                #print(time[i], io[i], door[i])
                 sumTime = sumTime + time[i]
                 outT = 1
             #if time[i] > after12:
             #    if io[i] == 'Out':
             #        print(time[i], time[i]-after12)
             if io[i-1] == io[i] and door[i-1] in accDoor and door[i] in accDoor:
-                #print(io[i], door[i], ":", io[i+1], door[i+1])
-                """inCorrectTime = time[i+1] - time[i]
-                sumTime = sumTime - inCorrectTime"""
                 continue
             if io[i] == 'In':
                 inTime = time[i]
@@ -49,15 +45,11 @@ def calActualWorkingHours(io, time, door):
             if time[i] > after20 and time[i] < before24:
                 try:
                     if io[i] == 'In' and io[i+1] != 'Out':
-                        print(time[i])
+                        pass
                 except:
-                    print(before24 - time[i])
                     sumTime = (sumTime)+(before24 - time[i])
-                    #ins.append(time[i])
-    #infoPopup.AWH.append(sumTime)
-    #print(max(ins))
+
     return sumTime
-    #print(sumTime)
 
 def calTotalWorkingHours(ios, timings, doors):
     #times = datetime.timedelta()
@@ -93,8 +85,6 @@ def getUserInfo():
         doors.append(data[3])
 
     totalWorkingHours = calTotalWorkingHours(ios, timings, doors)
-    #infoPopup.TWH.append(totalWorkingHours)
-    #print(totalWorkingHours)
 
     sumTime = calActualWorkingHours(ios, timings, doors)
 

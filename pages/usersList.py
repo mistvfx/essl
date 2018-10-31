@@ -25,6 +25,7 @@ months = ['January ', 'Feburary ', 'March ', 'April ', 'May ', 'June ', 'July ',
 Builder.load_string("""
 <dayBtn>:
     text: 'Day'
+    font_name: 'fonts/moon-bold.otf'
     size_hint_x: 0.1
     size_hint_y: 1
     color: (1, 1, 1, 1)
@@ -32,6 +33,7 @@ Builder.load_string("""
 
 <monthInfoBtn>:
     text: 'Month'
+    font_name: 'fonts/moon-bold.otf'
     size_hint_x: 0.1
     background_color: (0, 0, 0, 1)
     canvas.before:
@@ -40,6 +42,7 @@ Builder.load_string("""
 
 <settingsBtn>:
     text: 'Settings'
+    font_name: 'fonts/moon-bold.otf'
     size_hint_x: 0.1
 
 <user>:
