@@ -1,7 +1,9 @@
 import pymysql
 import pandas as pd
+import numpy as np
 from pandas import *
 import datetime
+import calendar
 import threading
 from kivy.uix.popup import Popup
 from kivy.uix.label import Label
@@ -10,7 +12,8 @@ from kivy.core.image import Image
 from kivy.uix.button import Button
 
 from db.calcWrkHrs import calActualWorkingHours
-from pages import Dialog
+from db import *
+from pages import *
 
 import openpyxl
 
@@ -35,6 +38,14 @@ def excelUpPB():
     popup.open()
 
     return 0
+
+def formatTime(time):
+    seconds = time.total_seconds()
+    hours = int(seconds / 3600)
+    minutes = int((seconds % 3600) / 60)
+    seconds = int(seconds % 60)
+
+    return ('{}:{}:{}'.format(hours, minutes, seconds))
 
 def excelManip(filePath):
     db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
@@ -211,6 +222,209 @@ def excelExport(date):
         del writer.book[worksheet]
 
     for row in worksheet['A1:K100']:
+        for cell in row:
+            cell.alignment = Alignment(wrap_text=True, horizontal='center', vertical='center')
+            cell.border = thin_border
+
+    for cell in worksheet['A'] + worksheet[1]:
+        cell.style = 'Pandas'
+
+    for col in worksheet.columns:
+        max_length = 0
+        column = col[0].column # Get the column name
+        for cell in col:
+            try: # Necessary to avoid error on empty cells
+                if len(str(cell.value)) > max_length:
+                    max_length = len(cell.value)
+            except:
+                pass
+        adjusted_width = (max_length + 2) * 1.2
+        worksheet.column_dimensions[column].width = adjusted_width
+
+    worksheet.conditional_formatting.add('E1:K500', rule)
+    worksheet.sheet_properties.tabColor = "1072BA"
+
+    writer.save()
+
+def exportMonth(month, year):
+    wd = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+    StdWrkHrs = datetime.timedelta(hours=8, minutes=29, seconds=59)
+    absent = datetime.timedelta()
+    totalDays = calendar.monthrange(int(year), int(month))[1]
+    #Month = calendar.monthcalendar(year, month)
+    db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
+    cur = db.cursor()
+    cur1 = db.cursor()
+    cur2 = db.cursor()
+
+    artistID = []
+    artistName = []
+    artistDept = []
+
+    ios = []
+    timings = []
+    doors = []
+
+    Work_Duration = []
+    std_Hours = []
+    Additional_Hours = []
+
+    Artist_Leaves = []
+    Month_Std_Hours = []
+    Month_Completed_Hours = []
+    Month_Non_Completed_Hours = []
+    Month_Additional_Hours = []
+    AH_Decimal = []
+    AHD_Decimal = []
+
+    cur.execute("SELECT ID, Name, Department FROM essl.user_master WHERE ID != '1000'")
+
+    for data in cur.fetchall():
+        artistID.append(data[0])
+        artistName.append(data[1])
+        artistDept.append(data[2])
+
+    for id in artistID:
+        monthlyWrkHours.id.append(id)
+        Artist_Leaves.append(str(monthlyWrkHours.calArtistLeaveMon(year, month)))
+
+        monthlyPopup.month.append((month+"-"+year))
+        monthlyPopup.workTime()
+        Month_Std_Hours.append(formatTime(monthlyPopup.workTime.tarWorkingTime))
+
+        Month_Completed_Hours.append(formatTime(monthlyWrkHours.calMonWrkHrs(year, month)))
+
+        if monthlyPopup.workTime.tarWorkingTime-monthlyWrkHours.calMonWrkHrs(year, month) < datetime.timedelta():
+            Month_Non_Completed_Hours.append("00:00:00")
+            Month_Additional_Hours.append(formatTime(monthlyWrkHours.calMonWrkHrs(year, month) - monthlyPopup.workTime.tarWorkingTime))
+            AH_Decimal.append("%.2f"%(round((monthlyWrkHours.calMonWrkHrs(year, month) - monthlyPopup.workTime.tarWorkingTime).total_seconds()/3600, 2)))
+            AHD_Decimal.append("%.2f"%(((monthlyWrkHours.calMonWrkHrs(year, month) - monthlyPopup.workTime.tarWorkingTime).total_seconds()) / 86399))
+        else:
+            Month_Non_Completed_Hours.append(formatTime(monthlyPopup.workTime.tarWorkingTime-monthlyWrkHours.calMonWrkHrs(year, month)))
+            Month_Additional_Hours.append("00:00:00")
+            AH_Decimal.append("0.0")
+            AHD_Decimal.append("0.0")
+
+    extras = pd.DataFrame({
+        'Absents': Artist_Leaves,
+        'AUG Actual Hours': Month_Std_Hours,
+        'Completed Hours': Month_Completed_Hours,
+        'Non Completed Hours': Month_Non_Completed_Hours,
+        'Additional Completed Hours': Month_Additional_Hours,
+        'Additional Hours Decimal': AH_Decimal,
+        'Additional Hours in Days': AHD_Decimal,
+        'OT Pay on Gross Pay(25%)': None,
+        'Comments': None
+    })
+
+    """#topDict = {'INFORMATION': None}
+    infoDict = {'Actual': None, 'Standard': None, 'Additional Hours': None}
+    #for Week in Month:
+    #    for Day in Week:
+    #        topDict[Day]
+    for Day in range(1, totalDays+1):
+        Ddate = (str(year) + "-" + str(month) + "-" + str(Day))
+        #Cdate = datetime.datetime.strptime(Ddate, '%Y-%m-%d')
+        topDict[Ddate] = infoDict
+    #print(topDict)
+    df1 = pd.DataFrame(topDict)
+    print(df1)
+    df2 = pd.DataFrame(infoDict, index=[0])
+    print(df2)"""
+
+    from openpyxl import load_workbook
+    from openpyxl.formatting import Rule
+    from openpyxl.styles import Font, PatternFill
+    from openpyxl.styles.differential import DifferentialStyle
+    from openpyxl.styles import Alignment
+    from openpyxl.styles.borders import Border, Side
+
+    c = 4
+
+    thin_border = Border(left=Side(style='thin'),
+                     right=Side(style='thin'),
+                     top=Side(style='thin'),
+                     bottom=Side(style='thin'))
+
+    red_text = Font(color="9C0006")
+    red_fill = PatternFill(bgColor='FFC7CE')
+    dxf = DifferentialStyle(font=red_text, fill=red_fill)
+    rule = Rule(type="containsText", operator='containsText', text='ABSENT', dxf=dxf)
+    rule.formula = ['NOT(ISERROR(SEARCH("ABSENT",E1)))']
+
+    try:
+        book = load_workbook('export_test.xlsx')
+        writer = pd.ExcelWriter('export_test.xlsx', engine='openpyxl')
+    except:
+        writer = pd.ExcelWriter('export_test.xlsx', engine='openpyxl')
+        book = writer.book
+
+    writer.book = book
+
+    for Day in range(1, totalDays+1):
+        Ddate = (str(year) + "-" + str(month) + "-" + str(Day))
+        Cdate = datetime.datetime.strptime(Ddate, '%Y-%m-%d')
+
+        for id in artistID:
+
+            cur2.execute("SELECT IO, MTIME, DOOR FROM essl.`%d` WHERE MDate = '%s' ORDER BY MTIME ASC" %(int(id), Cdate))
+
+            for dt in cur2.fetchall():
+                ios.append(dt[0])
+                timings.append(dt[1])
+                doors.append(dt[2])
+
+            try:
+                actWrkHrs = calActualWorkingHours(ios, timings, doors)
+                if actWrkHrs == datetime.timedelta():
+                    Work_Duration.append('00:00')
+                else:
+                    Work_Duration.append((datetime.datetime.min + actWrkHrs).time())
+            except Exception as e:
+                print(e)
+                actWrkHrs = datetime.timedelta()
+                Work_Duration.append('00:00')
+
+            if actWrkHrs >= StdWrkHrs :
+                Additional_Hours.append((datetime.datetime.min + actWrkHrs-StdWrkHrs).time())
+            elif actWrkHrs == absent:
+                Additional_Hours.append('00:00')
+            elif actWrkHrs < StdWrkHrs :
+                Additional_Hours.append('00:00')
+
+            std_Hours.append(str(StdWrkHrs))
+
+            del ios[:]; del timings[:]; del doors[:]
+
+        dfs = pd.DataFrame({
+            '%s'%(Ddate): Work_Duration,
+            'Standard Hours': std_Hours,
+            'Additional Hours': Additional_Hours
+        })
+
+        dfs.to_excel(writer, sheet_name=str(month), startrow=1, startcol=c, index=False)
+        c += 3
+        del Work_Duration[:]; del std_Hours[:]; del Additional_Hours[:]
+        del dfs
+
+    df = pd.DataFrame({
+        'Artist Code': artistID,
+        'Artist Name': artistName,
+        'Department': artistDept
+    })
+
+    df.to_excel(writer, sheet_name=str(month), startrow=1)
+
+    extras.to_excel(writer, sheet_name=str(month), startrow=1, startcol=c, index=False)
+    worksheet = writer.sheets[str(month)]
+
+    worksheet.freeze_panes= 'A2'
+    worksheet.freeze_panes= 'E2'
+
+    if worksheet in writer.book:
+        del writer.book[worksheet]
+
+    for row in worksheet['A1:DB100']:
         for cell in row:
             cell.alignment = Alignment(wrap_text=True, horizontal='center', vertical='center')
             cell.border = thin_border

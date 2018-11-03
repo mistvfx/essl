@@ -12,6 +12,7 @@ from kivy.uix.recyclegridlayout import RecycleGridLayout
 from kivy.uix.behaviors import FocusBehavior
 from kivy.uix.recycleview.layout import LayoutSelectionBehavior
 from kivy.uix.filechooser import FileChooserListView
+from kivy.uix.spinner import Spinner
 from kivy.lang import Builder
 
 from . import excelIO
@@ -32,17 +33,13 @@ Builder.load_string("""
         x: self.parent.x
         keep_data: True
 
-<excelExpButton>:
+<ExcelExport>:
     text: "Excel Export"
+    values: ('DAY', 'MONTH')
+    font_name: 'fonts/moon-bold.otf'
     size_hint: (1, 1)
-    color: (1, 1, 1, 0)
+    color: (1, 1, 1, 1)
     background_color: (0, 0, 0, 0)
-    Image:
-        source: 'icons/importExcel.png'
-        size: self.parent.size
-        y: self.parent.y
-        x: self.parent.x
-        keep_data: True
 
 <ExcelExported>:
     size_hint: 0.5, 0.5
@@ -81,7 +78,7 @@ Builder.load_string("""
 class excelImpButton(Button):
     pass
 
-class excelExpButton(Button):
+class ExcelExport(Spinner):
     pass
 
 class ExcelExported(Popup):
@@ -103,14 +100,20 @@ class AdminPage(Screen):
         def callback(instance):
             if(instance.text == 'Excel Import'):
                 self.excelOpen()
-            if(instance.text == 'Excel Export'):
+            """if(instance.text == 'Excel Export'):
                 excelIO.excelExport(date.text)
-                ExcelExported().open()
+                ExcelExported().open()"""
             if(instance.text == 'REFRESH'):
-                #print(date.text)
                 usersList.date.append(date.text)
             if(instance.text == 'SETTINGS'):
                 settings.Settings()
+
+        def callexcel(spinner, text):
+            if text == 'DAY':
+                excelIO.excelExport(date.text)
+            if text == 'MONTH':
+                excelIO.exportMonth(date.text.split(".")[1], date.text.split(".")[2])
+
 
         adminLayout = BoxLayout(orientation='vertical', padding=10, spacing=5)
         self.add_widget(adminLayout)
@@ -128,9 +131,9 @@ class AdminPage(Screen):
         date = DatePicker(size_hint=(0.7, 1), pHint=(0.35, 0.35))
         controlLayout.add_widget(date)
 
-        excelExportBtn = excelExpButton()
-        excelExportBtn.bind(on_press=callback)
-        controlLayout.add_widget(excelExportBtn)
+        excelExport = ExcelExport()
+        excelExport.bind(text=callexcel)
+        controlLayout.add_widget(excelExport)
 
         refreshBtn = refButton()
         refreshBtn.bind(on_press=callback)

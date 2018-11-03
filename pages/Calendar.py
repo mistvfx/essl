@@ -125,7 +125,7 @@ class CalendarWidget(RelativeLayout):
                     self.tbtn = Button(text=str(day[0]), background_color=(0.5, 0.5, 0.5, 1), color=(1, 1, 1, 1))
                 else:
                     self.tbtn = Button(text=str(day[0]), background_color=(255, 255, 255, 1), color=(0, 0, 0, 1))
-                    if day[0] < self.active_date[0] and self.active_date[1] == datetime.now().month:
+                    if day[0] < self.active_date[0] and self.active_date[1] <= datetime.now().month:
                         self.tbtn.background_color=(255, 255, 0, 1)
                     for i in range(len(aboveSWH)):
                         if self.active_date[2] == aboveSWH[i][2]:

@@ -36,11 +36,19 @@ def workTime():
 
     mon = month[len(month)-1].split("-")
     workTime.year = int(mon[1])
-    workTime.mont = int(months.index(mon[0])+1)
+    try:
+        workTime.mont = int(months.index(mon[0])+1)
+    except:
+        workTime.mont = int(mon[0])
     date = str(datetime.date.today()).split("-")
 
-    Sundays = len([1 for i in calendar.monthcalendar(int(mon[1]), months.index(mon[0])+1) if i[6] != 0])
-    No_of_days = calendar.monthrange(int(mon[1]), months.index(mon[0])+1)
+    try:
+        Sundays = len([1 for i in calendar.monthcalendar(int(mon[1]), months.index(mon[0])+1) if i[6] != 0])
+        No_of_days = calendar.monthrange(int(mon[1]), months.index(mon[0])+1)
+    except:
+        Sundays = len([1 for i in calendar.monthcalendar(int(mon[1]), int(mon[0])) if i[6] != 0])
+        No_of_days = calendar.monthrange(int(mon[1]), int(mon[0]))
+
     totWorkingdays = calTotWorkingDays(No_of_days[1], int(date[1]), workTime.mont, int(date[2]), workTime.year)
 
     workTime.tarWorkingTime = StdWrkHrs * totWorkingdays
