@@ -48,6 +48,8 @@ def calActualWorkingHours(io, time, door):
                         pass
                 except:
                     sumTime = (sumTime)+(before24 - time[i])
+        elif door[i] == 'PERMISSION':
+            sumTime = sumTime - time[i]
 
     return sumTime
 

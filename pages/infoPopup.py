@@ -55,14 +55,12 @@ class infoLbl(Label):
     pass
 
 def formatTime(time):
-    #gTime = ("%.2f"%(time.total_seconds()/3600)).split(".")
-    #mins = str((int(gTime[1])/100)*60).split(".")
-    #oTime = (gTime[0] + "." + mins[0])
-    #retTime = ("%.2f"%float(oTime))
-    #print(gTime, mins, oTime, retTime)
-    #return str(retTime)
-    #(datetime.datetime.min + time).time()
-    return str((datetime.datetime.min + time).time())
+    seconds = time.total_seconds()
+    hours = int(seconds / 3600)
+    minutes = int((seconds % 3600) / 60)
+    seconds = int(seconds % 60)
+
+    return ('{}:{}:{}'.format(hours, minutes, seconds))
 
 class infoTab(BoxLayout):
     def __init__(self, **args):

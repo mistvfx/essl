@@ -59,6 +59,14 @@ def ActualWorkingTime():
 def TotalWorkingTime():
     return(monthlyWrkHours.calMonTotWrkHrs(workTime.year, workTime.mont))
 
+def formatTime(time):
+    seconds = time.total_seconds()
+    hours = int(seconds / 3600)
+    minutes = int((seconds % 3600) / 60)
+    seconds = int(seconds % 60)
+
+    return ('{}:{}:{}'.format(hours, minutes, seconds))
+
 class MonPop(GridLayout):
     def __init__(self, **args):
         super(MonPop, self).__init__(**args)
@@ -73,13 +81,17 @@ class MonPop(GridLayout):
         else:
             reqWorkTime = (workTime.tarWorkingTime-actWorkingTime)
 
-        twt = ("%.2f"%(round(totWorkingTime.total_seconds()/3600, 2)))
+        #twt = ("%.2f"%(round(totWorkingTime.total_seconds()/3600, 2)))
+        twt = formatTime(totWorkingTime)
 
-        tawt = ("%.2f"%(round(workTime.tarWorkingTime.total_seconds()/3600, 2)))
+        #tawt = ("%.2f"%(round(workTime.tarWorkingTime.total_seconds()/3600, 2)))
+        tawt = formatTime(workTime.tarWorkingTime)
 
-        awt = ("%.2f"%(round(actWorkingTime.total_seconds()/3600, 2)))
+        #awt = ("%.2f"%(round(actWorkingTime.total_seconds()/3600, 2)))
+        awt = formatTime(actWorkingTime)
 
-        rwt = ("%.2f"%(round(reqWorkTime.total_seconds()/3600, 2)))
+        #rwt = ("%.2f"%(round(reqWorkTime.total_seconds()/3600, 2)))
+        rwt = formatTime(reqWorkTime)
 
         details = ['Total Working Hours (10:00:00): ', twt, 'Total Target Actual Working Hours :', tawt, 'Actual Working Hours :', awt, 'Not Completed Working Hours :', rwt]
         for i in range(len(details)):

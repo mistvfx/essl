@@ -75,7 +75,7 @@ def excelManip(filePath):
             try:
                 cur.execute("INSERT INTO essl.%d (IO, MTIME, MDATE, DOOR) VALUES('%s', '%s', '%s', '%s')" %(id, io, time, date, door))
             except:
-                cur.execute("INSERT INTO essl.user_master(ID, Name, Department, Password) VALUES('%d','%s','%s','%d');" %(id, artist, dept, id))
+                cur.execute("INSERT INTO essl.user_master(ID, Name, Department, Password, AccDoors) VALUES('%d','%s','%s','%d', '%s');" %(id, artist, dept, id, dept))
                 cur.execute("CREATE TABLE essl.%d (SNum int(11) NOT NULL AUTO_INCREMENT, IO char(4) NOT NULL, MTIME time NOT NULL, MDATE date NOT NULL, DOOR varchar(45) NOT NULL, PRIMARY KEY (`SNum`))" %(id))
                 cur.execute("INSERT INTO essl.%d (IO, MTIME, MDATE, DOOR) VALUES('%s', '%s', '%s', '%s')" %(id, io, time, date, door))
 

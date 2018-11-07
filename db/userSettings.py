@@ -55,10 +55,12 @@ Builder.load_string("""
     anchor_y: 'center'
     BoxLayout:
         TextInput:
+            id: hours
             hint_text: 'HOURS (HH:MM:SS)'
             multiline: False
         Button:
             text: 'Submit Permission Time'
+            on_release: root.addPermTime(hours.text)
 
 <SettingsTabs>:
     TabbedPanelItem:
@@ -97,6 +99,15 @@ class TimingFix(BoxLayout):
         db.close()
 
 class Permission(AnchorLayout):
+    def addPermTime(self, time):
+        global Date, id
+        db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
+        cur = db.cursor()
+        cur.execute("INSERT INTO essl.%d (IO, MTIME, MDATE, DOOR) VALUES('P', '%s', '%s', 'PERMISSION')" %(int(id), time, Date))
+        cur.close()
+        db.close()
+
+class Doors(BoxLayout):
     pass
 
 def getTimings(artistID):
