@@ -18,6 +18,7 @@ from pages import monthlyPopup, Dialog
 aboveSWH = []
 belowSWH = []
 holidays = []
+leaves = []
 artistHolidays = 0
 
 Builder.load_string("""
@@ -89,6 +90,12 @@ class CalendarWidget(RelativeLayout):
         self.title_label.bind(on_press=callback)
         self.add_widget(self.title_label)
 
+        #Leaves
+        leaveLbl = Label(text='LEAVES :', pos_hint={"bottom": 1, "right": 1}, color=(0, 0, 0, 1))
+        self.leavesLbl = Label(text='0')
+        self.add_widget(leaveLbl)
+        self.add_widget(self.leavesLbl)
+
         # ScreenManager
         self.sm = ScreenManager(pos_hint={"top": .9}, size_hint=(1, .9))
         self.add_widget(self.sm)
@@ -97,6 +104,7 @@ class CalendarWidget(RelativeLayout):
 
     def create_month_scr(self, month, toogle_today=False):
         """ Screen with calendar for one month """
+        monthlyWrkHours.calArtistLeave(self.active_date[2], self.active_date[1], self.active_date[0])
         #self.active_date[0] = day, self.active_date[1] = month, self.active_date[2] = year
 
         scr = Screen()
@@ -125,8 +133,13 @@ class CalendarWidget(RelativeLayout):
                     self.tbtn = Button(text=str(day[0]), background_color=(0.5, 0.5, 0.5, 1), color=(1, 1, 1, 1))
                 else:
                     self.tbtn = Button(text=str(day[0]), background_color=(255, 255, 255, 1), color=(0, 0, 0, 1))
-                    if day[0] < self.active_date[0] and self.active_date[1] <= datetime.now().month:
-                        self.tbtn.background_color=(255, 255, 0, 1)
+                    #if day[0] < self.active_date[0] and self.active_date[1] <= datetime.now().month:
+                    #    self.tbtn.background_color=(255, 255, 0, 1)
+                    for i in range(len(leaves)):
+                        if self.active_date[2] <= leaves[i][2]:
+                            if self.active_date[1] <= leaves[i][1]:
+                                if self.tbtn.text == str(leaves[i][0]):
+                                    self.tbtn.background_color=(255, 255, 0, 1)
                     for i in range(len(aboveSWH)):
                         if self.active_date[2] == aboveSWH[i][2]:
                             if self.active_date[1] == aboveSWH[i][1]:
@@ -207,6 +220,7 @@ class CalendarWidget(RelativeLayout):
 
     def go_prev(self, inst):
         """ Go to screen with previous month """
+        monthlyWrkHours.calArtistLeave(self.quarter_nums[0][0], self.quarter_nums[0][1], self.active_date[0])
 
         # Change active date
         self.active_date = [self.active_date[0], self.quarter_nums[0][1],
@@ -232,6 +246,7 @@ class CalendarWidget(RelativeLayout):
 
     def go_next(self, inst):
         """ Go to screen with next month """
+        monthlyWrkHours.calArtistLeave(self.quarter_nums[2][0], self.quarter_nums[2][1], self.active_date[0])
 
          # Change active date
         self.active_date = [self.active_date[0], self.quarter_nums[2][1],

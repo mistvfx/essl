@@ -80,8 +80,10 @@ def getUserTime():
         ActWorHrs = calActualWorkingHours(ios, timings, doors)
         if(ActWorHrs > StdWrkHrs):
             Calendar.aboveSWH.append(DMY)
-        else:
+        elif ActWorHrs < StdWrkHrs and ActWorHrs > datetime.timedelta(hours=3, minutes=0, seconds=0):
             Calendar.belowSWH.append(DMY)
+        else:
+            Calendar.leaves.append(DMY)
 
     monthlyWrkHours.getHolidays()
 

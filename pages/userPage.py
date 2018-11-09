@@ -75,4 +75,6 @@ class UserPage(Screen):
         userPageLayout.add_widget(otherInfoLayout)
 
         info1 = Label(text= 'LEAVES :', color=(0, 0, 0, 1))
+        info2 = Label(text= '0', color=(1, 0, 0, 1))
         otherInfoLayout.add_widget(info1)
+        otherInfoLayout.add_widget(info2)

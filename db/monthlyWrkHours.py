@@ -57,9 +57,14 @@ def calArtistLeave(year, month, d):
 
     db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
     cur = db.cursor()
+    cur1 = db.cursor()
     cur.execute("SELECT DISTINCT(MDate) from essl.`%d` WHERE YEAR(MDate) = '%d' AND MONTH(MDate) = '%d'" %(id[len(id)-1], int(year), int(month)))
     for date in cur.fetchall():
         actualWorkingDays.append(date[0].day)
+        actWrkHrs = calcWrkHrs.calMon(id[len(id)-1], date[0])
+        if actWrkHrs < datetime.timedelta(hours=3, minutes=0, seconds=0):
+            leave += 1
+            Calendar.leaves.append([date[0].day, date[0].month, date[0].year])
 
     for week in Month:
         for day in week:
@@ -70,6 +75,7 @@ def calArtistLeave(year, month, d):
                 continue
             else :
                 leave += 1
+                Calendar.leaves.append([day, month, year])
             if day == d:
                 break
 
@@ -102,6 +108,7 @@ def calArtistLeaveMon(year, month):
                 continue
             else :
                 leave += 1
+                #Calendar.leaves.append()
 
     cur.close()
     db.close()
