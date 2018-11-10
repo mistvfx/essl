@@ -5,8 +5,11 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.tabbedpanel import TabbedPanel
 from kivy.uix.spinner import Spinner
+from kivy.uix.button import Button
 from kivy.graphics import *
 from kivy.properties import *
+
+from pages import Dialog
 
 Date = ""
 id = 0
@@ -94,12 +97,31 @@ class TimingFix(BoxLayout):
         global Date, id
         db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
         cur = db.cursor()
-        cur.execute("INSERT INTO essl.%d (IO, MTIME, MDATE, DOOR) VALUES('%s', '%s', '%s', '%s')" %(int(id), self.io, time, Date, self.door))
+        try:
+            cur.execute("INSERT INTO essl.%d (IO, MTIME, MDATE, DOOR) VALUES('%s', '%s', '%s', '%s')" %(int(id), self.io, time, Date, self.door))
+        except:
+            def callback(instance):
+                if instance.text == 'OK':
+                    pop.dismiss()
+                    return 0
+            closePopBtn = Button(text="OK", size_hint=(1, 0.25))
+            closePopBtn.bind(on_release=callback)
+            pop = Dialog.dialog("Error !!!", "Please Provide valid information !!", closePopBtn)
+            pop.open()
         cur.close()
         db.close()
 
 class Permission(AnchorLayout):
     def addPermTime(self, time):
+        if time == '':
+            def callback(instance):
+                if instance.text == 'OK':
+                    pop.dismiss()
+                    return 0
+            closePopBtn = Button(text="OK", size_hint=(1, 0.25))
+            closePopBtn.bind(on_release=callback)
+            pop = Dialog.dialog("No TIME !!!", "Please Enter valid HOURS !!", closePopBtn)
+            pop.open()
         global Date, id
         db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
         cur = db.cursor()
