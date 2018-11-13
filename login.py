@@ -7,6 +7,7 @@ from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.textinput import TextInput
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.button import Button
+from kivy.uix.checkbox import CheckBox
 from kivy.animation import *
 from kivy.core.image import Image
 from kivy.graphics import *
@@ -15,6 +16,7 @@ from kivy.uix.behaviors.touchripple import TouchRippleBehavior
 from kivy.lang import Builder
 from kivy.graphics.texture import Texture
 from kivy import utils
+import tempfile
 
 from db.credentialsCheck import checkCredentials
 from pages import userPage, adminPage
@@ -72,7 +74,7 @@ Builder.load_string("""
             pos: self.pos
 
 <loginBG>:
-    size_hint: 1, 0.40
+    size_hint: 1, 0.50
     orientation: 'vertical'
     canvas.before:
         Color:
@@ -125,6 +127,18 @@ class loginWindow(Screen):
         self.login()
 
     def login(self):
+        self.username = userNameBox(hint_text='USERNAME')
+        self.password = passwordBox(hint_text='PASSWORD', password=True)
+        try:
+            with open("%s/mttup.txt"%(tempfile.gettempdir()), "r") as f:
+                res = str(f.read(4))
+                self.username.text = res
+                self.password.text = res
+                self.checkLogin()
+        except Exception as e:
+            print(e)
+            pass
+
         anchorLayout = loginScrnBg(anchor_x='center', anchor_y='center')
         self.add_widget(anchorLayout)
 
@@ -140,8 +154,8 @@ class loginWindow(Screen):
 
         loginLabel = Label(text='ARTIST LOGIN', bold=True, color=(0, 0, 0, 1), font_size=25, font_name='fonts/moon-bold.otf')
         #self.username = TextInput(text='USERNAME', multiline=False, padding=5)
-        self.username = userNameBox(hint_text='USERNAME')
-        self.password = passwordBox(hint_text='PASSWORD', password=True)
+        #self.username = userNameBox(hint_text='USERNAME')
+        #self.password = passwordBox(hint_text='PASSWORD', password=True)
 
         def callback(instance):
             if(instance.text == 'LOGIN'):
@@ -149,6 +163,14 @@ class loginWindow(Screen):
             if(instance.text == 'LOGOUT'):
                 ScreenManagement.sm.remove_widget(userPage.UserPage())
                 ScreenManagement.sm.current = 'login'
+
+        def cbActive(cb, value):
+            if value:
+                with open("%s/mttup.txt"%(tempfile.gettempdir()), "w") as f:
+                    f.write(self.password.text)
+            else:
+                with open("%s/mttup.txt"%(tempfile.gettempdir()), "w") as f:
+                    f.write("")
 
         #loginButton = Button(text='LOGIN')
         loginBtn = loginButton()
@@ -158,12 +180,24 @@ class loginWindow(Screen):
         logoutButton.bind(on_press=callback)
         userPage.logoutButton = logoutButton
 
+        remLayout = BoxLayout(orientation='horizontal')
+
+        remME = CheckBox(size_hint_x=0.25, color=(0, 0, 0, 1))
+        remME.bind(active=cbActive)
+
+        remLbl = Label(text='REMEMBER ME', color=(0, 0, 0, 1))
+
+        remLayout.add_widget(remME)
+        remLayout.add_widget(remLbl)
+
         layout.add_widget(loginLabel)
         layout.add_widget(self.username)
         layout.add_widget(self.password)
+        layout.add_widget(remLayout)
         layout.add_widget(loginBtn)
 
     def checkLogin(self):
+        print(self.username.text, self.password.text, "ok")
         login = checkCredentials(self.username.text, self.password.text)
 
         if login == 1:

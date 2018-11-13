@@ -67,7 +67,7 @@ class UserPage(Screen):
         userInfoLabel = userLabel(text='%d | %s | %s' %(id[int(len(id)-1)], user[int(len(user)-1)], department[int(len(department)-1)]))
         userPageLayout.add_widget(userInfoLabel)
 
-        calendarWidget = Calendar.CalendarWidget()
+        calendarWidget = Calendar.CalendarWidgetM()
         calendarWidget.size_hint=(0.75, 0.75); calendarWidget.pos_hint={'center_y':0.5, 'center_x':0.5}
         userPageLayout.add_widget(calendarWidget)
 

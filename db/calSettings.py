@@ -17,11 +17,11 @@ selectedDates = []
 holiday = []
 halfday = []
 
-class CalendarWidget(RelativeLayout):
+class CalendarWidgetS(RelativeLayout):
     """ Basic calendar widget """
 
     def __init__(self, as_popup=False, touch_switch=False, *args, **kwargs):
-        super(CalendarWidget, self).__init__(*args, **kwargs)
+        super(CalendarWidgetS, self).__init__(*args, **kwargs)
 
         self.as_popup = as_popup
         self.touch_switch = touch_switch
@@ -240,7 +240,7 @@ def setup():
     daySetLayout.add_widget(halfdayBtn)
     calSettingsLayout.add_widget(daySetLayout)
 
-    cal = CalendarWidget()
+    cal = CalendarWidgetS()
     calSettingsLayout.add_widget(cal)
 
     def callback(instance):

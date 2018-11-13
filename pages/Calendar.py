@@ -4,7 +4,7 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.core.window import Window
-from kivy.properties import NumericProperty, ReferenceListProperty
+from kivy.properties import NumericProperty, ReferenceListProperty, ObjectProperty
 from kivy.lang import Builder
 from kivy.graphics import Triangle
 from kivy.graphics import Color
@@ -44,6 +44,18 @@ Builder.load_string("""
     color: (1, 0.26, 0.21, 1)
     font_name: 'fonts/moon.otf'
 
+<CalendarWidgetM>:
+    canvas.before:
+        Color:
+            rgba: (0, 0, 0, 1)
+        Rectangle:
+            pos: [self.pos[0] - self.pos[0]/1.1, self.pos[1] - self.pos[1]*1.1]
+            size: self.size
+        Color:
+            rgba: (1, 1, 1, 1)
+        Rectangle:
+            pos: [self.pos[0] - self.pos[0], self.pos[1] - self.pos[1]]
+            size: self.size
 """)
 
 class arrowBtn(Button):
@@ -58,11 +70,11 @@ class WrkDayLabel(Label):
 class WeekEndLabel(Label):
     pass
 
-class CalendarWidget(RelativeLayout):
+class CalendarWidgetM(RelativeLayout):
     """ Basic calendar widget """
 
     def __init__(self, as_popup=False, touch_switch=False, *args, **kwargs):
-        super(CalendarWidget, self).__init__(*args, **kwargs)
+        super(CalendarWidgetM, self).__init__(*args, **kwargs)
 
         self.as_popup = as_popup
         self.touch_switch = touch_switch

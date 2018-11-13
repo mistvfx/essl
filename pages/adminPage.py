@@ -23,21 +23,16 @@ from db import usersListManip
 Builder.load_string("""
 <excelImpButton>:
     text: "Excel Import"
-    size_hint: (1, 1)
-    color: (1, 1, 1, 0)
+    font_name: 'fonts/moon-bold.otf'
+    size_hint: (0.5, 1)
+    color: (1, 1, 1, 1)
     background_color: (0, 0, 0, 0)
-    Image:
-        source: 'icons/importExcel.png'
-        size: self.parent.size
-        y: self.parent.y
-        x: self.parent.x
-        keep_data: True
 
 <ExcelExport>:
     text: "Excel Export"
     values: ('DAY', 'MONTH')
     font_name: 'fonts/moon-bold.otf'
-    size_hint: (1, 1)
+    size_hint: (0.5, 1)
     color: (1, 1, 1, 1)
     background_color: (0, 0, 0, 0)
 
@@ -57,6 +52,13 @@ Builder.load_string("""
     background_color: (0, 0, 0, 0)
     pos_hint: {'right':1, 'bottom':1}
     size_hint: (0.1, 0.1)
+    canvas.before:
+        Color:
+            rgba: (1, 1, 1, 1)
+        RoundedRectangle:
+            size: self.size
+            pos: self.pos
+            radius: [70, 70, 50, 50]
     Image:
         source: 'icons/refresh.png'
         size: self.parent.size
@@ -128,7 +130,7 @@ class AdminPage(Screen):
         excelImportBtn.bind(on_press=callback)
         controlLayout.add_widget(excelImportBtn)
 
-        date = DatePicker(size_hint=(0.7, 1), pHint=(0.35, 0.35))
+        date = DatePicker(size_hint=(0.5, 1), pHint=(0.35, 0.35))
         controlLayout.add_widget(date)
 
         excelExport = ExcelExport()
