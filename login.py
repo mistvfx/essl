@@ -20,6 +20,7 @@ import tempfile
 
 from db.credentialsCheck import checkCredentials
 from pages import userPage, adminPage
+from pages.specialFeatures import *
 
 Window.maximize()
 
@@ -27,24 +28,23 @@ Builder.load_string("""
 <loginScrnBg>:
     canvas:
         Color:
-            hsv: 0.80, 1, 0.85
+            rgba: (0.5, 0.5, 1, 0.85)
         Rectangle:
             size: self.size
             pos: self.pos
 
 <loginButton@Button>:
+    id: loginBtn
     text: 'LOGIN'
-    color: (1, 1, 1, 1)
+    color: (0, 0, 0, 1)
     font_name: 'fonts/moon-bold.otf'
     font_size: 20
     background_color: (0, 0, 0, 0)
     canvas.before:
         Color:
-            rgba: 0, 0, 0, 1
-        RoundedRectangle:
-            size: self.size
-            pos: self.pos
-            radius: [25, 25, 25, 25]
+            rgba: (0, 0, 0, 1)
+        Line:
+            rectangle: (self.pos[0], self.pos[1], self.size[0], self.size[1])
 
 <userNameBox@TextInput>:
     multiline: False
@@ -106,8 +106,20 @@ Builder.load_string("""
 class loginScrnBg(AnchorLayout):
     pass
 
-class loginButton(TouchRippleBehavior, Button):
-    pass
+class loginButton(Button, MouseOver):
+    def on_hover(self):
+        self.color = (1, 1, 1, 1)
+        with self.canvas.before:
+            Color(0, 0, 0, 1)
+            Rectangle(size=(self.size), pos=(self.pos))
+
+    def on_exit(self):
+        self.color = (0, 0, 0, 1)
+        with self.canvas.before:
+            Color(1, 1, 1, 1)
+            Rectangle(size=(self.size), pos=(self.pos))
+            Color(0, 0, 0, 1)
+            Line(rectangle=(self.pos[0], self.pos[1], self.size[0], self.size[1]))
 
 class userNameBox(TextInput):
     pass
@@ -177,7 +189,7 @@ class loginWindow(Screen):
         loginBtn.bind(on_release=callback)
 
         logoutButton = Button(text='LOGOUT', size_hint=(0.1, 0.1), pos_hint={'right':1, 'top':1})
-        logoutButton.bind(on_press=callback)
+        logoutButton.bind(on_release=callback)
         userPage.logoutButton = logoutButton
 
         remLayout = BoxLayout(orientation='horizontal')

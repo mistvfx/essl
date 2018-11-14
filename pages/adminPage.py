@@ -18,23 +18,53 @@ from kivy.lang import Builder
 from . import excelIO
 import threading
 from pages import usersList, settings
+from pages.specialFeatures import *
 from db import usersListManip
 
 Builder.load_string("""
+<AdminPage>:
+    canvas.before:
+        Color:
+            rgba: (1, 1, 1, 1)
+        Rectangle:
+            pos: self.pos
+            size: self.size
 <excelImpButton>:
     text: "Excel Import"
-    font_name: 'fonts/moon-bold.otf'
     size_hint: (0.5, 1)
-    color: (1, 1, 1, 1)
-    background_color: (0, 0, 0, 0)
+    color: (0, 0, 0, 0)
+    background_color: (1, 1, 1, 0)
+    StackLayout:
+        pos: self.parent.pos
+        size: self.parent.size
+        orientation: 'lr-tb'
+        Image:
+            source: 'icons/importExcel.png'
+            size_hint_x: None
+        Label:
+            size_hint_x: None
+            text: "Excel Import"
+            font_name: 'fonts/moon-bold.otf'
+            color: (0, 0, 0, 1)
 
 <ExcelExport>:
     text: "Excel Export"
     values: ('DAY', 'MONTH')
-    font_name: 'fonts/moon-bold.otf'
     size_hint: (0.5, 1)
-    color: (1, 1, 1, 1)
+    color: (0, 0, 0, 0)
     background_color: (0, 0, 0, 0)
+    StackLayout:
+        pos: self.parent.pos
+        size: self.parent.size
+        orientation: 'lr-tb'
+        Image:
+            source: 'icons/exportExcel.png'
+            size_hint_x: None
+        Label:
+            size_hint_x: None
+            text: "Excel Export"
+            font_name: 'fonts/moon-bold.otf'
+            color: (0, 0, 0, 1)
 
 <ExcelExported>:
     size_hint: 0.5, 0.5
@@ -55,15 +85,14 @@ Builder.load_string("""
     canvas.before:
         Color:
             rgba: (1, 1, 1, 1)
-        RoundedRectangle:
-            size: self.size
-            pos: self.pos
-            radius: [70, 70, 50, 50]
     Image:
-        source: 'icons/refresh.png'
+        id: refImg
+        source: 'icons/refresh.zip'
         size: self.parent.size
         y: self.parent.y
         x: self.parent.x
+        anim_delay: -1
+        anim_loop: 1
 
 <setButton>:
     text: 'SETTINGS'
@@ -72,25 +101,50 @@ Builder.load_string("""
     pos_hint: {'left':1, 'bottom':1}
     size_hint: (0.1, 0.1)
     Image:
-        source: 'icons/setting.png'
+        id: setImg
+        source: 'icons/settings.zip'
         size: self.parent.size
         y: self.parent.y
         x: self.parent.x
+        anim_delay: -1
+        anim_loop: 1
 """)
-class excelImpButton(Button):
-    pass
+class excelImpButton(Button, MouseOver):
+    def on_hover(self):
+        self.background_color = (1, 0, 1, 0.5)
 
-class ExcelExport(Spinner):
-    pass
+    def on_exit(self):
+        self.background_color = (0, 0, 0, 0)
+
+class ExcelExport(Spinner, MouseOver):
+    def on_hover(self):
+        self.background_color = (1, 0, 1, 0.5)
+
+    def on_exit(self):
+        self.background_color = (0, 0, 0, 0)
 
 class ExcelExported(Popup):
     pass
 
-class refButton(Button):
-    pass
+class refButton(Button, MouseOver):
+    def on_hover(self):
+        self.background_color = (1, 1, 1, 0.5)
 
-class setButton(Button):
-    pass
+    def on_exit(self):
+        self.background_color = (0, 0, 0, 0)
+
+    def on_press(self):
+        self.ids.refImg.anim_delay = 0.01
+
+    def on_release(self):
+        self.ids.refImg.anim_delay = -1
+
+class setButton(Button, MouseOver):
+    def on_hover(self):
+        self.ids.setImg.anim_delay = 0.1
+
+    def on_exit(self):
+        self.ids.setImg.anim_delay = -1
 
 class AdminPage(Screen):
     def __init__(self, **args):
@@ -127,7 +181,7 @@ class AdminPage(Screen):
         adminLayout.add_widget(listLayout)
 
         excelImportBtn = excelImpButton()
-        excelImportBtn.bind(on_press=callback)
+        excelImportBtn.bind(on_release=callback)
         controlLayout.add_widget(excelImportBtn)
 
         date = DatePicker(size_hint=(0.5, 1), pHint=(0.35, 0.35))
@@ -138,10 +192,10 @@ class AdminPage(Screen):
         controlLayout.add_widget(excelExport)
 
         refreshBtn = refButton()
-        refreshBtn.bind(on_press=callback)
+        refreshBtn.bind(on_release=callback)
 
         settingsBtn = setButton()
-        settingsBtn.bind(on_press=callback)
+        settingsBtn.bind(on_release=callback)
 
         usersListManip.getUserInfo()
         usersList.date.append(date.text)

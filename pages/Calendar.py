@@ -24,6 +24,7 @@ artistHolidays = 0
 Builder.load_string("""
 
 <arrowBtn>:
+    color: (0, 0, 0, 1)
     background_color: (0, 0, 0, 0)
     font_size: 50
     bold: True
@@ -37,6 +38,7 @@ Builder.load_string("""
 <WrkDayLabel>:
     color: (0.1, 0.1, 0.1, 1)
     text_size: [self.size[0], None]
+    background_color: (0.5, 0.5, 0.5, 1)
     font_name: 'fonts/moon.otf'
     halign: "center"
 
@@ -47,9 +49,9 @@ Builder.load_string("""
 <CalendarWidgetM>:
     canvas.before:
         Color:
-            rgba: (0, 0, 0, 1)
+            rgba: (0.1, 0.1, 0.1, 0.2)
         Rectangle:
-            pos: [self.pos[0] - self.pos[0]/1.1, self.pos[1] - self.pos[1]*1.1]
+            pos: [self.pos[0] - self.pos[0]/1.05, self.pos[1] - self.pos[1]*1.1]
             size: self.size
         Color:
             rgba: (1, 1, 1, 1)
@@ -124,7 +126,7 @@ class CalendarWidgetM(RelativeLayout):
         scr.name = "%s-%s" % (m, self.active_date[2])  # like march-2015
 
         # Grid for days
-        grid_layout = GridLayout(cols=7, rows=7, size_hint=(1, 1), pos_hint={"top": 1})
+        grid_layout = GridLayout(cols=7, rows=7, size_hint=(1, 1), pos_hint={"top": 1}, spacing = 2)
         scr.add_widget(grid_layout)
 
         # Days abbrs
@@ -148,9 +150,9 @@ class CalendarWidgetM(RelativeLayout):
                     #if day[0] < self.active_date[0] and self.active_date[1] <= datetime.now().month:
                     #    self.tbtn.background_color=(255, 255, 0, 1)
                     for i in range(len(leaves)):
-                        if self.active_date[2] <= leaves[i][2]:
-                            if self.active_date[1] <= leaves[i][1]:
-                                if self.tbtn.text == str(leaves[i][0]):
+                        if self.active_date[2] == leaves[i][2]:
+                            if self.active_date[1] == leaves[i][1]:
+                                if day[0] == (leaves[i][0]):
                                     self.tbtn.background_color=(255, 255, 0, 1)
                     for i in range(len(aboveSWH)):
                         if self.active_date[2] == aboveSWH[i][2]:
