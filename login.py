@@ -49,6 +49,7 @@ Builder.load_string("""
 <userNameBox@TextInput>:
     multiline: False
     write_tab: False
+    input_filter: 'int'
     font_name: 'fonts/moon.otf'
     font_size: self.size[1]/3.0
     padding: [self.size[1], self.size[1]/3.5, 10, 10]
@@ -209,7 +210,6 @@ class loginWindow(Screen):
         layout.add_widget(loginBtn)
 
     def checkLogin(self):
-        print(self.username.text, self.password.text, "ok")
         login = checkCredentials(self.username.text, self.password.text)
 
         if login == 1:

@@ -79,7 +79,7 @@ Builder.load_string("""
             RoundedRectangle:
                 size: self.size
                 pos: self.pos
-                radius: [25, 0, 0, 25]
+                radius: [25, 25, 25, 25]
 
         Image:
             source: 'icons/user.png'
@@ -206,7 +206,7 @@ class userList(ScrollView):
     def listUI(self):
         global id, names
 
-        layout = GridLayout(cols=1, spacing=1, padding=(10, 0, 0, 0), size_hint=(1, None))
+        layout = GridLayout(cols=1, spacing=1, padding=(20, 0, 0, 0), size_hint=(1, None))
         layout.bind(minimum_height=layout.setter('height'))
 
         for i in range(len(id)):

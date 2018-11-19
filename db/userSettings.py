@@ -8,6 +8,7 @@ from kivy.uix.spinner import Spinner
 from kivy.uix.button import Button
 from kivy.graphics import *
 from kivy.properties import *
+import re
 
 from pages import Dialog
 
@@ -38,12 +39,14 @@ Builder.load_string("""
     TextInput:
         id: time
         hint_text: 'HH:MM:SS'
+        background_color: (1, 1, 1, 1)
         font_size: self.size[1]/2.5
         padding: [self.size[1]*2.5, self.size[1]/5.0, 0, 0]
         font_name: 'fonts/moon-bold.otf'
         multiline: False
         size_hint: (0.65, 0.25)
         pos_hint: {'center_x': .5, 'center_y': .5}
+        on_text: root.checkText(time.text)
 
     Button:
         text: 'ADD TIME'
@@ -61,6 +64,7 @@ Builder.load_string("""
             id: hours
             hint_text: 'HOURS (HH:MM:SS)'
             multiline: False
+            on_text: root.checkText(hours.text)
         Button:
             text: 'Submit Permission Time'
             on_release: root.addPermTime(hours.text)
@@ -97,37 +101,60 @@ class TimingFix(BoxLayout):
         global Date, id
         db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
         cur = db.cursor()
+        def callback(instance):
+            if instance.text == 'OK':
+                pop.dismiss()
+                return 0
+        closePopBtn = Button(text="OK", size_hint=(1, 0.25))
+        closePopBtn.bind(on_release=callback)
         try:
             cur.execute("INSERT INTO essl.%d (IO, MTIME, MDATE, DOOR) VALUES('%s', '%s', '%s', '%s')" %(int(id), self.io, time, Date, self.door))
+            pop = Dialog.dialog("Success", "Data added successfully !!", closePopBtn)
+            pop.open()
         except:
-            def callback(instance):
-                if instance.text == 'OK':
-                    pop.dismiss()
-                    return 0
-            closePopBtn = Button(text="OK", size_hint=(1, 0.25))
-            closePopBtn.bind(on_release=callback)
             pop = Dialog.dialog("Error !!!", "Please Provide valid information !!", closePopBtn)
             pop.open()
         cur.close()
         db.close()
 
+    def checkText(self, text):
+        time = re.compile(r'[0-2][0-9]:[0-6][0-9]:[0-6][0-9]')
+        if time.match(text):
+            self.ids.time.background_color = (0, 1, 0, 1)
+        elif text != '':
+            self.ids.time.background_color = (1, 0, 0, 1)
+        elif text == '':
+            self.ids.time.background_color = (1, 1, 1, 1)
+
 class Permission(AnchorLayout):
     def addPermTime(self, time):
+        def callback(instance):
+            if instance.text == 'OK':
+                pop.dismiss()
+                return 0
+        closePopBtn = Button(text="OK", size_hint=(1, 0.25))
+        closePopBtn.bind(on_release=callback)
         if time == '':
-            def callback(instance):
-                if instance.text == 'OK':
-                    pop.dismiss()
-                    return 0
-            closePopBtn = Button(text="OK", size_hint=(1, 0.25))
-            closePopBtn.bind(on_release=callback)
             pop = Dialog.dialog("No TIME !!!", "Please Enter valid HOURS !!", closePopBtn)
             pop.open()
-        global Date, id
-        db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
-        cur = db.cursor()
-        cur.execute("INSERT INTO essl.%d (IO, MTIME, MDATE, DOOR) VALUES('P', '%s', '%s', 'PERMISSION')" %(int(id), time, Date))
-        cur.close()
-        db.close()
+        else:
+            global Date, id
+            db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
+            cur = db.cursor()
+            cur.execute("INSERT INTO essl.%d (IO, MTIME, MDATE, DOOR) VALUES('P', '%s', '%s', 'PERMISSION')" %(int(id), time, Date))
+            cur.close()
+            db.close()
+            pop = Dialog.dialog("SUCCESS", "Successfully added the permission time", closePopBtn)
+            pop.open()
+
+    def checkText(self, text):
+        time = re.compile(r'[0-2][0-9]:[0-6][0-9]:[0-6][0-9]')
+        if time.match(text):
+            self.ids.hours.background_color = (0, 1, 0, 1)
+        elif text != '':
+            self.ids.hours.background_color = (1, 0, 0, 1)
+        elif text == '':
+            self.ids.hours.background_color = (1, 1, 1, 1)
 
 class Doors(BoxLayout):
     pass
