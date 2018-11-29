@@ -60,7 +60,7 @@ def formatTime(time):
     minutes = int((seconds % 3600) / 60)
     seconds = int(seconds % 60)
 
-    return ('{}:{}:{}'.format(hours, minutes, seconds))
+    return ('{}:{}'.format(hours, minutes))
 
 class infoTab(BoxLayout):
     def __init__(self, **args):
