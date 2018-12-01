@@ -71,14 +71,16 @@ def calArtistLeave(year, month, d):
             for i in range(len(holidays)):
                 if day == holidays[i][0] and month == holidays[i][1]:
                     hDays += 1
-            if day == week[6] or day in actualWorkingDays:
+            if day == week[6] or day in actualWorkingDays or day == 0:
                 continue
             else :
+                print('leave', day)
                 leave += 1
                 Calendar.leaves.append([day, month, year])
             if day == d:
                 break
 
+    print(leave, hDays)
     cur.close()
     db.close()
     return leave - hDays

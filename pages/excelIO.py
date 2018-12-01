@@ -69,9 +69,9 @@ def excelManip(filePath):
             continue
         date = date_time.date()
         time = date_time.time()
-        #print(type(time))
+        #print(type(time))  if str(id) != 'nan' and str(event) != 'Anti-Passback':
 
-        if str(id) != 'nan' :
+        if str(id) != 'nan':
             try:
                 cur.execute("INSERT INTO essl.%d (IO, MTIME, MDATE, DOOR) VALUES('%s', '%s', '%s', '%s')" %(id, io, time, date, door))
             except:
@@ -379,9 +379,9 @@ def exportMonth(month, year):
                 if actWrkHrs == datetime.timedelta():
                     Work_Duration.append('00:00')
                 else:
+                    print(actWrkHrs)
                     Work_Duration.append((datetime.datetime.min + actWrkHrs).time())
             except Exception as e:
-                print(e)
                 actWrkHrs = datetime.timedelta()
                 Work_Duration.append('00:00')
 

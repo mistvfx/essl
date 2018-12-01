@@ -3,6 +3,7 @@ from kivy.uix.button import Button
 from kivy.uix.scrollview import ScrollView
 from kivy.core.window import Window
 from kivy.uix.label import Label
+from kivy.graphics import Color, Rectangle
 #from kivy.app import runTouchApp
 from kivy.app import App
 from kivy.lang import Builder
@@ -24,7 +25,25 @@ Builder.load_string("""
 """)
 
 class dataLbl(Label):
-    pass
+    def set_bgRed(self):
+        with self.canvas.before:
+            Color(1, 0, 0, 0.50)
+            self.rect = Rectangle(pos=self.pos, size=self.size)
+
+        self.bind(pos=self.update_rect,
+                  size=self.update_rect)
+
+    def set_bgGreen(self):
+        with self.canvas.before:
+            Color(0, 1, 0, 0.50)
+            self.rect = Rectangle(pos=self.pos, size=self.size)
+
+        self.bind(pos=self.update_rect,
+                  size=self.update_rect)
+
+    def update_rect(self, *args):
+        self.rect.pos = self.pos
+        self.rect.size = self.size
 
 class dataTable(ScrollView):
     def __init__(self, **args):
@@ -36,7 +55,8 @@ class dataTable(ScrollView):
 
     def tableUI(self):
         global io, time, door
-        #print(time)
+        accDoor = ['MM', 'ROTO', 'PAINT', 'CONFERENCE ROOM', 'IT', 'TRAINING-1']
+        #print(io)
         layout = GridLayout(cols=3, spacing=5, size_hint_y=None)
         # Make sure the height is such that there is something to scroll.
         layout.bind(minimum_height=layout.setter('height'))
@@ -44,12 +64,39 @@ class dataTable(ScrollView):
         i=1; j=1; k=1;
         while i < len(io):
             lbl = dataLbl(text=str(io[i]), size_hint_y=None, height=40)
+            try:
+                if door[i] in accDoor and io[i] == 'In' and door[i+1] == door[i] and io[i+1] == 'Out':
+                    lbl.set_bgGreen()
+                elif door[i-1] in accDoor and io[i-1] == 'In' and door[i] == door[i] and io[i] == 'Out':
+                    lbl.set_bgGreen()
+                elif door[i] in accDoor:
+                    lbl.set_bgRed()
+            except:
+                pass
             layout.add_widget(lbl)
             while j < len(time):
                 lbl = dataLbl(text=str(time[j]), size_hint_y=None, height=40)
+                try:
+                    if door[i] in accDoor and io[i] == 'In' and door[i+1] == door[i] and io[i+1] == 'Out':
+                        lbl.set_bgGreen()
+                    elif door[i-1] in accDoor and io[i-1] == 'In' and door[i] == door[i] and io[i] == 'Out':
+                        lbl.set_bgGreen()
+                    elif door[i] in accDoor:
+                        lbl.set_bgRed()
+                except:
+                    pass
                 layout.add_widget(lbl)
                 while k < len(door):
                     lbl = dataLbl(text=str(door[k]), size_hint_y=None, height=40)
+                    try:
+                        if door[i] in accDoor and io[i] == 'In' and door[i+1] == door[i] and io[i+1] == 'Out':
+                            lbl.set_bgGreen()
+                        elif door[i-1] in accDoor and io[i-1] == 'In' and door[i] == door[i] and io[i] == 'Out':
+                            lbl.set_bgGreen()
+                        elif door[i] in accDoor:
+                            lbl.set_bgRed()
+                    except:
+                        pass
                     layout.add_widget(lbl)
                     k+=1
                     break

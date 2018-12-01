@@ -52,6 +52,8 @@ def calTotWorkingDays(totDays, curMonth, givMonth, curDate, givYear):
                 return days-hDays-calTotWorkingDays.artistLeaves
             days += 1
 
+    #print(days-hDays)
+
     calTotWorkingDays.officeDefault = days-hDays
     return days-hDays-calTotWorkingDays.artistLeaves
 

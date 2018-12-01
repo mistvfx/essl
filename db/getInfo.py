@@ -18,38 +18,24 @@ def formatDate(date):
         self.login()"""
 
 def calActualWorkingHours(io, time, door):
-    inTime = datetime.timedelta(); outTime = datetime.timedelta(); sumTime = datetime.timedelta(); inCorrectTime = datetime.timedelta();
-    after12 = datetime.timedelta(hours=0, minutes=1, seconds=0)
-    after20 = datetime.timedelta(hours=20, minutes=0, seconds=0)
-    before24 = datetime.timedelta(hours=23, minutes=59, seconds=59)
-    after24 = datetime.timedelta(hours=0, minutes=0, seconds=59)
-    before5 = datetime.timedelta(hours=6, minutes=0, seconds=0)
-    ins = []
-    outT = 0
-    accDoor = ['MM', 'ROTO', 'PAINT', 'CONFERENCE ROOM', 'IT', 'TRAINING-1']
-    for i in range(len(io)):
-        if door[i] in accDoor:
-            if time[i] > after24 and time[i] < before5 and io[i] == 'Out' and door[i] in accDoor and outT == 0:
-                sumTime = sumTime + time[i]
-                outT = 1
-            #if time[i] > after12:
-            #    if io[i] == 'Out':
-            #        print(time[i], time[i]-after12)
-            if io[i-1] == io[i] and door[i-1] in accDoor and door[i] in accDoor:
+    sumTime = datetime.timedelta()
+    accDoor = ['MM', 'ROTO', 'PAINT', 'CONFERENCE ROOM', 'TRAINING-1', 'IT', 'HR']
+    i = 0
+
+    while i < len(io):
+        try:
+            if door[i] in accDoor and io[i] == 'In' and door[i+1] == door[i] and io[i+1] == 'Out':
+                sumTime += (time[i+1] - time[i])
+                i += 2
                 continue
-            if io[i] == 'In':
-                inTime = time[i]
-            elif io[i] == 'Out':
-                outTime = time[i]
-                sumTime = (sumTime)+(outTime-inTime)
-            if time[i] > after20 and time[i] < before24:
-                try:
-                    if io[i] == 'In' and io[i+1] != 'Out':
-                        pass
-                except:
-                    sumTime = (sumTime)+(before24 - time[i])
-        elif door[i] == 'PERMISSION':
-            sumTime = sumTime - time[i]
+
+            elif door[i] == 'PERMISSION':
+                sumTime -= time[i]
+
+        except:
+            continue
+
+        i += 1
 
     return sumTime
 

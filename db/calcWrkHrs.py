@@ -8,33 +8,25 @@ def getDayMonthYear(date):
     return (date.day, date.month, date.year)
 
 def calActualWorkingHours(io, time, door):
-    #getDayMonthYear(date)
-    inTime = datetime.timedelta(); outTime = datetime.timedelta(); sumTime = datetime.timedelta();
-    after20 = datetime.timedelta(hours=20, minutes=0, seconds=0)
-    before24 = datetime.timedelta(hours=23, minutes=59, seconds=59)
-    after24 = datetime.timedelta(hours=0, minutes=0, seconds=59)
-    before5 = datetime.timedelta(hours=6, minutes=0, seconds=0)
+    sumTime = datetime.timedelta()
     accDoor = ['MM', 'ROTO', 'PAINT', 'CONFERENCE ROOM', 'TRAINING-1', 'IT', 'HR']
-    for i in range(len(io)):
-        if door[i] in accDoor:
-            if time[i] > after24 and time[i] < before5 and io[i] == 'Out' and door[i] in accDoor:
-                sumTime = sumTime + time[i]
-                outT = 1
-            if io[i-1] == io[i] and door[i-1] in accDoor and door[i] in accDoor:
+    i = 0
+
+    while i < len(io):
+        try:
+            if door[i] in accDoor and io[i] == 'In' and door[i+1] == door[i] and io[i+1] == 'Out':
+                sumTime += (time[i+1] - time[i])
+                i += 2
                 continue
-            if io[i] == 'In':
-                inTime = time[i]
-            elif io[i] == 'Out':
-                outTime = time[i]
-                sumTime = (sumTime)+(outTime-inTime)
-            if time[i] > after20 and time[i] < before24:
-                try:
-                    if io[i] == 'In' and io[i+1] != 'Out':
-                        pass
-                except:
-                    sumTime = (sumTime)+(before24 - time[i])
-        elif door[i] == 'PERMISSION':
-            sumTime = sumTime - time[i]
+
+            elif door[i] == 'PERMISSION':
+                sumTime -= time[i]
+
+        except:
+            break
+
+        i += 1
+
     return sumTime
 
 def calMon(id, date):
