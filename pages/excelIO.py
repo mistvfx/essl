@@ -73,11 +73,11 @@ def excelManip(filePath):
 
         if str(id) != 'nan':
             try:
-                cur.execute("INSERT INTO essl.%d (IO, MTIME, MDATE, DOOR) VALUES('%s', '%s', '%s', '%s')" %(id, io, time, date, door))
+                cur.execute("INSERT INTO essl.%d (IO, MTIME, MDATE, DOOR, AccType) VALUES('%s', '%s', '%s', '%s', '%s')" %(id, io, time, date, door, event))
             except:
-                cur.execute("INSERT INTO essl.user_master(ID, Name, Department, Password, AccDoors) VALUES('%d','%s','%s','%d', '%s');" %(id, artist, dept, id, dept))
-                cur.execute("CREATE TABLE essl.%d (SNum int(11) NOT NULL AUTO_INCREMENT, IO char(4) NOT NULL, MTIME time NOT NULL, MDATE date NOT NULL, DOOR varchar(45) NOT NULL, PRIMARY KEY (`SNum`))" %(id))
-                cur.execute("INSERT INTO essl.%d (IO, MTIME, MDATE, DOOR) VALUES('%s', '%s', '%s', '%s')" %(id, io, time, date, door))
+                cur.execute("INSERT INTO essl.user_master(ID, Name, Department, Password, Level) VALUES('%d','%s','%s','%d','5');" %(id, artist, dept, id))
+                cur.execute("CREATE TABLE essl.%d (SNum int(11) NOT NULL AUTO_INCREMENT, IO char(4) NOT NULL, MTIME time NOT NULL, MDATE date NOT NULL, DOOR varchar(45) NOT NULL, AccType varchar(50) NOT NULL, PRIMARY KEY (`SNum`))" %(id))
+                cur.execute("INSERT INTO essl.%d (IO, MTIME, MDATE, DOOR, AccType) VALUES('%s', '%s', '%s', '%s', '%s')" %(id, io, time, date, door, event))
 
     cur.close()
     db.close()

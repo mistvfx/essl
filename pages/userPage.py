@@ -41,9 +41,24 @@ Builder.load_string("""
     color: (0, 0, 0, 1)
     font_name: 'fonts/moon-bold.otf'
     font_size: 25
+
+<InfoLabel>:
+    color: (0, 0, 0, 1)
+    canvas.before:
+        Color:
+            rgba: (1, 1, 1, 1)
+        Rectangle:
+            pos: self.pos
+            size: self.size
 """)
 
 class userLabel(Label):
+    pass
+
+class OtherLayout(BoxLayout):
+    pass
+
+class InfoLabel(Label):
     pass
 
 class UserPage(Screen):
@@ -71,10 +86,41 @@ class UserPage(Screen):
         calendarWidget.size_hint=(0.75, 0.75); calendarWidget.pos_hint={'center_y':0.5, 'center_x':0.5}
         userPageLayout.add_widget(calendarWidget)
 
-        otherInfoLayout = BoxLayout(orientation='horizontal', size_hint=(0.1, 0.1), pos_hint={'center_y':0.1, 'center_x':0.5})
+        otherInfoLayout = OtherLayout(orientation='horizontal', size_hint=(0.75, 0.05), pos_hint={'center_y':0.08, 'center_x':0.5}, spacing=10, padding=(10, 0, 0, 10))
         userPageLayout.add_widget(otherInfoLayout)
 
-        info1 = Label(text= 'LEAVES :', color=(0, 0, 0, 1))
-        info2 = Label(text= '0', color=(1, 0, 0, 1))
-        otherInfoLayout.add_widget(info1)
-        otherInfoLayout.add_widget(info2)
+        redLayout = BoxLayout(orientation = 'horizontal', size_hint_x=0.15)
+        red = Button(text="", background_color=(255, 0, 0, 0.7), size_hint_x=0.2)
+        redInfo = InfoLabel(text="Non Completed")
+        redLayout.add_widget(red)
+        redLayout.add_widget(redInfo)
+
+        greenLayout = BoxLayout(orientation = 'horizontal', size_hint_x=0.15)
+        green = Button(text="", background_color=(0, 255, 0, 0.7), size_hint_x=0.2)
+        greenInfo = InfoLabel(text="Completed")
+        greenLayout.add_widget(green)
+        greenLayout.add_widget(greenInfo)
+
+        yellowLayout = BoxLayout(orientation = 'horizontal', size_hint_x=0.15)
+        yellow = Button(text="", background_color=(255, 255, 0, 0.7), size_hint_x=0.2)
+        yellowInfo = InfoLabel(text="Absent")
+        yellowLayout.add_widget(yellow)
+        yellowLayout.add_widget(yellowInfo)
+
+        blueLayout = BoxLayout(orientation = 'horizontal', size_hint_x=0.15)
+        blue = Button(text="", background_color=(0, 0, 255, 0.7), size_hint_x=0.2)
+        blueInfo = InfoLabel(text="Holiday")
+        blueLayout.add_widget(blue)
+        blueLayout.add_widget(blueInfo)
+
+        greyLayout = BoxLayout(orientation = 'horizontal', size_hint_x=0.15)
+        grey = Button(text="", background_color=(0.5, 0.5, 0.5, 1), size_hint_x=0.2)
+        greyInfo = InfoLabel(text="Sat/Sun")
+        greyLayout.add_widget(grey)
+        greyLayout.add_widget(greyInfo)
+
+        otherInfoLayout.add_widget(redLayout)
+        otherInfoLayout.add_widget(greenLayout)
+        otherInfoLayout.add_widget(yellowLayout)
+        otherInfoLayout.add_widget(blueLayout)
+        otherInfoLayout.add_widget(greyLayout)

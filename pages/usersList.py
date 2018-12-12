@@ -154,7 +154,7 @@ class dayBtn(Button, MouseOver):
         getInfo.date.append(formatDate(date[len(date)-1]))
 
         try:
-            getInfo.openPopup()
+            getInfo.openPopup('admin')
         except Exception as e:
             print(e)
             def callback(instance):

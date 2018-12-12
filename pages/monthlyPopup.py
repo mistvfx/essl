@@ -50,6 +50,7 @@ def calTotWorkingDays(totDays, curMonth, givMonth, curDate, givYear):
             if day == curDate and givMonth == curMonth:
                 calTotWorkingDays.officeDefault = days-hDays
                 return days-hDays-calTotWorkingDays.artistLeaves
+            print(day)
             days += 1
 
     #print(days-hDays)
@@ -93,6 +94,9 @@ def formatTime(time):
     minutes = int((seconds % 3600) / 60)
     seconds = int(seconds % 60)
 
+    if hours < 0:
+        return ('0:0')
+
     return ('{}:{}'.format(hours, minutes))
 
 class PopLabel(Label, ):
@@ -119,16 +123,12 @@ class MonPop(GridLayout):
         else:
             reqTotTime = formatTime(datetime.timedelta())
 
-        #twt = ("%.2f"%(round(totWorkingTime.total_seconds()/3600, 2)))
         twt = formatTime(totWorkingTime)
 
-        #tawt = ("%.2f"%(round(workTime.tarWorkingTime.total_seconds()/3600, 2)))
         tawt = formatTime(workTime.tarWorkingTime)
 
-        #awt = ("%.2f"%(round(actWorkingTime.total_seconds()/3600, 2)))
         awt = formatTime(actWorkingTime)
 
-        #rwt = ("%.2f"%(round(reqWorkTime.total_seconds()/3600, 2)))
         rwt = formatTime(reqWorkTime)
 
         """'Total Target Actual Working Hours : \n ( %d * 8:30 )'%(workTime.totWorkingdays), '-', '-', tawt,"""

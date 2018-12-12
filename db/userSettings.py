@@ -6,6 +6,7 @@ from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.tabbedpanel import TabbedPanel
 from kivy.uix.spinner import Spinner
 from kivy.uix.button import Button
+from kivy.uix.label import Label
 from kivy.graphics import *
 from kivy.properties import *
 import re
@@ -16,6 +17,12 @@ Date = ""
 id = 0
 
 Builder.load_string("""
+<userSettingPop>:
+    size_hint: (0.75, 0.65)
+
+    SettingsTabs:
+        do_default_tab: False
+
 <TimingFix>:
     orientation: 'vertical'
     spacing: 5
@@ -69,6 +76,27 @@ Builder.load_string("""
             text: 'Submit Permission Time'
             on_release: root.addPermTime(hours.text)
 
+<Level>:
+    orientation: 'vertical'
+    Label:
+        id: curLvl
+        text: 'CURRENT LEVEL : 0'
+    BoxLayout:
+        orientation: 'horizontal'
+        Spinner:
+            id: lvl
+            text: 'LEVEL'
+            values: ('1', '2', '3', '4', '5')
+            font_name: 'fonts/moon-bold.otf'
+            size_hint: (0.5, 0.25)
+            pos_hint: {'center_x': .5, 'center_y': .5}
+        Button:
+            id: subLvl
+            text: 'Assign Level'
+            size_hint_x: 0.5
+            on_release: root.submitLvl(lvl.text)
+
+
 <SettingsTabs>:
     TabbedPanelItem:
         text: 'TIMING FIX'
@@ -80,12 +108,22 @@ Builder.load_string("""
         font_name: 'fonts/moon-bold.otf'
         Permission:
 
-<userSettingPop>:
-    size_hint: (0.75, 0.65)
-
-    SettingsTabs:
-        do_default_tab: False
+    TabbedPanelItem:
+        text: 'LEVEL'
+        font_name: 'fonts/moon-bold.otf'
+        Level:
 """)
+
+class userSettingPop(Popup):
+    def __init__(self, artistID, date):
+        super(userSettingPop, self).__init__()
+        global Date, id
+        self.date = formatDate(date)
+        Date = formatDate(date)
+        self.id = artistID.split(":")[0]
+        id = artistID.split(":")[0]
+        self.title = (artistID.split(":")[1] + " || " + date)
+        self.font_name = 'fonts/moon-bold.otf'
 
 class SettingsTabs(TabbedPanel):
     pass
@@ -156,8 +194,14 @@ class Permission(AnchorLayout):
         elif text == '':
             self.ids.hours.background_color = (1, 1, 1, 1)
 
-class Doors(BoxLayout):
-    pass
+class Level(BoxLayout):
+    def submitLvl(self, lvl):
+        global id
+        db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
+        cur = db.cursor()
+        cur.execute("UPDATE essl.user_master SET Level = '%d' WHERE ID = '%d'"%(int(lvl), int(id)))
+        cur.close()
+        db.close()
 
 def getTimings(artistID):
     print(artistID)
@@ -165,14 +209,3 @@ def getTimings(artistID):
 def formatDate(date):
     Dt = date.split(".")
     return str("-".join(list(reversed(Dt))))
-
-class userSettingPop(Popup):
-    def __init__(self, artistID, date):
-        super().__init__()
-        global Date, id
-        self.date = formatDate(date)
-        Date = formatDate(date)
-        self.id = artistID.split(":")[0]
-        id = artistID.split(":")[0]
-        self.title = (artistID.split(":")[1] + " || " + date)
-        self.font_name = 'fonts/moon-bold.otf'

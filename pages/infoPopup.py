@@ -121,3 +121,63 @@ class infoTab(BoxLayout):
             if i % 2 == 1:
                 infoLabels.size_hint_x= 0.30
             info.add_widget(infoLabels)
+
+class infoTabAdmin(BoxLayout):
+    def __init__(self, **args):
+        super(infoTabAdmin, self).__init__(**args)
+        self.popUI()
+
+    def popUI(self):
+        overallLayout = BoxLayout(orientation='vertical')
+        self.add_widget(overallLayout)
+
+        """ Defining Header and closeBtn """
+
+        headerLayout = hdrLayout()
+        overallLayout.add_widget(headerLayout)
+
+        header = GridLayout(cols=4, size_hint=(0.55, 1))
+        headerLayout.add_widget(header)
+        headers = ['I/O', 'TIME', 'DOOR', 'Access Type']
+        for i in range(4):
+            headerLabel = Label(text=headers[i], bold=True)
+            header.add_widget(headerLabel)
+
+        global closeBtn
+        headerLayout.add_widget(closeBtn)
+
+        """ Table and info """
+
+        tableLayout = tblLayout()
+        overallLayout.add_widget(tableLayout)
+
+        tab = table.dataTableAdmin()
+        tab.size_hint=(0.55, 1)
+        tableLayout.add_widget(tab)
+
+        """ Defining Info """
+
+        info = GridLayout(cols=2, size_hint=(0.45, 1))
+        tableLayout.add_widget(info)
+
+        global TWH, AWH, NCH, ACH
+
+        #tw = ("%.2f"%(round(TWH[len(TWH)-1].total_seconds()/3600, 2)))
+        tw = formatTime(TWH[len(TWH)-1])
+
+        #aw = ("%.2f"%(round(AWH[len(AWH)-1].total_seconds()/3600, 2)))
+        aw = formatTime(AWH[len(AWH)-1])
+
+        #nc = ("%.2f"%(round(NCH[len(NCH)-1].total_seconds()/3600, 2)))
+        nc = formatTime(NCH[len(NCH)-1])
+
+        #ac = ("%.2f"%(round(ACH[len(ACH)-1].total_seconds()/3600, 2)))
+        ac = formatTime(ACH[len(ACH)-1])
+
+        infoQ = ['Total Hours :', tw, 'Working Hours :', aw, 'Non-Completed Actual Hours:', nc, 'Additional Hours:', ac]
+
+        for i in range(len(infoQ)):
+            infoLabels = infoLbl(text=infoQ[i])
+            if i % 2 == 1:
+                infoLabels.size_hint_x= 0.30
+            info.add_widget(infoLabels)

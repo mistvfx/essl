@@ -17,6 +17,7 @@ from pages import monthlyPopup, Dialog
 
 aboveSWH = []
 belowSWH = []
+reg = []
 holidays = []
 leaves = []
 artistHolidays = 0
@@ -58,6 +59,25 @@ Builder.load_string("""
         Rectangle:
             pos: [self.pos[0] - self.pos[0], self.pos[1] - self.pos[1]]
             size: self.size
+
+<CalNormalButton>:
+    FloatLayout:
+        pos: self.parent.pos
+        size: self.parent.size
+        Label:
+            id: calLbl
+            bold: True
+            font_size: 20
+            size_hint: (0.10, 0.30)
+            pos_hint: {'y':0, 'right':1}
+            text: ''
+            color: (0, 0, 0, 1)
+            canvas.before:
+                Color:
+                    rgba: (1, 1, 1, 0)
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
 """)
 
 class arrowBtn(Button):
@@ -70,6 +90,9 @@ class WrkDayLabel(Label):
     pass
 
 class WeekEndLabel(Label):
+    pass
+
+class CalNormalButton(Button):
     pass
 
 class CalendarWidgetM(RelativeLayout):
@@ -103,12 +126,6 @@ class CalendarWidgetM(RelativeLayout):
         self.title_label = monthBtn(text=self.title, pos_hint={"top": 1, "center_x": .5}, size_hint=(None, 0.15), halign=("center"))
         self.title_label.bind(on_press=callback)
         self.add_widget(self.title_label)
-
-        #Leaves
-        leaveLbl = Label(text='LEAVES :', pos_hint={"bottom": 1, "right": 1}, color=(0, 0, 0, 1))
-        self.leavesLbl = Label(text='0')
-        self.add_widget(leaveLbl)
-        self.add_widget(self.leavesLbl)
 
         # ScreenManager
         self.sm = ScreenManager(pos_hint={"top": .9}, size_hint=(1, .9))
@@ -144,30 +161,35 @@ class CalendarWidgetM(RelativeLayout):
         for week in month:
             for day in week:
                 if day[1] >= 6:  # weekends
-                    self.tbtn = Button(text=str(day[0]), background_color=(0.5, 0.5, 0.5, 1), color=(1, 1, 1, 1))
+                    self.tbtn = CalNormalButton(text=str(day[0]), background_color=(0.5, 0.5, 0.5, 1), color=(1, 1, 1, 1))
                 else:
-                    self.tbtn = Button(text=str(day[0]), background_color=(255, 255, 255, 1), color=(0, 0, 0, 1))
+                    self.tbtn = CalNormalButton(text=str(day[0]), background_color=(255, 255, 255, 1), color=(0, 0, 0, 1))
                     #if day[0] < self.active_date[0] and self.active_date[1] <= datetime.now().month:
                     #    self.tbtn.background_color=(255, 255, 0, 1)
-                    for i in range(len(leaves)):
-                        if self.active_date[2] == leaves[i][2]:
-                            if self.active_date[1] == leaves[i][1]:
-                                if day[0] == (leaves[i][0]):
-                                    self.tbtn.background_color=(255, 255, 0, 1)
                     for i in range(len(aboveSWH)):
                         if self.active_date[2] == aboveSWH[i][2]:
                             if self.active_date[1] == aboveSWH[i][1]:
                                 if self.tbtn.text == str(aboveSWH[i][0]):
-                                    self.tbtn.background_color=(0, 255, 0, 1)
+                                    self.tbtn.background_color=(0, 255, 0, 0.7)
                     for i in range(len(belowSWH)):
                         if self.active_date[2] == belowSWH[i][2]:
                             if self.active_date[1] == belowSWH[i][1]:
                                 if self.tbtn.text == str(belowSWH[i][0]):
-                                    self.tbtn.background_color=(255, 0, 0, 1)
+                                    self.tbtn.background_color=(255, 0, 0, 0.7)
+                    for i in range(len(reg)):
+                        if self.active_date[2] == reg[i][2]:
+                            if self.active_date[1] == reg[i][1]:
+                                if self.tbtn.text == str(reg[i][0]):
+                                    self.tbtn.ids.calLbl.text = 'R'
+                    for i in range(len(leaves)):
+                        if self.active_date[2] == leaves[i][2]:
+                            if self.active_date[1] == leaves[i][1]:
+                                if day[0] == (leaves[i][0]):
+                                    self.tbtn.background_color=(255, 255, 0, 0.7)
                     for i in range(len(holidays)):
                         if self.active_date[1] == holidays[i][1]:
                             if day[0] == holidays[i][0]:
-                                self.tbtn.background_color=(0, 0, 255, 1)
+                                self.tbtn.background_color=(0, 0, 255, 0.7)
 
                 self.tbtn.bind(on_press=self.get_btn_value)
 
@@ -221,7 +243,7 @@ class CalendarWidgetM(RelativeLayout):
             self.parent_popup.dismiss()
 
         try:
-            getInfo.openPopup()
+            getInfo.openPopup('user')
         except Exception as e:
             print(e)
             def callback(instance):

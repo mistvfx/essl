@@ -74,7 +74,6 @@ def calArtistLeave(year, month, d):
             if day == week[6] or day in actualWorkingDays or day == 0:
                 continue
             else :
-                print('leave', day)
                 leave += 1
                 Calendar.leaves.append([day, month, year])
             if day == d:

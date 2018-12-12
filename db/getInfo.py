@@ -17,14 +17,18 @@ def formatDate(date):
         super(loginWindow, self).__init__(**args)
         self.login()"""
 
-def calActualWorkingHours(io, time, door):
+def calActualWorkingHours(io, time, door, lvl):
     sumTime = datetime.timedelta()
-    accDoor = ['MM', 'ROTO', 'PAINT', 'CONFERENCE ROOM', 'TRAINING-1', 'IT', 'HR']
+    level = { '1': ['MM', 'ROTO', 'PAINT', 'CONFERENCE ROOM', 'TRAINING-1', 'IT', 'HR', 'SERVER ROOM', 'STORE'],
+            '2': ['MM', 'ROTO', 'PAINT', 'CONFERENCE ROOM', 'TRAINING-1', 'HR'],
+            '3': ['MM', 'ROTO', 'PAINT', 'CONFERENCE ROOM', 'TRAINING-1'],
+            '4': ['MM', 'ROTO', 'CONFERENCE ROOM'],
+            '5': ['ROTO', 'CONFERENCE ROOM']}
     i = 0
 
     while i < len(io):
         try:
-            if door[i] in accDoor and io[i] == 'In' and door[i+1] == door[i] and io[i+1] == 'Out':
+            if door[i] in level[lvl] and io[i] == 'In' and door[i+1] == door[i] and io[i+1] == 'Out':
                 sumTime += (time[i+1] - time[i])
                 i += 2
                 continue
@@ -37,6 +41,7 @@ def calActualWorkingHours(io, time, door):
 
         i += 1
 
+    print(sumTime)
     return sumTime
 
 def calTotalWorkingHours(ios, timings, doors):
@@ -58,7 +63,7 @@ def getUserInfo():
     #print(formattedDate)
     db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
     cur = db.cursor()
-    cur.execute("SELECT IO, MTIME, MDATE, DOOR FROM essl.`%d` WHERE MDATE = '%s' ORDER BY MTIME ASC" %(id[int(len(id)-1)], formattedDate))
+    cur.execute("SELECT IO, MTIME, MDATE, DOOR, AccType FROM essl.`%d` WHERE MDATE = '%s' ORDER BY MTIME ASC" %(id[int(len(id)-1)], formattedDate))
 
     ios = []
     timings = []
@@ -68,13 +73,22 @@ def getUserInfo():
         table.io.append(data[0])
         table.time.append(data[1])
         table.door.append(data[3])
+        table.accType.append(data[4])
         ios.append(data[0])
         timings.append(data[1])
         doors.append(data[3])
 
+    cur1 = db.cursor()
+    cur1.execute("SELECT Level FROM essl.user_master WHERE ID = '%d'"%(id[int(len(id)-1)]))
+
+    for data in cur1.fetchall():
+        lvl = data[0]
+
+    table.lvl = lvl
+
     totalWorkingHours = calTotalWorkingHours(ios, timings, doors)
 
-    sumTime = calActualWorkingHours(ios, timings, doors)
+    sumTime = calActualWorkingHours(ios, timings, doors, lvl)
 
     NonWrkHours = StdWrkHrs - sumTime
     AdditionalHours = sumTime - StdWrkHrs
@@ -91,13 +105,16 @@ def getUserInfo():
     cur.close()
     db.close()
 
-def openPopup():
-    popUpCLoseBtn = Button(text='close', size_hint=(0.35, 1))
+def openPopup(ua):
+    popUpCLoseBtn = Button(text='close', size_hint=(0.45, 1))
     infoPopup.closeBtn = popUpCLoseBtn
 
     getUserInfo()
 
-    tab = infoPopup.infoTab()
+    if ua == 'user':
+        tab = infoPopup.infoTab()
+    elif ua == 'admin':
+        tab = infoPopup.infoTabAdmin()
     popup = Popup(title="INFORMATION", content=tab, size_hint=(0.85, 0.85))
     popup.open()
     popUpCLoseBtn.bind(on_press=popup.dismiss)
