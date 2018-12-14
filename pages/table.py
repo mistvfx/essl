@@ -1,18 +1,25 @@
 from kivy.uix.gridlayout import GridLayout
+from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.uix.scrollview import ScrollView
 from kivy.core.window import Window
 from kivy.uix.label import Label
 from kivy.graphics import Color, Rectangle
+from kivy.uix.popup import Popup
+from kivy.uix.splitter import Splitter
 #from kivy.app import runTouchApp
 from kivy.app import App
 from kivy.lang import Builder
+
+from db import userSettings
 
 io = ['I/O']*1
 time = ['TIME']*1
 door = ['DOOR']*1
 accType = ['ACCESS TYPE']*1
 lvl = 0
+id = 0
+date = 0
 
 Builder.load_string("""
 <dataLbl>:
@@ -28,11 +35,13 @@ Builder.load_string("""
 <dataLblM>:
     FloatLayout:
         pos: self.parent.pos
-        size: self.parent.pos
+        size: self.parent.size
         Button:
             text: '+/-'
-            size_hint_x: 0.20
+            bold: True
+            size_hint: (0.20, 0.6)
             pos_hint: {'y':0, 'right':1}
+            on_release: root.openRegPop()
             canvas.before:
                 Color:
                     rgba: (0, 0, 0, 0)
@@ -63,7 +72,21 @@ class dataLbl(Label):
         self.rect.size = self.size
 
 class dataLblM(dataLbl):
-    pass
+    def getInfo(self, data):
+        self.data = data
+
+    def openRegPop(self):
+        global id, date
+        TF = userSettings.TimingFix(id[len(id)-1], date)
+        RT = userSettings.RemTime(id[len(id)-1], date, self.data[0], self.data[1], self.data[2], self.data[3])
+        setLayout = BoxLayout(orientation = 'horizontal')
+        REG = Splitter(sizable_from = 'right', rescale_with_parent = True, keep_within_parent = True)
+        REG.add_widget(TF)
+        setLayout.add_widget(REG)
+        setLayout.add_widget(RT)
+        #REG.add_widget(setLayout)
+        popup = Popup(title="TIMING FIX", content=setLayout, size_hint=(0.65, 0.65))
+        popup.open()
 
 class dataTable(ScrollView):
     def __init__(self, **args):
@@ -79,7 +102,9 @@ class dataTable(ScrollView):
                 '2': ['MM', 'ROTO', 'PAINT', 'CONFERENCE ROOM', 'TRAINING-1', 'HR'],
                 '3': ['MM', 'ROTO', 'PAINT', 'CONFERENCE ROOM', 'TRAINING-1'],
                 '4': ['MM', 'ROTO', 'CONFERENCE ROOM'],
-                '5': ['ROTO', 'CONFERENCE ROOM']}
+                '5': ['ROTO', 'CONFERENCE ROOM'],
+                '6': ['MM', 'CONFERENCE ROOM', 'TRAINING-1'],
+                '7': ['ROTO', 'CONFERENCE ROOM', 'TRAINING-1']}
 
         layout = GridLayout(cols=3, spacing=5, size_hint_y=None)
         layout.bind(minimum_height=layout.setter('height'))
@@ -146,7 +171,9 @@ class dataTableAdmin(ScrollView):
                 '2': ['MM', 'ROTO', 'PAINT', 'CONFERENCE ROOM', 'TRAINING-1', 'HR'],
                 '3': ['MM', 'ROTO', 'PAINT', 'CONFERENCE ROOM', 'TRAINING-1'],
                 '4': ['MM', 'ROTO', 'CONFERENCE ROOM'],
-                '5': ['ROTO', 'CONFERENCE ROOM']}
+                '5': ['ROTO', 'CONFERENCE ROOM'],
+                '6': ['MM', 'CONFERENCE ROOM', 'TRAINING-1'],
+                '7': ['ROTO', 'CONFERENCE ROOM', 'TRAINING-1']}
         #print(io)
         layout = GridLayout(cols=4, spacing=5, size_hint_y=None)
         # Make sure the height is such that there is something to scroll.
@@ -190,13 +217,15 @@ class dataTableAdmin(ScrollView):
                         pass
                     layout.add_widget(lbl)
                     while l < len(accType):
-                        lbl = dataLblM(text=str(accType[l]), size_hint_y=None, height=40)
+                        lbl = dataLbl(text=str(accType[l]), size_hint_y=None, height=40)
                         try:
                             if door[i] in level[lvl] and io[i] == 'In' and door[i+1] == door[i] and io[i+1] == 'Out':
                                 lbl.set_bgGreen()
                             elif door[i-1] in level[lvl] and io[i-1] == 'In' and door[i-1] == door[i] and io[i] == 'Out':
                                 lbl.set_bgGreen()
                             elif door[i] in level[lvl]:
+                                lbl = dataLblM(text=str(accType[l]), size_hint_y=None, height=40)
+                                lbl.getInfo([io[i], time[i], door[i], accType[i]])
                                 lbl.set_bgRed()
                         except:
                             pass

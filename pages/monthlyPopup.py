@@ -43,14 +43,14 @@ def calTotWorkingDays(totDays, curMonth, givMonth, curDate, givYear):
     for week in month:
         for day in week:
             for i in range(len(holidays)):
-                if day == holidays[i][0] and givMonth == holidays[i][1]:
+                if day == holidays[i][0] and givMonth == holidays[i][1] and givYear == holidays[i][2]:
                     hDays += 1
             if day == 0 or day == week[6]:
                 continue
             if day == curDate and givMonth == curMonth:
+                #print(days, hDays, calTotWorkingDays.artistLeaves)
                 calTotWorkingDays.officeDefault = days-hDays
                 return days-hDays-calTotWorkingDays.artistLeaves
-            print(day)
             days += 1
 
     #print(days-hDays)

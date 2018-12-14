@@ -14,10 +14,6 @@ Builder.load_string("""
     size_hint_y: 0.25
     font_name: 'fonts/moon-bold.otf'
     background_color: (0, 0, 0, 1)
-    Image:
-        source: 'icons/cal.png'
-        y: self.parent.y
-        x: self.parent.x
 
 <DBBtn>:
     text: 'Database Editing'

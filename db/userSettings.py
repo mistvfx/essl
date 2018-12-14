@@ -3,6 +3,7 @@ from kivy.uix.popup import Popup
 from kivy.lang import Builder
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.anchorlayout import AnchorLayout
+from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.tabbedpanel import TabbedPanel
 from kivy.uix.spinner import Spinner
 from kivy.uix.button import Button
@@ -48,7 +49,7 @@ Builder.load_string("""
         hint_text: 'HH:MM:SS'
         background_color: (1, 1, 1, 1)
         font_size: self.size[1]/2.5
-        padding: [self.size[1]*2.5, self.size[1]/5.0, 0, 0]
+        padding: [self.size[1], self.size[1]/5.0, 0, 0]
         font_name: 'fonts/moon-bold.otf'
         multiline: False
         size_hint: (0.65, 0.25)
@@ -61,6 +62,15 @@ Builder.load_string("""
         size_hint: (0.65, 0.25)
         pos_hint: {'center_x': .5, 'center_y': .5}
         on_release: root.Time(time.text)
+
+<RemTime>:
+    pos: self.pos
+    size: self.size
+    Button:
+        text: 'Remove Time'
+        size_hint: (0.75, 0.25)
+        pos_hint: {'center_x':0.5, 'center_y':0.5}
+        on_press: root.remTime()
 
 <Permission>:
     size_hint: (0.5, 0.10)
@@ -86,7 +96,7 @@ Builder.load_string("""
         Spinner:
             id: lvl
             text: 'LEVEL'
-            values: ('1', '2', '3', '4', '5')
+            values: ('1', '2', '3', '4', '5', '6', '7')
             font_name: 'fonts/moon-bold.otf'
             size_hint: (0.5, 0.25)
             pos_hint: {'center_x': .5, 'center_y': .5}
@@ -99,11 +109,6 @@ Builder.load_string("""
 
 <SettingsTabs>:
     TabbedPanelItem:
-        text: 'TIMING FIX'
-        font_name: 'fonts/moon-bold.otf'
-        TimingFix:
-
-    TabbedPanelItem:
         text: 'PERMISSION'
         font_name: 'fonts/moon-bold.otf'
         Permission:
@@ -113,6 +118,9 @@ Builder.load_string("""
         font_name: 'fonts/moon-bold.otf'
         Level:
 """)
+def formatDate(date):
+    Dt = date.split(".")
+    return str("-".join(list(reversed(Dt))))
 
 class userSettingPop(Popup):
     def __init__(self, artistID, date):
@@ -128,15 +136,14 @@ class userSettingPop(Popup):
 class SettingsTabs(TabbedPanel):
     pass
 
-class TimingFix(BoxLayout):
-    def Dept(self, dept):
-        self.door = dept
+class RemTime(FloatLayout):
+    def __init__(self, ID, Date, IO, Time, Door, AccType):
+        super(RemTime, self).__init__()
+        self.id = str(ID)
+        self.date = Date
+        self.data = [IO, Time, Door, AccType]
 
-    def IO(self, io):
-        self.io = io
-
-    def Time(self, time):
-        global Date, id
+    def remTime(self):
         db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
         cur = db.cursor()
         def callback(instance):
@@ -146,17 +153,50 @@ class TimingFix(BoxLayout):
         closePopBtn = Button(text="OK", size_hint=(1, 0.25))
         closePopBtn.bind(on_release=callback)
         try:
-            cur.execute("INSERT INTO essl.%d (IO, MTIME, MDATE, DOOR) VALUES('%s', '%s', '%s', '%s')" %(int(id), self.io, time, Date, self.door))
+            cur.execute("DELETE FROM essl.%d WHERE IO = '%s' AND MTIME = '%s' AND MDATE = '%s' AND DOOR = '%s' AND AccType = '%s'"%(int(self.id), self.data[0], self.data[1], self.date, self.data[2], self.data[3]))
+            pop = Dialog.dialog("Deleted", "Data Delete Successfull !! \n Details: TIME: {} | DATE: {} | DOOR:{}".format(self.data[1], self.date, self.data[2]), closePopBtn)
+            pop.open()
+        except Exception as e:
+            print(e)
+            pop = Dialog.dialog("Error !!!", "Some Error Occured Please restart and try again !!", closePopBtn)
+            pop.open()
+        cur.close()
+        db.close()
+
+class TimingFix(BoxLayout):
+    def __init__(self, ID, Date):
+        super(TimingFix, self).__init__()
+        self.id = str(ID)
+        self.date = Date
+
+    def Dept(self, dept):
+        self.door = dept
+
+    def IO(self, io):
+        self.io = io
+
+    def Time(self, time):
+        db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
+        cur = db.cursor()
+        def callback(instance):
+            if instance.text == 'OK':
+                pop.dismiss()
+                return 0
+        closePopBtn = Button(text="OK", size_hint=(1, 0.25))
+        closePopBtn.bind(on_release=callback)
+        try:
+            cur.execute("INSERT INTO essl.%d (IO, MTIME, MDATE, DOOR, AccType) VALUES('%s', '%s', '%s', '%s', 'REGULARIZATION')" %(int(self.id), self.io, time, self.date, self.door))
             pop = Dialog.dialog("Success", "Data added successfully !!", closePopBtn)
             pop.open()
-        except:
+        except Exception as e:
+            print(e)
             pop = Dialog.dialog("Error !!!", "Please Provide valid information !!", closePopBtn)
             pop.open()
         cur.close()
         db.close()
 
     def checkText(self, text):
-        time = re.compile(r'[0-2][0-9]:[0-6][0-9]:[0-6][0-9]')
+        time = re.compile(r'[0-2][0-9]:[0-5][0-9]:[0-5][0-9]')
         if time.match(text):
             self.ids.time.background_color = (0, 1, 0, 1)
         elif text != '':
@@ -205,7 +245,3 @@ class Level(BoxLayout):
 
 def getTimings(artistID):
     print(artistID)
-
-def formatDate(date):
-    Dt = date.split(".")
-    return str("-".join(list(reversed(Dt))))

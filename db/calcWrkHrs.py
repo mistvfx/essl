@@ -14,7 +14,9 @@ def calActualWorkingHours(io, time, door, lvl):
             '2': ['MM', 'ROTO', 'PAINT', 'CONFERENCE ROOM', 'TRAINING-1', 'HR'],
             '3': ['MM', 'ROTO', 'PAINT', 'CONFERENCE ROOM', 'TRAINING-1'],
             '4': ['MM', 'ROTO', 'CONFERENCE ROOM'],
-            '5': ['ROTO', 'CONFERENCE ROOM']}
+            '5': ['ROTO', 'CONFERENCE ROOM'],
+            '6': ['MM', 'CONFERENCE ROOM', 'TRAINING-1'],
+            '7': ['ROTO', 'CONFERENCE ROOM', 'TRAINING-1']}
     i = 0
 
     while i < len(io):
@@ -98,7 +100,9 @@ def getUserTime():
                 '2': ['MM', 'ROTO', 'PAINT', 'CONFERENCE ROOM', 'TRAINING-1', 'HR'],
                 '3': ['MM', 'ROTO', 'PAINT', 'CONFERENCE ROOM', 'TRAINING-1'],
                 '4': ['MM', 'ROTO', 'CONFERENCE ROOM'],
-                '5': ['ROTO', 'CONFERENCE ROOM']}
+                '5': ['ROTO', 'CONFERENCE ROOM'],
+                '6': ['MM', 'CONFERENCE ROOM', 'TRAINING-1'],
+                '7': ['ROTO', 'CONFERENCE ROOM', 'TRAINING-1']}
 
         i = 0
         while i < len(ios):

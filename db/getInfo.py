@@ -23,7 +23,9 @@ def calActualWorkingHours(io, time, door, lvl):
             '2': ['MM', 'ROTO', 'PAINT', 'CONFERENCE ROOM', 'TRAINING-1', 'HR'],
             '3': ['MM', 'ROTO', 'PAINT', 'CONFERENCE ROOM', 'TRAINING-1'],
             '4': ['MM', 'ROTO', 'CONFERENCE ROOM'],
-            '5': ['ROTO', 'CONFERENCE ROOM']}
+            '5': ['ROTO', 'CONFERENCE ROOM'],
+            '6': ['MM', 'CONFERENCE ROOM', 'TRAINING-1'],
+            '7': ['ROTO', 'CONFERENCE ROOM', 'TRAINING-1']}
     i = 0
 
     while i < len(io):
@@ -85,6 +87,8 @@ def getUserInfo():
         lvl = data[0]
 
     table.lvl = lvl
+    table.id = id
+    table.date = formatDate(date[len(date)-1])
 
     totalWorkingHours = calTotalWorkingHours(ios, timings, doors)
 
@@ -108,6 +112,7 @@ def getUserInfo():
 def openPopup(ua):
     popUpCLoseBtn = Button(text='close', size_hint=(0.45, 1))
     infoPopup.closeBtn = popUpCLoseBtn
+    global id, date
 
     getUserInfo()
 
@@ -115,6 +120,11 @@ def openPopup(ua):
         tab = infoPopup.infoTab()
     elif ua == 'admin':
         tab = infoPopup.infoTabAdmin()
-    popup = Popup(title="INFORMATION", content=tab, size_hint=(0.85, 0.85))
+
+    db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
+    cur = db.cursor()
+    cur.execute("SELECT Name FROM essl.user_master WHERE ID = '%d'"%(id[len(id)-1]))
+    name = cur.fetchone()
+    popup = Popup(title="{}||{}".format(name[0], formatDate(date[len(date)-1])), content=tab, size_hint=(0.85, 0.85))
     popup.open()
     popUpCLoseBtn.bind(on_press=popup.dismiss)

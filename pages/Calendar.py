@@ -187,9 +187,10 @@ class CalendarWidgetM(RelativeLayout):
                                 if day[0] == (leaves[i][0]):
                                     self.tbtn.background_color=(255, 255, 0, 0.7)
                     for i in range(len(holidays)):
-                        if self.active_date[1] == holidays[i][1]:
-                            if day[0] == holidays[i][0]:
-                                self.tbtn.background_color=(0, 0, 255, 0.7)
+                        if self.active_date[2] == holidays[i][2]:
+                            if self.active_date[1] == holidays[i][1]:
+                                if day[0] == holidays[i][0]:
+                                    self.tbtn.background_color=(0, 0, 255, 0.7)
 
                 self.tbtn.bind(on_press=self.get_btn_value)
 

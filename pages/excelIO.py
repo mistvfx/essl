@@ -101,12 +101,13 @@ def excelExport(date):
     absent = datetime.timedelta()
     db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
     cur = db.cursor()
-    cur.execute("SELECT ID, Name, Department FROM essl.user_master WHERE ID != '1000'")
+    cur.execute("SELECT ID, Name, Department, Level FROM essl.user_master WHERE ID != '1000'")
     cur1 = db.cursor()
 
     Artist_Code = []
     Artist_Name = []
     Department = []
+    Level = []
 
     ios = []
     timings = []
@@ -133,6 +134,7 @@ def excelExport(date):
         Artist_Code.append(id[0])
         Artist_Name.append(id[1])
         Department.append(id[2])
+        Level.append(id[3])
         try:
             In_Time.append((datetime.datetime.min + min(timings)).time())
         except:
@@ -142,7 +144,7 @@ def excelExport(date):
         except:
             Out_Time.append('ABSENT')
         try:
-            actWrkHrs = calActualWorkingHours(ios, timings, doors)
+            actWrkHrs = calActualWorkingHours(ios, timings, doors, Level[len(Level)-1])
             if actWrkHrs == datetime.timedelta():
                 Work_Duration.append('ABSENT')
             else:
@@ -260,6 +262,7 @@ def exportMonth(month, year):
     artistID = []
     artistName = []
     artistDept = []
+    artistLvl = []
 
     ios = []
     timings = []
@@ -277,12 +280,13 @@ def exportMonth(month, year):
     AH_Decimal = []
     AHD_Decimal = []
 
-    cur.execute("SELECT ID, Name, Department FROM essl.user_master WHERE ID != '1000'")
+    cur.execute("SELECT ID, Name, Department, Level FROM essl.user_master WHERE ID != '1000'")
 
     for data in cur.fetchall():
         artistID.append(data[0])
         artistName.append(data[1])
         artistDept.append(data[2])
+        artistLvl.append(data[3])
 
     for id in artistID:
         monthlyWrkHours.id.append(id)
@@ -375,7 +379,7 @@ def exportMonth(month, year):
                 doors.append(dt[2])
 
             try:
-                actWrkHrs = calActualWorkingHours(ios, timings, doors)
+                actWrkHrs = calActualWorkingHours(ios, timings, doors, artistLvl[len(artistLvl)-1])
                 if actWrkHrs == datetime.timedelta():
                     Work_Duration.append('00:00')
                 else:

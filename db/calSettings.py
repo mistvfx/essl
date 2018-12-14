@@ -9,13 +9,51 @@ from kivy.properties import NumericProperty, ReferenceListProperty
 from kivy.uix.popup import Popup
 from kivy.uix.boxlayout import BoxLayout
 from datetime import datetime
+from kivy.lang import Builder
 
 
-from pages import calendar_data as cal_data
+from pages import calendar_data as cal_data, Dialog
 
 selectedDates = []
 holiday = []
 halfday = []
+
+Builder.load_string("""
+<ToggleBtn>:
+    canvas.before:
+        Color:
+            rgba: (1, 1, 1, 1)
+        Rectangle:
+            size: self.size
+            pos: self.pos
+
+<HolidayBtn>:
+    font_name: 'fonts/moon-bold.otf'
+    canvas.before:
+        Color:
+            rgba: (128, 0, 128, 0.5)
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+<HalfdayBtn>:
+    font_name: 'fonts/moon-bold.otf'
+    canvas.before:
+        Color:
+            rgba: (0, 255, 255, 0.25)
+        Rectangle:
+            pos: self.pos
+            size: self.size
+""")
+
+class ToggleBtn(ToggleButton):
+    pass
+
+class HolidayBtn(ToggleButton):
+    pass
+
+class HalfdayBtn(ToggleButton):
+    pass
 
 class CalendarWidgetS(RelativeLayout):
     """ Basic calendar widget """
@@ -81,17 +119,19 @@ class CalendarWidgetS(RelativeLayout):
         for week in month:
             for day in week:
                 if day[1] >= 6:  # weekends
-                    self.tbtn = ToggleButton(text=str(day[0]), background_color=(1, 0, 0, 1), color=(0, 0, 0, 1))
+                    self.tbtn = ToggleBtn(text=str(day[0]), color=(0, 0, 0, 1))
                 else:
-                    self.tbtn = ToggleButton(text=str(day[0]), background_color=(255, 255, 255, 1), color=(0, 0, 0, 1))
+                    self.tbtn = ToggleBtn(text=str(day[0]), color=(0, 0, 0, 1))
                     for i in range(len(holiday)):
-                        if self.active_date[1] == holiday[i][1]:
-                            if day[0] == holiday[i][0]:
-                                self.tbtn.background_color=(128, 0, 128, 1)
+                        if self.active_date[2] == holiday[i][2]:
+                            if self.active_date[1] == holiday[i][1]:
+                                if day[0] == holiday[i][0]:
+                                    self.tbtn.background_color=(128, 0, 128, 1)
                     for i in range(len(halfday)):
-                        if self.active_date[1] == halfday[i][1]:
-                            if day[0] == halfday[i][0]:
-                                self.tbtn.background_color=(0, 255, 255, 0.5)
+                        if self.active_date[2] == halfday[i][2]:
+                            if self.active_date[1] == halfday[i][1]:
+                                if day[0] == halfday[i][0]:
+                                    self.tbtn.background_color=(0, 255, 255, 0.5)
 
                 self.tbtn.bind(on_press=self.get_btn_value)
 
@@ -141,10 +181,12 @@ class CalendarWidgetS(RelativeLayout):
 
         global selectedDates
 
-        if [self.active_date[0], self.quarter_nums[0][1]+1] in selectedDates:
-            pass
+        if [self.active_date[0], self.quarter_nums[0][1]+1, self.quarter_nums[0][0]] in selectedDates:
+            selectedDates.remove([self.active_date[0], self.quarter_nums[0][1]+1, self.quarter_nums[0][0]])
+            print(selectedDates)
         else:
-            selectedDates.append([self.active_date[0], self.quarter_nums[0][1]+1])
+            selectedDates.append([self.active_date[0], self.quarter_nums[0][1]+1, self.quarter_nums[0][0]])
+            print(selectedDates)
 
         if self.as_popup:
             self.parent_popup.dismiss()
@@ -218,13 +260,13 @@ def paintDates():
     global holiday, halfday
     db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
     cur = db.cursor()
-    cur.execute("SELECT DAY, MONTH, DETAIL FROM essl.month_details")
+    cur.execute("SELECT DAY, MONTH, YEAR, DETAIL FROM essl.month_details")
 
     for data in cur.fetchall():
-        if data[2] == 'HOLIDAY':
-            holiday.append([data[0], data[1]])
+        if data[3] == 'HOLIDAY':
+            holiday.append([data[0], data[1], data[2]])
         else:
-            halfday.append([data[0], data[1]])
+            halfday.append([data[0], data[1], data[2]])
 
 
 def setup():
@@ -234,9 +276,9 @@ def setup():
     calSettingsLayout = BoxLayout(orientation='vertical')
 
     daySetLayout = BoxLayout(orientation='horizontal', size_hint_y=0.2)
-    holidayBtn = ToggleButton(text='HOLIDAY', size_hint_x=0.5, color=(128, 0, 128, 1), bold=True)
+    holidayBtn = HolidayBtn(text='HOLIDAY', size_hint_x=0.5, color=(128, 0, 128, 1), bold=True)
     daySetLayout.add_widget(holidayBtn)
-    halfdayBtn = ToggleButton(text='HALF DAY', size_hint_x=0.5, color=(0, 255, 255, 0.5), bold=True)
+    halfdayBtn = HalfdayBtn(text='HALF DAY', size_hint_x=0.5, color=(0, 255, 255, 0.5), bold=True)
     daySetLayout.add_widget(halfdayBtn)
     calSettingsLayout.add_widget(daySetLayout)
 
@@ -244,16 +286,25 @@ def setup():
     calSettingsLayout.add_widget(cal)
 
     def callback(instance):
+        def call(instance):
+            if instance.text == 'OK':
+                pop.dismiss()
         global selectedDates
         if instance.text == 'SAVE':
             db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
             cur = db.cursor()
+            closePopBtn = Button(text="OK", size_hint=(1, 0.25))
+            closePopBtn.bind(on_release=call)
             if holidayBtn.state == 'down':
                 for date in selectedDates:
-                    cur.execute("INSERT INTO essl.month_details (DAY, MONTH, DETAIL) VALUES(%d, %d, 'HOLIDAY')" %(date[0], date[1]))
+                    cur.execute("INSERT INTO essl.month_details (DAY, MONTH, YEAR, DETAIL) VALUES(%d, %d, %d, 'HOLIDAY')" %(date[0], date[1], date[2]))
+                pop = Dialog.dialog("Changes Applied !", "HOLIDAYS Applied ", closePopBtn)
+                pop.open()
             elif halfdayBtn.state == 'down':
                 for date in selectedDates:
-                    cur.execute("INSERT INTO essl.month_details (DAY, MONTH, DETAIL) VALUES(%d, %d, 'HALFDAY')" %(date[0], date[1]))
+                    cur.execute("INSERT INTO essl.month_details (DAY, MONTH, YEAR, DETAIL) VALUES(%d, %d, %d, 'HALFDAY')" %(date[0], date[1], date[2]))
+                pop = Dialog.dialog("Changes Applied !", "HALFDAYS Applied ", closePopBtn)
+                pop.open()
 
             cur.close()
             db.close()
@@ -262,5 +313,5 @@ def setup():
     saveBtn.bind(on_press=callback)
     calSettingsLayout.add_widget(saveBtn)
 
-    popup = Popup(title='date settings', content=calSettingsLayout, size_hint=(0.75, 0.75))
+    popup = Popup(title='date settings', content=calSettingsLayout, size_hint=(0.65, 0.65))
     popup.open()

@@ -69,17 +69,18 @@ def calArtistLeave(year, month, d):
     for week in Month:
         for day in week:
             for i in range(len(holidays)):
-                if day == holidays[i][0] and month == holidays[i][1]:
+                if day == holidays[i][0] and month == holidays[i][1] and year == holidays[i][2]:
                     hDays += 1
             if day == week[6] or day in actualWorkingDays or day == 0:
                 continue
+            elif day == d:
+                return leave - hDays
             else :
                 leave += 1
+                #print('leave day', day)
                 Calendar.leaves.append([day, month, year])
-            if day == d:
-                break
 
-    print(leave, hDays)
+    #print('leave', leave, hDays)
     cur.close()
     db.close()
     return leave - hDays
@@ -103,7 +104,7 @@ def calArtistLeaveMon(year, month):
     for week in Month:
         for day in week:
             for i in range(len(holidays)):
-                if day == holidays[i][0] and month == holidays[i][1]:
+                if day == holidays[i][0] and month == holidays[i][1] and year == holidays[i][2]:
                     hDays += 1
             if day == week[6] or day in actualWorkingDays:
                 continue
@@ -124,8 +125,8 @@ def getHolidays():
 
     for data in cur.fetchall():
         if data[2] == 'HOLIDAY':
-            holidays.append([data[0], data[1]])
-            Calendar.holidays.append([data[0], data[1]])
+            holidays.append([data[0], data[1], data[2]])
+            Calendar.holidays.append([data[0], data[1], data[2]])
 
     cur.close()
     db.close()
