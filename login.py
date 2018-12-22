@@ -16,13 +16,16 @@ from kivy.uix.behaviors.touchripple import TouchRippleBehavior
 from kivy.lang import Builder
 from kivy.graphics.texture import Texture
 from kivy import utils
+from kivy.vector import Vector
 import tempfile
+from kivy.config import Config
 
 from db.credentialsCheck import checkCredentials
 from pages import userPage, adminPage
 from pages.specialFeatures import *
 
 Window.maximize()
+Config.set('input', 'mouse', 'mouse,multitouch_on_demand')
 
 Builder.load_string("""
 <loginScrnBg>:
@@ -102,7 +105,23 @@ Builder.load_string("""
     Image:
         size_hint_x: 0.75
         source: 'icons/logo.png'
+
+<LogoutButton>:
+    color: (0, 0, 0, 0)
+    background_color: (0, 0, 0, 0)
+    size: (min(self.width, self.height), min(self.width, self.height))
+    canvas:
+        Color:
+            rgba: ((0.5,0.5,0.5,0.5) if self.state == "normal" else (0.5,0.5,0.5,1))
+        Rectangle:
+            source: 'icons/logout.png'
+            pos: self.pos
+            size: self.size
 """)
+class LogoutButton(Button):
+    pass
+    #def collide_point(self, x, y):
+    #    return Vector(x, y).distance(self.center) <= self.width / 2
 
 class loginScrnBg(AnchorLayout):
     pass
@@ -174,7 +193,8 @@ class loginWindow(Screen):
             if(instance.text == 'LOGIN'):
                 self.checkLogin()
             if(instance.text == 'LOGOUT'):
-                ScreenManagement.sm.remove_widget(userPage.UserPage())
+                ScreenManagement.sm.current = ScreenManagement.sm.previous()
+                #ScreenManagement.sm.remove_widget(userPage.UserPage())
                 ScreenManagement.sm.current = 'login'
 
         def cbActive(cb, value):
@@ -189,7 +209,7 @@ class loginWindow(Screen):
         loginBtn = loginButton()
         loginBtn.bind(on_release=callback)
 
-        logoutButton = Button(text='LOGOUT', size_hint=(0.1, 0.1), pos_hint={'right':1, 'top':1})
+        logoutButton = LogoutButton(text='LOGOUT', size_hint=(0.08, 0.08), pos_hint={'left':1, 'top':1})
         logoutButton.bind(on_release=callback)
         userPage.logoutButton = logoutButton
 

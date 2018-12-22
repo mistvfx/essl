@@ -15,7 +15,7 @@ import re
 from pages import Dialog
 
 Date = ""
-id = 0
+id = ""
 
 Builder.load_string("""
 <userSettingPop>:
@@ -88,6 +88,7 @@ Builder.load_string("""
 
 <Level>:
     orientation: 'vertical'
+    spacing: 5
     Label:
         id: curLvl
         text: 'CURRENT LEVEL : 0'
@@ -105,6 +106,15 @@ Builder.load_string("""
             text: 'Assign Level'
             size_hint_x: 0.5
             on_release: root.submitLvl(lvl.text)
+    BoxLayout:
+        orientation: 'horizontal'
+        Label:
+            text: "User Status :"
+        Switch:
+            id: user_status
+            active_norm_pos: 1
+            on_active: root.change_user_status()
+
 
 
 <SettingsTabs>:
@@ -122,16 +132,21 @@ def formatDate(date):
     Dt = date.split(".")
     return str("-".join(list(reversed(Dt))))
 
+def getTimings():
+    print(id)
+
 class userSettingPop(Popup):
     def __init__(self, artistID, date):
         super(userSettingPop, self).__init__()
         global Date, id
+        print('ok')
         self.date = formatDate(date)
         Date = formatDate(date)
         self.id = artistID.split(":")[0]
         id = artistID.split(":")[0]
         self.title = (artistID.split(":")[1] + " || " + date)
         self.font_name = 'fonts/moon-bold.otf'
+        pass
 
 class SettingsTabs(TabbedPanel):
     pass
@@ -243,5 +258,10 @@ class Level(BoxLayout):
         cur.close()
         db.close()
 
-def getTimings(artistID):
-    print(artistID)
+    def change_user_status(self):
+        global id
+        db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
+        cur = db.cursor()
+        cur.execute("UPDATE essl.user_master SET Status = 'CLOSED' WHERE ID = '%d'"%(int(id)))
+        cur.close()
+        db.close()

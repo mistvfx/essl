@@ -10,14 +10,17 @@ from kivy.uix.recycleview.views import RecycleDataViewBehavior
 from kivy.properties import BooleanProperty, ListProperty, StringProperty, ObjectProperty
 from kivy.uix.recyclegridlayout import RecycleGridLayout
 from kivy.uix.behaviors import FocusBehavior
+from kivy.uix.behaviors.button import ButtonBehavior
 from kivy.uix.recycleview.layout import LayoutSelectionBehavior
 from kivy.uix.filechooser import FileChooserListView
 from kivy.uix.spinner import Spinner
 from kivy.lang import Builder
+from kivy.uix.image import Image
+from kivy.vector import Vector
 
 from . import excelIO
 import threading
-from pages import usersList, settings
+from pages import usersList, settings, leaveDet
 from pages.specialFeatures import *
 from db import usersListManip
 
@@ -80,17 +83,18 @@ Builder.load_string("""
     text: 'REFRESH'
     color: (1, 1, 1, 0)
     background_color: (0, 0, 0, 0)
-    pos_hint: {'right':1, 'bottom':1}
-    size_hint: (0.1, 0.1)
-    canvas.before:
+    pos_hint: {'right':1}
+    canvas:
         Color:
-            rgba: (1, 1, 1, 1)
+            rgba: (1, 1, 1, 0)
+        Ellipse:
+            pos: self.pos
+            size: self.size
     Image:
         id: refImg
         source: 'icons/refresh.zip'
+        pos: self.parent.pos
         size: self.parent.size
-        y: self.parent.y
-        x: self.parent.x
         anim_delay: -1
         anim_loop: 1
 
@@ -99,16 +103,53 @@ Builder.load_string("""
     color: (1, 1, 1, 0)
     background_color: (0, 0, 0, 0)
     pos_hint: {'left':1, 'bottom':1}
-    size_hint: (0.1, 0.1)
+    size_hint: (0.05, 0.1)
+    canvas:
+        Color:
+            rgba: (1,1,1,0)
+        Ellipse:
+            pos: self.pos
+            size: self.size
     Image:
         id: setImg
         source: 'icons/settings.zip'
         size: self.parent.size
-        y: self.parent.y
-        x: self.parent.x
         anim_delay: -1
         anim_loop: 1
+
+<LeaveDetails>
+    text: 'Leave Details'
+    color: (1, 1, 1, 0)
+    background_color: (0, 0, 0, 0)
+    pos_hint: {'y':0.1}
+    on_release: root.openDetPage()
+    size_hint: (0.05, 0.1)
+    canvas:
+        Color:
+            rgba: (1,1,1,1)
+        Ellipse:
+            source: 'icons/attendance.png'
+            pos: self.pos
+            size: self.size
 """)
+
+"""
+
+"""
+class LeaveDetails(Button, MouseOver):
+    def collide_point(self, x, y):
+          return Vector(x, y).distance(self.center) <= self.width / 2
+
+    def openDetPage(self):
+        pop = Popup(title= 'Leave Details', content= leaveDet.LeaveDetLayout(), size_hint= (0.98, 0.98))
+        pop.open()
+
+    def on_hover(self):
+        self.background_color = (1, 0.5, 0.5, 0.5)
+
+    def on_exit(self):
+        self.background_color = (0, 0, 0, 0)
+
 class excelImpButton(Button, MouseOver):
     def on_hover(self):
         self.background_color = (1, 0, 1, 0.5)
@@ -127,6 +168,9 @@ class ExcelExported(Popup):
     pass
 
 class refButton(Button, MouseOver):
+    def collide_point(self, x, y):
+          return Vector(x, y).distance(self.center) <= self.width / 2
+
     def on_hover(self):
         self.background_color = (1, 1, 1, 0.5)
 
@@ -140,6 +184,9 @@ class refButton(Button, MouseOver):
         self.ids.refImg.anim_delay = -1
 
 class setButton(Button, MouseOver):
+    def collide_point(self, x, y):
+          return Vector(x, y).distance(self.center) <= self.width / 2
+
     def on_hover(self):
         self.ids.setImg.anim_delay = 0.1
 
@@ -187,23 +234,27 @@ class AdminPage(Screen):
         date = DatePicker(size_hint=(0.5, 1), pHint=(0.35, 0.35))
         controlLayout.add_widget(date)
 
+        refreshBtn = refButton(size_hint_x=(0.07))
+        refreshBtn.bind(on_release=callback)
+        controlLayout.add_widget(refreshBtn)
+
         excelExport = ExcelExport()
         excelExport.bind(text=callexcel)
         controlLayout.add_widget(excelExport)
 
-        refreshBtn = refButton()
-        refreshBtn.bind(on_release=callback)
-
         settingsBtn = setButton()
         settingsBtn.bind(on_release=callback)
+
+        leaveDetBtn = LeaveDetails()
+        leaveDetBtn.bind(on_release=callback)
 
         usersListManip.getUserInfo()
         usersList.date.append(date.text)
         userList = usersList.userList()
         userList.size_hint = (1, 1)
         listLayout.add_widget(userList)
-        listLayout.add_widget(refreshBtn)
         listLayout.add_widget(settingsBtn)
+        listLayout.add_widget(leaveDetBtn)
 
     def excelOpen(self):
 

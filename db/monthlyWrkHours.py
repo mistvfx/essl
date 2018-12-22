@@ -85,36 +85,45 @@ def calArtistLeave(year, month, d):
     db.close()
     return leave - hDays
 
-def calArtistLeaveMon(year, month):
-    global id
-
-    totalDays = calendar.monthrange(int(year), int(month))[1]
-    Month = calendar.monthcalendar(int(year), int(month))
-    leave = 0
-    hDays = 0
-    holidays = getHolidays()
-    actualWorkingDays = []
+def ArtistLeaveDates(year, month, id):
+    from datetime import datetime
+    today = datetime.today()
+    if year > today.year or month > today.month:
+        return None
+    leave_dates = []
+    sundays = []
+    holidays = []
 
     db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
     cur = db.cursor()
-    cur.execute("SELECT DISTINCT(MDate) from essl.`%d` WHERE YEAR(MDate) = '%d' AND MONTH(MDate) = '%d'" %(id[len(id)-1], int(year), int(month)))
-    for date in cur.fetchall():
-        actualWorkingDays.append(date[0].day)
+
+    Month = calendar.monthcalendar(year, month)
 
     for week in Month:
         for day in week:
             for i in range(len(holidays)):
                 if day == holidays[i][0] and month == holidays[i][1] and year == holidays[i][2]:
-                    hDays += 1
-            if day == week[6] or day in actualWorkingDays:
-                continue
-            else :
-                leave += 1
-                #Calendar.leaves.append()
+                    holidays.append("{}-{}-{}".format(year, month, day))
+            if day == week[6] and day != 0:
+                sundays.append("{}-{}-{}".format(year, month, day))
+    #print(sundays)
 
-    cur.close()
-    db.close()
-    return leave - hDays
+    def formatDate(day):
+        return ("{}-{}-{}".format(year, month, day))
+
+    allDays = calendar.monthrange(int(year), int(month))[1]
+    for d in range(1, allDays+1):
+        date = formatDate(d)
+        if d == today.day and month == today.month and year == today.year:
+            break
+        try:
+            cur.execute("SELECT SNum from essl.`%d` WHERE MDate = '%s'"%(id, date))
+            if cur.fetchall() == () and date not in sundays and date not in holidays:
+                leave_dates.append(date)
+        except Exception as e:
+            print(e)
+
+    return leave_dates
 
 def getHolidays():
     db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
@@ -124,7 +133,7 @@ def getHolidays():
     holidays = []
 
     for data in cur.fetchall():
-        if data[2] == 'HOLIDAY':
+        if data[3] == 'HOLIDAY':
             holidays.append([data[0], data[1], data[2]])
             Calendar.holidays.append([data[0], data[1], data[2]])
 

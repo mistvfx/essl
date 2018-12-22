@@ -50,6 +50,10 @@ Builder.load_string("""
         Rectangle:
             pos: self.pos
             size: self.size
+
+<OtherButton>:
+    text: 'Extras'
+    size_hint: (0.1, 0.1)
 """)
 
 class userLabel(Label):
@@ -59,6 +63,9 @@ class OtherLayout(BoxLayout):
     pass
 
 class InfoLabel(Label):
+    pass
+
+class OtherButton(Button):
     pass
 
 class UserPage(Screen):
@@ -78,6 +85,16 @@ class UserPage(Screen):
             userPageLayout.add_widget(logoutButton)
         except:
             pass
+
+        def callback(instance):
+            from pages import leaveReq
+            leaveReq.Data.append([user[len(user)-1], id[len(id)-1], department[len(department)-1]])
+            pop = Popup(title= 'Leave Reuqest Form', content= leaveReq.LeaveLayout(), size_hint=(0.5, 0.5))
+            pop.open()
+
+        others = OtherButton(pos_hint= {'right':1})
+        others.bind(on_release=callback)
+        userPageLayout.add_widget(others)
 
         userInfoLabel = userLabel(text='%d | %s | %s' %(id[int(len(id)-1)], user[int(len(user)-1)], department[int(len(department)-1)]))
         userPageLayout.add_widget(userInfoLabel)
