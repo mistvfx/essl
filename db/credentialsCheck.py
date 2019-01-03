@@ -1,5 +1,4 @@
 import pymysql
-from pages import userPage
 from db import getInfo, calcWrkHrs, monthlyWrkHours
 
 def checkCredentials(username, password):
@@ -15,17 +14,18 @@ def checkCredentials(username, password):
                 cur.close()
                 db.close()
                 return 1
-            else:
-                userPage.id.append(int(data[0]))
+            elif str(data[2]) != 'ADMIN':
+                from pages import userPage
+                userPage.id = (data[0])
+                userPage.user = (str(data[1]))
+                userPage.department = (str(data[2]))
                 getInfo.id.append(int(data[0]))
                 calcWrkHrs.id.append(int(data[0]))
-                monthlyWrkHours.id.append(int(data[0]))
-                userPage.user.append(str(data[1]))
-                userPage.department.append(str(data[2]))
                 calcWrkHrs.getUserTime()
+                monthlyWrkHours.id.append(int(data[0]))
                 cur.close()
                 db.close()
-                return 2
+                return ([2, data[0], data[1], data[2]])
 
     cur.close()
     db.close()

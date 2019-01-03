@@ -11,6 +11,8 @@ from kivy.uix.checkbox import CheckBox
 from kivy.animation import *
 from kivy.core.image import Image
 from kivy.graphics import *
+from kivy.uix.floatlayout import FloatLayout
+from kivy.properties import NumericProperty
 from kivy.core.window import Window
 from kivy.uix.behaviors.touchripple import TouchRippleBehavior
 from kivy.lang import Builder
@@ -21,63 +23,44 @@ import tempfile
 from kivy.config import Config
 
 from db.credentialsCheck import checkCredentials
-from pages import userPage, adminPage
+from pages import adminPage
 from pages.specialFeatures import *
 
 Window.maximize()
-Config.set('input', 'mouse', 'mouse,multitouch_on_demand')
+Config.set('input', 'mouse', 'mouse,disable_multitouch')
 
 Builder.load_string("""
-<loginScrnBg>:
+#:include themes/TextBox.kv
+
+<LoginScrnBg>:
     canvas:
         Color:
-            rgba: (0.5, 0.5, 1, 0.85)
+            rgba: (1, 1, 1, 1)
         Rectangle:
             size: self.size
             pos: self.pos
+        Color:
+            rgba: (0.5, 0.5, 1, 0.85)
+        Rectangle:
+            size: self.size[0], self.size[1]
+            pos: self.pos
 
-<loginButton@Button>:
-    id: loginBtn
-    text: 'LOGIN'
-    color: (0, 0, 0, 1)
-    font_name: 'fonts/moon-bold.otf'
-    font_size: 20
-    background_color: (0, 0, 0, 0)
+<LoginScrn>:
+    padding: 10
+    orientation: 'horizontal'
+    size_hint: 0.65, 0.75
     canvas.before:
         Color:
-            rgba: (0, 0, 0, 1)
-        Line:
-            rectangle: (self.pos[0], self.pos[1], self.size[0], self.size[1])
-
-<userNameBox@TextInput>:
-    multiline: False
-    write_tab: False
-    input_filter: 'int'
-    font_name: 'fonts/moon.otf'
-    font_size: self.size[1]/3.0
-    padding: [self.size[1], self.size[1]/3.5, 10, 10]
-    cursor_color: (0, 0, 0, 1)
-    background_color: (0.9, 0.9, 0.9, 1) if self.focus else (1, 1, 1, 0.5)
-    canvas.after:
-        Rectangle:
-            source: 'icons/username.png'
-            size: (self.size[1], self.size[1])
+            rgba: (1, 1, 1, 1)
+        RoundedRectangle:
+            size: self.size
             pos: self.pos
+            radius: [0, 50, 0, 50]
+    Image:
+        size_hint_x: 0.75
+        source: 'icons/logo.png'
 
-<passwordBox@TextInput>:
-    multiline: False
-    write_tab: False
-    font_name: 'fonts/moon.otf'
-    font_size: self.size[1]/3.0
-    padding: [self.size[1], self.size[1]/3.5, 10, 10]
-    background_color: (0.9, 0.9, 0.9, 1) if self.focus else (1, 1, 1, 0.5)
-    canvas.after:
-        Rectangle:
-            source: 'icons/password.png'
-            size: (self.size[1], self.size[1])
-            pos: self.pos
-
-<loginBG>:
+<LoginBG>:
     size_hint: 1, 0.50
     orientation: 'vertical'
     canvas.before:
@@ -90,21 +73,56 @@ Builder.load_string("""
     padding: 10
     spacing: 2
 
-
-<loginScrn>:
-    padding: 10
-    orientation: 'horizontal'
-    size_hint: 0.65, 0.75
+<Lbl>:
+    font_name: 'fonts/GoogleSans-Bold.ttf'
+    size_hint_x: 0.22
+    size_hint_y: None
+    text_size: self.width, None
+    height: self.texture_size[1]
+    halign: "center"
+    valign: "middle"
+    color: (0, 0, 0, 1)
+    pos_hint: {'center_y':0.82, 'center_x':0.25}
     canvas.before:
         Color:
-            hsv: 0, 0, 1
-        RoundedRectangle:
-            size: self.size
+            rgba: (1, 1, 1, 1)
+        Rectangle:
             pos: self.pos
-            radius: [0, 50, 0, 50]
-    Image:
-        size_hint_x: 0.75
-        source: 'icons/logo.png'
+            size: self.size
+
+<In>:
+    font_name: 'fonts/GoogleSans-Regular.ttf'
+    multiline: False
+    write_tab: False
+    background_color: (1, 1, 1, 0)
+    size_hint: (0.75, 0.75)
+    pos_hint: {'top':0.8, 'center_x':0.5}
+    on_text: root.update_padding()
+    padding_x: (self.width - self.text_width) / 2
+    padding_y: [self.height / 2.0 - (self.line_height / 2.0) * len(self._lines), 0]
+    canvas.before:
+        Color:
+            rgba: (0.5, 0, 1, 0.85)
+        Line:
+            width: 2
+            rectangle: (self.x, self.y, self.width, self.height)
+
+<MaterialTextBox>:
+    size_hint_y: 1
+
+<LoginButton>:
+    id: loginBtn
+    text: 'LOGIN'
+    color: (0, 0, 0, 1)
+    size_hint: (0.75, 0.75)
+    font_name: 'fonts/moon-bold.otf'
+    font_size: 20
+    background_color: (0, 0, 0, 0)
+    canvas.before:
+        Color:
+            rgba: (0, 0, 0, 1)
+        Line:
+            rectangle: (self.pos[0], self.pos[1], self.size[0], self.size[1])
 
 <LogoutButton>:
     color: (0, 0, 0, 0)
@@ -112,21 +130,67 @@ Builder.load_string("""
     size: (min(self.width, self.height), min(self.width, self.height))
     canvas:
         Color:
-            rgba: ((0.5,0.5,0.5,0.5) if self.state == "normal" else (0.5,0.5,0.5,1))
+            rgba: ((0.5,0.5,1,0.85) if self.state == "normal" else (0.5,0.5,0.5,1))
         Rectangle:
             source: 'icons/logout.png'
             pos: self.pos
             size: self.size
+
+<LoginWindow>:
+    LoginScrnBg:
+        anchor_x: 'center'
+        anchor_y: 'center'
+        LoginScrn:
+            AnchorLayout:
+                anchor_x: 'center'
+                anchor_y: 'center'
+                size_hint_x: 0.35
+                LoginBG:
+                    Label:
+                        text:'ARTIST LOGIN'
+                        bold:True
+                        color:(0, 0, 0, 1)
+                        font_size:25
+                        font_name:'fonts/moon-bold.otf'
+                    MaterialTextBox:
+                        In:
+                            id: username
+                            hint_text: 'USERNAME'
+                        Lbl:
+                            text: 'UserName'
+                    MaterialTextBox:
+                        In:
+                            id: password
+                            hint_text: 'PASSWORD'
+                            password: True
+                        Lbl:
+                            text: 'Password'
+                    BoxLayout:
+                        orientation:'horizontal'
+                        CheckBox:
+                            size_hint_x:0.25
+                            color:(0, 0, 0, 1)
+                            on_active: root.cbActive
+                        Label:
+                            text:'REMEMBER ME'
+                            font_name: 'fonts/GoogleSans-Medium.ttf'
+                            color:(0, 0, 0, 1)
+                    FloatLayout:
+                        LoginButton:
+                            pos_hint: {'center_x':0.5, 'center_y':0.5}
+                            on_release: root.checkLogin()
+
 """)
+class Lbl(Label):
+    pass
+
 class LogoutButton(Button):
     pass
-    #def collide_point(self, x, y):
-    #    return Vector(x, y).distance(self.center) <= self.width / 2
 
-class loginScrnBg(AnchorLayout):
+class LoginScrnBg(AnchorLayout):
     pass
 
-class loginButton(Button, MouseOver):
+class LoginButton(Button, MouseOver):
     def on_hover(self):
         self.color = (1, 1, 1, 1)
         with self.canvas.before:
@@ -147,95 +211,63 @@ class userNameBox(TextInput):
 class passwordBox(TextInput):
     pass
 
-class loginBG(BoxLayout):
+class MaterialTextBox(FloatLayout):
     pass
 
-class loginScrn(BoxLayout):
+class In(TextInput):
+    text_width = NumericProperty()
+
+    def update_padding(self, *args):
+        self.text_width = self._get_text_width(
+            self.text,
+            self.tab_width,
+            self._label_cached
+        )
+
+class LoginBG(BoxLayout):
     pass
 
-class loginWindow(Screen):
+class LoginScrn(BoxLayout):
+    pass
+
+class LoginWindow(Screen):
     def __init__(self, **args):
-        super(loginWindow, self).__init__(**args)
+        super(LoginWindow, self).__init__(**args)
         self.login()
 
     def login(self):
-        self.username = userNameBox(hint_text='USERNAME')
-        self.password = passwordBox(hint_text='PASSWORD', password=True)
         try:
             with open("%s/mttup.txt"%(tempfile.gettempdir()), "r") as f:
                 res = str(f.read(4))
-                self.username.text = res
-                self.password.text = res
-                self.checkLogin()
+                self.ids.username.text = res
+                self.ids.password.text = res
+                #self.checkLogin()
         except Exception as e:
             print(e)
             pass
 
-        anchorLayout = loginScrnBg(anchor_x='center', anchor_y='center')
-        self.add_widget(anchorLayout)
+    def callback(instance):
+        if(instance.text == 'LOGOUT'):
+            ScreenManagement.sm.current = ScreenManagement.sm.previous()
+            #ScreenManagement.sm.remove_widget(userPage.UserPage())
+            ScreenManagement.sm.current = 'login'
 
-        loginSetup = loginScrn()
-        anchorLayout.add_widget(loginSetup)
-
-        #layout = loginBG(orientation='vertical', padding=10, spacing = 2, size_hint=(0.3, 0.3))
-        loginAnchor = AnchorLayout(anchor_x='center', anchor_y='center', size_hint_x=0.35)
-        loginSetup.add_widget(loginAnchor)
-
-        layout = loginBG()
-        loginAnchor.add_widget(layout)
-
-        loginLabel = Label(text='ARTIST LOGIN', bold=True, color=(0, 0, 0, 1), font_size=25, font_name='fonts/moon-bold.otf')
-        #self.username = TextInput(text='USERNAME', multiline=False, padding=5)
-        #self.username = userNameBox(hint_text='USERNAME')
-        #self.password = passwordBox(hint_text='PASSWORD', password=True)
-
-        def callback(instance):
-            if(instance.text == 'LOGIN'):
-                self.checkLogin()
-            if(instance.text == 'LOGOUT'):
-                ScreenManagement.sm.current = ScreenManagement.sm.previous()
-                #ScreenManagement.sm.remove_widget(userPage.UserPage())
-                ScreenManagement.sm.current = 'login'
-
-        def cbActive(cb, value):
-            if value:
-                with open("%s/mttup.txt"%(tempfile.gettempdir()), "w") as f:
-                    f.write(self.password.text)
-            else:
-                with open("%s/mttup.txt"%(tempfile.gettempdir()), "w") as f:
-                    f.write("")
-
-        #loginButton = Button(text='LOGIN')
-        loginBtn = loginButton()
-        loginBtn.bind(on_release=callback)
-
-        logoutButton = LogoutButton(text='LOGOUT', size_hint=(0.08, 0.08), pos_hint={'left':1, 'top':1})
-        logoutButton.bind(on_release=callback)
-        userPage.logoutButton = logoutButton
-
-        remLayout = BoxLayout(orientation='horizontal')
-
-        remME = CheckBox(size_hint_x=0.25, color=(0, 0, 0, 1))
-        remME.bind(active=cbActive)
-
-        remLbl = Label(text='REMEMBER ME', color=(0, 0, 0, 1))
-
-        remLayout.add_widget(remME)
-        remLayout.add_widget(remLbl)
-
-        layout.add_widget(loginLabel)
-        layout.add_widget(self.username)
-        layout.add_widget(self.password)
-        layout.add_widget(remLayout)
-        layout.add_widget(loginBtn)
+    def cbActive(cb, value):
+        if value:
+            with open("%s/mttup.txt"%(tempfile.gettempdir()), "w") as f:
+                f.write(self.ids.password.text)
+        else:
+            with open("%s/mttup.txt"%(tempfile.gettempdir()), "w") as f:
+                f.write("")
 
     def checkLogin(self):
-        login = checkCredentials(self.username.text, self.password.text)
+        login = checkCredentials(self.ids.username.text, self.ids.password.text)
 
         if login == 1:
             ScreenManagement.sm.add_widget(adminPage.AdminPage(name='admin'))
             ScreenManagement.sm.current = 'admin'
-        elif login == 2:
+        elif login[0] == 2:
+            from pages import userPage
             ScreenManagement.sm.add_widget(userPage.UserPage(name='user'))
             ScreenManagement.sm.current = 'user'
         else:
@@ -243,9 +275,7 @@ class loginWindow(Screen):
 
 class ScreenManagement(ScreenManager):
     sm = ScreenManager()
-    sm.add_widget(loginWindow(name='login'))
-    #sm.add_widget(userPage.UserPage(name='user'))
-    #sm.add_widget(adminPage.AdminPage(name='admin'))
+    sm.add_widget(LoginWindow(name='login'))
 
 class mistApp(App):
     def build(self):

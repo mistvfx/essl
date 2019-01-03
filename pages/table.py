@@ -111,7 +111,7 @@ class dataTable(ScrollView):
 
         i=1; j=1; k=1;
         while i < len(io):
-            if door[i] not in level[lvl]:
+            if door[i] not in level[lvl] and door[i] != 'MAINDOOR':
                 i += 1; j += 1; k += 1;
                 continue
             lbl = dataLbl(text=str(io[i]), size_hint_y=None, height=40)

@@ -131,6 +131,14 @@ Builder.load_string("""
             source: 'icons/attendance.png'
             pos: self.pos
             size: self.size
+    FloatLayout:
+        pos: self.pos
+        size: self.size
+        Label:
+            text: '0'
+            size: (min(self.width, self.height), min(self.width, self.height))
+            pos_hint: {'top':0, 'right':1}
+            color: (0, 0, 0, 1)
 """)
 
 """

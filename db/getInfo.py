@@ -1,6 +1,7 @@
 import pymysql
 from pages import table, infoPopup
 from kivy.uix.popup import Popup
+from kivy.uix.modalview import ModalView
 from kivy.uix.button import Button
 import datetime
 
@@ -114,17 +115,20 @@ def openPopup(ua):
     infoPopup.closeBtn = popUpCLoseBtn
     global id, date
 
-    getUserInfo()
-
-    if ua == 'user':
-        tab = infoPopup.infoTab()
-    elif ua == 'admin':
-        tab = infoPopup.infoTabAdmin()
-
     db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
     cur = db.cursor()
     cur.execute("SELECT Name FROM essl.user_master WHERE ID = '%d'"%(id[len(id)-1]))
     name = cur.fetchone()
-    popup = Popup(title="{}||{}".format(name[0], formatDate(date[len(date)-1])), content=tab, size_hint=(0.85, 0.85))
+
+    getUserInfo()
+
+    if ua == 'user':
+        tab = infoPopup.InfoTab(name, date)
+    elif ua == 'admin':
+        tab = infoPopup.InfoTabAdmin(name, date)
+
+    popup = ModalView(size_hint=(0.85, 0.85))
+    popup.add_widget(tab)
+    #title="{}||{}".format(name[0], formatDate(date[len(date)-1])), content=tab,
     popup.open()
     popUpCLoseBtn.bind(on_press=popup.dismiss)

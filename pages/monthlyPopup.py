@@ -22,6 +22,8 @@ Builder.load_string("""
 
 <PopLabel>:
     color: (0, 0, 0, 1)
+    font_name: 'fonts/GoogleSans-Bold.ttf'
+    markup: True
     canvas.before:
         Color:
             rgba: (1, 1, 1, 1)
@@ -134,9 +136,9 @@ class MonPop(GridLayout):
         """'Total Target Actual Working Hours : \n ( %d * 8:30 )'%(workTime.totWorkingdays), '-', '-', tawt,"""
 
         details = ['PARTICULARS', 'DEFAULT', 'TARGET', 'CURRENT', 'INCOMPLETE',
-                'Total Working Hours : \n \n DEFAULT << 10:00:00 X No. of DEFAULT Working Days \n TARGET << 10:00:00 X No. of TARGET Working Days \n CURRENT << Sum of Daily Total Working Hours', formatTime(calTotWorkingDays.officeDefault*DefTotWrkHrs), formatTime(workTime.totWorkingdays*DefTotWrkHrs), twt, reqTotTime,
-                'Actual Working Hours : \n \n DEFAULT << 08:30:00 X No. of DEFAULT Working Days \n TARGET << 08:30:00 X No. of TARGET Working Days \n CURRENT << Sum of Daily Actual Working Hours', formatTime(calTotWorkingDays.officeDefault*StdWrkHrs), formatTime(workTime.totWorkingdays*StdWrkHrs), awt, rwt,
-                'Working Days : \n \n DEFAULT << Office Working Days \n TARGET << Artist Working Days \n INCOMPLETE << Leaves', calTotWorkingDays.officeDefault, workTime.totWorkingdays, '-', calTotWorkingDays.artistLeaves]
+                'Total Working Hours : [font=fonts/GoogleSans-Regular.ttf]\n \n DEFAULT << 10:00:00 X No. of DEFAULT Working Days \n TARGET << 10:00:00 X No. of TARGET Working Days \n CURRENT << Sum of Daily Total Working Hours[/font]', formatTime(calTotWorkingDays.officeDefault*DefTotWrkHrs), formatTime(workTime.totWorkingdays*DefTotWrkHrs), twt, reqTotTime,
+                'Actual Working Hours : [font=fonts/GoogleSans-Regular.ttf]\n \n DEFAULT << 08:30:00 X No. of DEFAULT Working Days \n TARGET << 08:30:00 X No. of TARGET Working Days \n CURRENT << Sum of Daily Actual Working Hours[/font]', formatTime(calTotWorkingDays.officeDefault*StdWrkHrs), formatTime(workTime.totWorkingdays*StdWrkHrs), awt, rwt,
+                'Working Days : [font=fonts/GoogleSans-Regular.ttf]\n \n DEFAULT << Office Working Days \n TARGET << Artist Working Days \n INCOMPLETE << Leaves[/font]', calTotWorkingDays.officeDefault, workTime.totWorkingdays, '-', calTotWorkingDays.artistLeaves]
         for i in range(len(details)):
             lbl = PopLabel(text=str(details[i]))
             if i in [0, 5, 10, 15]:

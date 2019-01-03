@@ -43,15 +43,48 @@ Builder.load_string("""
         Rectangle:
             size: self.size
             pos: self.pos
+
+<infoTabAdmin>:
+    FloatLayout:
+        Label:
+            id: userinfo
+            pos_hint: {'center_x':0.5, 'center_y':0.5}
+
+<infoTab>:
+    BoxLayout:
+        orientation: 'vertical'
+        FloatLayout:
+            pos: self.pos
+            size: self.size
+            size_hint_y: 0.06
+            Label:
+                id: userinfo
+                font_name: 'fonts/GoogleSans-Bold.ttf'
+                pos_hint: {'center_x':0.5, 'center_y':0.5}
+        HdrLayout:
+            GridLayout:
+                cols:3
+                size_hint: (0.65, 1)
+                Label:
+                    text: 'I/O'
+                    bold: True
+                Label:
+                    text: 'TIME'
+                    bold: True
+                Label:
+                    text: 'DOOR'
+                    bold: True
+        TblLayout:
+            id: table_layout
 """)
 
-class hdrLayout(BoxLayout):
+class HdrLayout(BoxLayout):
     pass
 
-class tblLayout(BoxLayout):
+class TblLayout(BoxLayout):
     pass
 
-class infoLbl(Label):
+class InfoLbl(Label):
     pass
 
 def formatTime(time):
@@ -62,43 +95,44 @@ def formatTime(time):
 
     return ('{}:{}'.format(hours, minutes))
 
-class infoTab(BoxLayout):
-    def __init__(self, **args):
-        super(infoTab, self).__init__(**args)
+class InfoTab(BoxLayout):
+    def __init__(self, name, date):
+        super(InfoTab, self).__init__()
+        self.ids.userinfo.text = '{}|{}'.format(name[0], date[len(date)-1])
         self.popUI()
 
     def popUI(self):
-        overallLayout = BoxLayout(orientation='vertical')
-        self.add_widget(overallLayout)
+        #overallLayout = BoxLayout(orientation='vertical')
+        #self.add_widget(overallLayout)
 
         """ Defining Header and closeBtn """
 
-        headerLayout = hdrLayout()
-        overallLayout.add_widget(headerLayout)
+        #headerLayout = hdrLayout()
+        #overallLayout.add_widget(headerLayout)
 
-        header = GridLayout(cols=3, size_hint=(0.65, 1))
-        headerLayout.add_widget(header)
-        headers = ['I/O', 'TIME', 'DOOR']
-        for i in range(3):
-            headerLabel = Label(text=headers[i], bold=True)
-            header.add_widget(headerLabel)
+        #header = GridLayout(cols=3, size_hint=(0.65, 1))
+        #headerLayout.add_widget(header)
+        #headers = ['I/O', 'TIME', 'DOOR']
+        #for i in range(3):
+            #headerLabel = Label(text=headers[i], bold=True)
+            #header.add_widget(headerLabel)
 
-        global closeBtn
-        headerLayout.add_widget(closeBtn)
+        #global closeBtn
+        #headerLayout.add_widget(closeBtn)
 
         """ Table and info """
 
-        tableLayout = tblLayout()
-        overallLayout.add_widget(tableLayout)
+        #tableLayout = tblLayout()
+        #overallLayout.add_widget(tableLayout)
 
         tab = table.dataTable()
         tab.size_hint=(0.65, 1)
-        tableLayout.add_widget(tab)
+        self.ids.table_layout.add_widget(tab)
 
         """ Defining Info """
 
         info = GridLayout(cols=2, size_hint=(0.35, 1))
-        tableLayout.add_widget(info)
+        self.ids.table_layout.add_widget(info)
 
         global TWH, AWH, NCH, ACH
 
@@ -117,7 +151,7 @@ class infoTab(BoxLayout):
         infoQ = ['Total Hours :', tw, 'Working Hours :', aw, 'Non-Completed Actual Hours:', nc, 'Additional Hours:', ac]
 
         for i in range(len(infoQ)):
-            infoLabels = infoLbl(text=infoQ[i])
+            infoLabels = InfoLbl(text=infoQ[i])
             if i % 2 == 1:
                 infoLabels.size_hint_x= 0.30
             info.add_widget(infoLabels)
@@ -181,3 +215,6 @@ class infoTabAdmin(BoxLayout):
             if i % 2 == 1:
                 infoLabels.size_hint_x= 0.30
             info.add_widget(infoLabels)
+
+def refreshTable():
+    print(children)

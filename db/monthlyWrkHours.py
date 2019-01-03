@@ -88,7 +88,9 @@ def calArtistLeave(year, month, d):
 def ArtistLeaveDates(year, month, id):
     from datetime import datetime
     today = datetime.today()
-    if year > today.year or month > today.month:
+    if year > today.year:
+        return None
+    elif year == today.year and month > today.month:
         return None
     leave_dates = []
     sundays = []
@@ -109,7 +111,7 @@ def ArtistLeaveDates(year, month, id):
     #print(sundays)
 
     def formatDate(day):
-        return ("{}-{}-{}".format(year, month, day))
+        return ("{}-{}-{}".format(year, str(month).zfill(2), str(day).zfill(2)))
 
     allDays = calendar.monthrange(int(year), int(month))[1]
     for d in range(1, allDays+1):

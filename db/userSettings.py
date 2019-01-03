@@ -12,7 +12,7 @@ from kivy.graphics import *
 from kivy.properties import *
 import re
 
-from pages import Dialog
+from pages import Dialog, infoPopup
 
 Date = ""
 id = ""
@@ -77,13 +77,14 @@ Builder.load_string("""
     anchor_x: 'center'
     anchor_y: 'center'
     BoxLayout:
+        orientation: 'vertical'
         TextInput:
             id: hours
             hint_text: 'HOURS (HH:MM:SS)'
             multiline: False
             on_text: root.checkText(hours.text)
         Button:
-            text: 'Submit Permission Time'
+            text: 'Submit'
             on_release: root.addPermTime(hours.text)
 
 <Level>:
@@ -113,16 +114,11 @@ Builder.load_string("""
         Switch:
             id: user_status
             active_norm_pos: 1
-            on_active: root.change_user_status()
+            on_touch_move: root.change_user_status()
 
 
 
 <SettingsTabs>:
-    TabbedPanelItem:
-        text: 'PERMISSION'
-        font_name: 'fonts/moon-bold.otf'
-        Permission:
-
     TabbedPanelItem:
         text: 'LEVEL'
         font_name: 'fonts/moon-bold.otf'
@@ -202,6 +198,7 @@ class TimingFix(BoxLayout):
         try:
             cur.execute("INSERT INTO essl.%d (IO, MTIME, MDATE, DOOR, AccType) VALUES('%s', '%s', '%s', '%s', 'REGULARIZATION')" %(int(self.id), self.io, time, self.date, self.door))
             pop = Dialog.dialog("Success", "Data added successfully !!", closePopBtn)
+            #infoPopup.refreshTable()
             pop.open()
         except Exception as e:
             print(e)
@@ -220,6 +217,10 @@ class TimingFix(BoxLayout):
             self.ids.time.background_color = (1, 1, 1, 1)
 
 class Permission(AnchorLayout):
+    def __init__(self, Data):
+        super(Permission, self).__init__()
+        self.data = Data
+
     def addPermTime(self, time):
         def callback(instance):
             if instance.text == 'OK':
@@ -231,13 +232,12 @@ class Permission(AnchorLayout):
             pop = Dialog.dialog("No TIME !!!", "Please Enter valid HOURS !!", closePopBtn)
             pop.open()
         else:
-            global Date, id
             db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
             cur = db.cursor()
-            cur.execute("INSERT INTO essl.%d (IO, MTIME, MDATE, DOOR) VALUES('P', '%s', '%s', 'PERMISSION')" %(int(id), time, Date))
+            cur.execute("INSERT INTO essl.`leave_details` (ID, from_date, to_date, Reason, Status, app_date) VALUES('%d', '%s', '%s', '%s', 'PE', '%s')" %(int(self.data[0]), self.data[1], self.data[1], time, self.data[1]))
             cur.close()
             db.close()
-            pop = Dialog.dialog("SUCCESS", "Successfully added the permission time", closePopBtn)
+            pop = Dialog.dialog("SUCCESS", "Success", closePopBtn)
             pop.open()
 
     def checkText(self, text):
@@ -260,6 +260,7 @@ class Level(BoxLayout):
 
     def change_user_status(self):
         global id
+        print(id)
         db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
         cur = db.cursor()
         cur.execute("UPDATE essl.user_master SET Status = 'CLOSED' WHERE ID = '%d'"%(int(id)))

@@ -50,6 +50,7 @@ def formatTime(time):
 def excelManip(filePath):
     db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
     cur = db.cursor()
+    cur1 = db.cursor()
     print(filePath[0])
 
     df = pd.read_excel(filePath[0], sheet_name='data')
@@ -76,8 +77,12 @@ def excelManip(filePath):
                 cur.execute("INSERT INTO essl.%d (IO, MTIME, MDATE, DOOR, AccType) VALUES('%s', '%s', '%s', '%s', '%s')" %(id, io, time, date, door, event))
             except:
                 cur.execute("INSERT INTO essl.user_master(ID, Name, Department, Password, Level) VALUES('%d','%s','%s','%d','5');" %(id, artist, dept, id))
-                cur.execute("CREATE TABLE essl.%d (SNum int(11) NOT NULL AUTO_INCREMENT, IO char(4) NOT NULL, MTIME time NOT NULL, MDATE date NOT NULL, DOOR varchar(45) NOT NULL, AccType varchar(50) NOT NULL, PRIMARY KEY (`SNum`))" %(id))
+                cur.execute("CREATE TABLE IF NOT EXISTS essl.%d (SNum int(11) NOT NULL AUTO_INCREMENT, IO char(4) NOT NULL, MTIME time NOT NULL, MDATE date NOT NULL, DOOR varchar(45) NOT NULL, AccType varchar(50) NOT NULL, PRIMARY KEY (`SNum`))" %(id))
                 cur.execute("INSERT INTO essl.%d (IO, MTIME, MDATE, DOOR, AccType) VALUES('%s', '%s', '%s', '%s', '%s')" %(id, io, time, date, door, event))
+            try:
+                cur1.execute("INSERT INTO essl.`leaves` (ID) VALUES('%d')"%(int(id)))
+            except:
+                pass
 
     cur.close()
     db.close()

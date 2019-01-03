@@ -52,7 +52,7 @@ Builder.load_string("""
         Color:
             rgba: (0.1, 0.1, 0.1, 0.2)
         Rectangle:
-            pos: [self.pos[0] - self.pos[0]/1.05, self.pos[1] - self.pos[1]*1.1]
+            pos: [self.pos[0] - self.pos[0]/1.03, self.pos[1] - self.pos[1]*1.06]
             size: self.size
         Color:
             rgba: (1, 1, 1, 1)

@@ -14,8 +14,9 @@ from kivy.uix.bubble import Bubble
 from kivy.uix.modalview import ModalView
 from kivy.vector import Vector
 
-from db import usersListManip, leaveData
+from db import usersListManip, leaveData, userSettings
 from pages import calendar_data
+from pages.specialFeatures import MouseOver
 
 Builder.load_string("""
 <LeaveDetLayout>:
@@ -298,6 +299,7 @@ Builder.load_string("""
 <LeaveButton>:
     font_name: 'fonts/GoogleSans-MediumItalic.ttf'
     background_color: (1, 1, 1, 0)
+    color: (0, 0, 0, 0)
     canvas.before:
         Color:
             rgba: (1, 1, 1, 1)
@@ -305,7 +307,7 @@ Builder.load_string("""
             pos: self.pos
             size: self.size
 
-<PopMenu>:
+<PopMenuPerm>:
     background_color: (1, 1, 1, 0)
     BoxLayout:
         id: layout
@@ -333,9 +335,34 @@ Builder.load_string("""
             size_hint: (1, 0.5)
             color: (1, 0, 0, 1)
             background_color: (1, 1, 1, 0)
+            on_release: root.declineLeave()
             canvas.before:
                 Color:
                     rgba: (1, 0, 0, 0.3)
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+
+<PopMenuLeave>:
+    background_color: (1, 1, 1, 0)
+    BoxLayout:
+        id: layout
+        orientation: 'vertical'
+        canvas.before:
+            Color:
+                rgba: (1, 1, 1, 1)
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        Button:
+            text: 'P'
+            size_hint: (1, 0.5)
+            color: (0, 1, 0, 1)
+            background_color: (1, 1, 1, 0)
+            on_release: root.permTime()
+            canvas.before:
+                Color:
+                    rgba: (0, 1, 0, 0.3)
                 Rectangle:
                     pos: self.pos
                     size: self.size
@@ -392,7 +419,39 @@ class DaysLabel(Label):
         self.rect.pos = self.pos
         self.rect.size = self.size
 
-class LeaveButton(Button):
+opDetail = 0
+
+class PopMenuLeave(ModalView):
+    def __init__(self, **args):
+        super(PopMenuLeave, self).__init__(**args)
+        self.size_hint = (None, None)
+        self.height = 50
+        self.width = 50
+
+    def open_pop(self, touch):
+        self.pos_hint={'x' : touch.spos[0], 'top' : touch.spos[1]}
+        self.open()
+
+    def permTime(self):
+        global opDetail
+        #p = leaveData.grant_perm(detail)
+        view = ModalView(size_hint=(0.25, 0.25), background_color=(0, 0, 0, 0.6))
+        view.add_widget(userSettings.Permission(opDetail))
+        view.open()
+
+class LeaveButton(Button, MouseOver):
+    #def on_hover(self, *args):
+    #    self.view = ModalView(size_hint=(0.1, 0.1), background_color=(0, 0, 0, 0.6))
+    #    #self.view.pos = (self.pos[0], self.pos[1])
+    #    self.view.add_widget(Label(text='test'))
+    #    self.view.open()
+
+    #def on_exit(self, *args):
+    #    try:
+    #        self.view.dismiss()
+    #    except:
+    #        pass
+
     def set_bgGray(self):
         with self.canvas.before:
             Color(0.5, 0.5, 0.5, 0.50)
@@ -419,15 +478,38 @@ class LeaveButton(Button):
         self.bind(pos=self.update_rect,
                   size=self.update_rect)
 
+    def setPE(self):
+        self.color = (0, 0, 1, 0)
+        with self.canvas.before:
+            #Color(1, 0, 0, 0.50)
+            self.rect = Rectangle(source='icons/leave/PE.png', pos=self.pos, size=self.size)
+
+        self.bind(pos=self.update_rect,
+                  size=self.update_rect)
+
     def update_rect(self, *args):
         self.rect.pos = self.pos
         self.rect.size = self.size
 
+    def on_touch_up(self, touch):
+        if touch.button == 'right':
+            try:
+                self.view.dismiss()
+            except:
+                self.view = ModalView(size_hint=(0.1, 0.1), background_color=(0, 0, 0, 0.6))
+                self.view.pos_hint={'x' : touch.spos[0], 'top' : touch.spos[1]}
+                self.view.add_widget(Label(text='test'))
+                self.view.open()
+        if touch.button == 'left':
+            if self.collide_point(touch.x, touch.y):
+                self.popup = PopMenuLeave()
+                self.popup.open_pop(touch)
+
 detail = 0
 
-class PopMenu(ModalView):
+class PopMenuPerm(ModalView):
     def __init__(self, **args):
-        super(PopMenu, self).__init__(**args)
+        super(PopMenuPerm, self).__init__(**args)
         self.size_hint = (None, None)
         self.height = 50
         self.width = 50
@@ -437,22 +519,27 @@ class PopMenu(ModalView):
         self.open()
 
     def acceptLeave(self):
+        self.dismiss()
         global detail
         p = leaveData.grant_perm(detail)
+
+    def declineLeave(self):
+        self.dismiss()
+        global detail
+        p = leaveData.decline_perm(detail)
 
 class PermissionButton(LeaveButton):
     def __init__(self, **args):
         super(PermissionButton, self).__init__(**args)
         self.size_hint_y=None
-        self.height=25
+        self.height=30
         self.on_touch_up = self.popM
         self.set_bgYellow()
 
     def popM(self, touch):
         if self.collide_point(touch.x, touch.y):
-            self.popup = PopMenu()
+            self.popup = PopMenuPerm()
             self.popup.open_pop(touch)
-            pass
 
     def set_bgYellow(self):
         #self.text = 'LR'
@@ -485,7 +572,7 @@ class LeaveDetLayout(BoxLayout):
         self.ids.artistlist.rows = len(self.artistDetList['artistId'])
         self.ids.artistlist.bind(minimum_height=self.ids.artistlist.setter('height'))
         for a in self.artistDetList['artistName']:
-            artistLbl = ArtistLabel(text="{}".format(a), size_hint_y=None, color=(0, 0, 0, 1), height=25)
+            artistLbl = ArtistLabel(text="{}".format(a), size_hint_y=None, color=(0, 0, 0, 1), height=30)
             self.ids.artistlist.add_widget(artistLbl)
 
         self.create_leave_scr()
@@ -537,16 +624,23 @@ class LeaveDetLayout(BoxLayout):
             det = wid.text.split(".")
             detail = [det[0], det[1]]
 
+        def opCall(wid, touch):
+            global opDetail
+            det = wid.text.split(".")
+            opDetail = [det[0], det[1]]
+
         for r in range(leaveGrid.rows):
             #print(Det[r]['leaveDates'][0])
             leaveDates = Det[r]['leaveDates']
             planned = Det[r]['planned']
             requests = Det[r]['leave_requests']
+            permissions = Det[r]['permission']
             l = 0
             w = self.numOfDays[0]
             for c in range(leaveGrid.cols):
-                lvBtn = LeaveButton(text='', size_hint_y=None, height=25)
-                curDate = "{}-{}-{}".format(self.dispYear, self.months.index(self.dispMonth)+1, c+1)
+                curDate = "{}-{}-{}".format(self.dispYear, str(self.months.index(self.dispMonth)+1).zfill(2), str(c+1).zfill(2))
+                lvBtn = LeaveButton(text='{}.{}'.format(Det[r]['id'], curDate), size_hint_y=None, height=30)
+                lvBtn.bind(on_touch_down =opCall)
                 wd = weekdays[w]
                 try:
                     if curDate in leaveDates:
@@ -556,6 +650,8 @@ class LeaveDetLayout(BoxLayout):
                     pass
                 if curDate in planned:
                     lvBtn.setP()
+                if curDate in permissions:
+                    lvBtn.setPE()
                 if curDate in requests:
                     lvBtn = PermissionButton(text='{}.{}'.format(Det[r]['id'], curDate))
                     lvBtn.bind(on_touch_down =callback)

@@ -1,7 +1,7 @@
 import pymysql
 from db import monthlyWrkHours
-from datetime import date, timedelta
 import datetime
+from datetime import date, timedelta, datetime
 
 def getRequests(id, month, year):
     dates = []
@@ -89,28 +89,52 @@ def getDetails(month, year, id):
         detail['leaveDates'] = monthlyWrkHours.ArtistLeaveDates(year, month, i)
         detail['planned'] = getPlanned(i, month, year)
         detail['leave_requests'] = getRequests(i, month, year)
+        detail['permission'] = getPermission(i, month, year)
 
         details.append(detail)
 
     return details
 
 def grant_perm(details):
+    from db import ExchangeMail
     db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
     cur = db.cursor()
-    cur.execute("UPDATE essl.`leave_details` SET Status = 'P' WHERE ID = '%s' AND from_date = '%s'"%(details[0], details[1]))
+    cur.execute("UPDATE essl.`leave_details` SET Status = 'P' , acc_date = '%s' WHERE ID = '%s' AND from_date = '%s'"%(datetime.today().strftime('%Y-%m-%d'), details[0], details[1]))
+    ExchangeMail.accepted_mail(details[0], details[1])
     cur.close()
     db.close()
     return 1
 
-def upload_to_db(id, from_date, to_date, reason):
+def decline_perm(details):
+    from db import ExchangeMail
     db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
     cur = db.cursor()
-    cur.execute("CREATE TABLE IF NOt EXISTS essl.`leave_details` (`S_no` INT NOT NULL AUTO_INCREMENT, `ID` INT NOT NULL, `from_date` DATE NOT NULL, `to_date` DATE NOT NULL, `Reason` LONGTEXT NOT NULL, `Status` VARCHAR(45) NOT NULL, PRIMARY KEY (`S_no`));")
+    cur.execute("UPDATE essl.`leave_details` SET Status = 'R' WHERE ID = '%s' AND from_date = '%s'"%(details[0], details[1]))
+    ExchangeMail.declined_mail(details[0], details[1])
+    cur.close()
+    db.close()
+    return 1
+
+def upload_to_db(id, from_date, to_date, type, reason):
+    db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
+    cur = db.cursor()
+    cur.execute("CREATE TABLE IF NOT EXISTS essl.`leave_details` (`S_no` int(11) NOT NULL AUTO_INCREMENT, `ID` int(11) NOT NULL, `from_date` date NOT NULL, `to_date` date NOT NULL, `Reason` longtext NOT NULL, `Status` varchar(45) NOT NULL, `Type` varchar(45) DEFAULT NULL, `app_date` date DEFAULT NULL, `acc_date` date DEFAULT NULL, PRIMARY KEY (`S_no`)) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;")
     cur.close()
 
     cur1 = db.cursor()
+    cur2 = db.cursor()
     try:
-        cur1.execute("INSERT INTO essl.`leave_details` (ID, from_date, to_date, Reason, Status) VALUES('%s', '%s', '%s', '%s', 'LR')"%(id, from_date, to_date, reason))
+        types = type.split(":")
+        cur2.execute("UPDATE essl.`leaves` SET EL = EL-%d, CL = CL-%d WHERE ID = '%s'"%(int(types[0].split("-")[1]), int(types[1].split("-")[1]), id))
+    except Exception as e:
+        print(e)
+        types = type.split("-")
+        if types[0] == 'EL':
+            cur2.execute("UPDATE essl.`leaves` SET EL = EL-%d WHERE ID = '%s'"%(int(types[1]), id))
+        elif types[0] == 'CL':
+            cur2.execute("UPDATE essl.`leaves` SET CL = CL-%d WHERE ID = '%s'"%(int(types[1]), id))
+    try:
+        cur1.execute("INSERT INTO essl.`leave_details` (ID, from_date, to_date, Reason, Status, Type, app_date) VALUES('%s', '%s', '%s', '%s', 'LR', '%s', '%s')"%(id, from_date, to_date, reason, type, datetime.today().strftime('%Y-%m-%d')))
         cur1.close()
         db.close()
         return 1
@@ -119,3 +143,21 @@ def upload_to_db(id, from_date, to_date, reason):
         cur1.close()
         db.close()
         return 0
+
+def getFeedback(id):
+    db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
+    cur = db.cursor()
+    cur.execute("SELECT from_date, to_date, Type, Status, app_date, Reason FROM essl.`leave_details` WHERE ID = '%s'"%(id))
+    data = cur.fetchall()
+    cur.close()
+    db.close()
+    return data
+
+def get_leaves_data(id):
+    db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
+    cur = db.cursor()
+    cur.execute("SELECT EL, CL FROM essl.`leaves` WHERE ID = '%s'"%(id))
+    data = cur.fetchone()
+    cur.close()
+    db.close()
+    return data
