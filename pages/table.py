@@ -22,7 +22,7 @@ id = 0
 date = 0
 
 Builder.load_string("""
-<dataLbl>:
+<DataLbl>:
     color: (0, 0, 0, 1)
     bold: True
     canvas.before:
@@ -32,7 +32,7 @@ Builder.load_string("""
             size: self.size
             pos: self.pos
 
-<dataLblM>:
+<DataLblM>:
     FloatLayout:
         pos: self.parent.pos
         size: self.parent.size
@@ -50,7 +50,7 @@ Builder.load_string("""
                     size: self.size
 
 """)
-class dataLbl(Label):
+class DataLbl(Label):
     def set_bgRed(self):
         with self.canvas.before:
             Color(1, 0, 0, 0.50)
@@ -71,14 +71,14 @@ class dataLbl(Label):
         self.rect.pos = self.pos
         self.rect.size = self.size
 
-class dataLblM(dataLbl):
+class DataLblM(DataLbl):
     def getInfo(self, data):
         self.data = data
 
     def openRegPop(self):
         global id, date
-        TF = userSettings.TimingFix(id[len(id)-1], date)
-        RT = userSettings.RemTime(id[len(id)-1], date, self.data[0], self.data[1], self.data[2], self.data[3])
+        TF = userSettings.TimingFix(id, date)
+        RT = userSettings.RemTime(id, date, self.data[0], self.data[1], self.data[2], self.data[3])
         setLayout = BoxLayout(orientation = 'horizontal')
         REG = Splitter(sizable_from = 'right', rescale_with_parent = True, keep_within_parent = True)
         REG.add_widget(TF)
@@ -88,9 +88,9 @@ class dataLblM(dataLbl):
         popup = Popup(title="TIMING FIX", content=setLayout, size_hint=(0.65, 0.65))
         popup.open()
 
-class dataTable(ScrollView):
+class DataTable(ScrollView):
     def __init__(self, **args):
-        super(dataTable, self).__init__(**args)
+        super(DataTable, self).__init__(**args)
         self.as_popup="True"
         self.size_hint=(1, 1)
         #self.size=(Window.width, Window.height)
@@ -114,7 +114,7 @@ class dataTable(ScrollView):
             if door[i] not in level[lvl] and door[i] != 'MAINDOOR':
                 i += 1; j += 1; k += 1;
                 continue
-            lbl = dataLbl(text=str(io[i]), size_hint_y=None, height=40)
+            lbl = DataLbl(text=str(io[i]), size_hint_y=None, height=40)
             try:
                 if door[i] in level[lvl] and io[i] == 'In' and door[i+1] == door[i] and io[i+1] == 'Out':
                     lbl.set_bgGreen()
@@ -126,7 +126,7 @@ class dataTable(ScrollView):
                 pass
             layout.add_widget(lbl)
             while j < len(time):
-                lbl = dataLbl(text=str(time[j]), size_hint_y=None, height=40)
+                lbl = DataLbl(text=str(time[j]), size_hint_y=None, height=40)
                 try:
                     if door[i] in level[lvl] and io[i] == 'In' and door[i+1] == door[i] and io[i+1] == 'Out':
                         lbl.set_bgGreen()
@@ -138,7 +138,7 @@ class dataTable(ScrollView):
                     pass
                 layout.add_widget(lbl)
                 while k < len(door):
-                    lbl = dataLbl(text=str(door[k]), size_hint_y=None, height=40)
+                    lbl = DataLbl(text=str(door[k]), size_hint_y=None, height=40)
                     try:
                         if door[i] in level[lvl] and io[i] == 'In' and door[i+1] == door[i] and io[i+1] == 'Out':
                             lbl.set_bgGreen()
@@ -181,7 +181,7 @@ class dataTableAdmin(ScrollView):
 
         i=1; j=1; k=1; l=1;
         while i < len(io):
-            lbl = dataLbl(text=str(io[i]), size_hint_y=None, height=40)
+            lbl = DataLbl(text=str(io[i]), size_hint_y=None, height=40)
             try:
                 if door[i] in level[lvl] and io[i] == 'In' and door[i+1] == door[i] and io[i+1] == 'Out':
                     lbl.set_bgGreen()
@@ -193,7 +193,7 @@ class dataTableAdmin(ScrollView):
                 pass
             layout.add_widget(lbl)
             while j < len(time):
-                lbl = dataLbl(text=str(time[j]), size_hint_y=None, height=40)
+                lbl = DataLbl(text=str(time[j]), size_hint_y=None, height=40)
                 try:
                     if door[i] in level[lvl] and io[i] == 'In' and door[i+1] == door[i] and io[i+1] == 'Out':
                         lbl.set_bgGreen()
@@ -205,7 +205,7 @@ class dataTableAdmin(ScrollView):
                     pass
                 layout.add_widget(lbl)
                 while k < len(door):
-                    lbl = dataLbl(text=str(door[k]), size_hint_y=None, height=40)
+                    lbl = DataLbl(text=str(door[k]), size_hint_y=None, height=40)
                     try:
                         if door[i] in level[lvl] and io[i] == 'In' and door[i+1] == door[i] and io[i+1] == 'Out':
                             lbl.set_bgGreen()
@@ -217,14 +217,14 @@ class dataTableAdmin(ScrollView):
                         pass
                     layout.add_widget(lbl)
                     while l < len(accType):
-                        lbl = dataLbl(text=str(accType[l]), size_hint_y=None, height=40)
+                        lbl = DataLbl(text=str(accType[l]), size_hint_y=None, height=40)
                         try:
                             if door[i] in level[lvl] and io[i] == 'In' and door[i+1] == door[i] and io[i+1] == 'Out':
                                 lbl.set_bgGreen()
                             elif door[i-1] in level[lvl] and io[i-1] == 'In' and door[i-1] == door[i] and io[i] == 'Out':
                                 lbl.set_bgGreen()
                             elif door[i] in level[lvl]:
-                                lbl = dataLblM(text=str(accType[l]), size_hint_y=None, height=40)
+                                lbl = DataLblM(text=str(accType[l]), size_hint_y=None, height=40)
                                 lbl.getInfo([io[i], time[i], door[i], accType[i]])
                                 lbl.set_bgRed()
                         except:

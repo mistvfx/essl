@@ -6,11 +6,11 @@ from kivy.uix.button import Button
 import datetime
 
 id = [0]*1
-date = [None]*1
+date = ""
 
 def formatDate(date):
-    allDateData = list(reversed(date))
-    dt = (str(allDateData[0])+"-"+str(allDateData[1])+"-"+str(allDateData[2]))
+    allDateData = list(reversed(date.split(":")))
+    dt = (str(allDateData[0]) +"-"+ str(allDateData[1]).zfill(2) +"-"+ str(allDateData[2]))
     return dt
 
 """class getUserInfo(Screen):
@@ -44,7 +44,6 @@ def calActualWorkingHours(io, time, door, lvl):
 
         i += 1
 
-    print(sumTime)
     return sumTime
 
 def calTotalWorkingHours(ios, timings, doors):
@@ -59,14 +58,13 @@ def calTotalWorkingHours(ios, timings, doors):
 
     return max(outtimes)-min(intimes)
 
-def getUserInfo():
+def getUserInfo(id, date):
     StdWrkHrs = datetime.timedelta(hours=8, minutes=29, seconds=59)
-    global id, date
-    formattedDate = formatDate(date[int(len(date)-1)])
+    formattedDate = formatDate(date)
     #print(formattedDate)
     db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
     cur = db.cursor()
-    cur.execute("SELECT IO, MTIME, MDATE, DOOR, AccType FROM essl.`%d` WHERE MDATE = '%s' ORDER BY MTIME ASC" %(id[int(len(id)-1)], formattedDate))
+    cur.execute("SELECT IO, MTIME, MDATE, DOOR, AccType FROM essl.`%d` WHERE MDATE = '%s' ORDER BY MTIME ASC" %(id, formattedDate))
 
     ios = []
     timings = []
@@ -82,14 +80,14 @@ def getUserInfo():
         doors.append(data[3])
 
     cur1 = db.cursor()
-    cur1.execute("SELECT Level FROM essl.user_master WHERE ID = '%d'"%(id[int(len(id)-1)]))
+    cur1.execute("SELECT Level FROM essl.user_master WHERE ID = '%d'"%(id))
 
     for data in cur1.fetchall():
         lvl = data[0]
 
     table.lvl = lvl
     table.id = id
-    table.date = formatDate(date[len(date)-1])
+    table.date = formattedDate
 
     totalWorkingHours = calTotalWorkingHours(ios, timings, doors)
 
@@ -111,8 +109,6 @@ def getUserInfo():
     db.close()
 
 def openPopup(ua):
-    popUpCLoseBtn = Button(text='close', size_hint=(0.45, 1))
-    infoPopup.closeBtn = popUpCLoseBtn
     global id, date
 
     db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)

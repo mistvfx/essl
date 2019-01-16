@@ -3,6 +3,7 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
 from kivy.uix.button import Button
 from kivy.uix.popup import Popup
+from kivy.uix.modalview import ModalView
 from kivy.lang import Builder
 import datetime
 
@@ -15,7 +16,7 @@ NCH = [0]*1
 ACH = [0]*1
 
 Builder.load_string("""
-<hdrLayout>:
+<HdrLayout>:
     orientation: 'horizontal'
     size_hint: (1, 0.10)
     canvas.before:
@@ -25,7 +26,7 @@ Builder.load_string("""
             size: self.size
             pos: self.pos
 
-<tblLayout>:
+<TblLayout>:
     orientation: 'horizontal'
     canvas.before:
         Color:
@@ -34,7 +35,7 @@ Builder.load_string("""
             size: self.size
             pos: self.pos
 
-<infoLbl>:
+<InfoLbl>:
     color: (0, 0, 0, 1)
     bold: True
     canvas.before:
@@ -44,13 +45,38 @@ Builder.load_string("""
             size: self.size
             pos: self.pos
 
-<infoTabAdmin>:
-    FloatLayout:
-        Label:
-            id: userinfo
-            pos_hint: {'center_x':0.5, 'center_y':0.5}
+<InfoTabAdmin>:
+    BoxLayout:
+        id: overallLayout
+        orientation: 'vertical'
+        HdrLayout:
+            id: header_layout_admin
+            Label:
+                text: 'Details'
+                bold: True
+            GridLayout:
+                cols: 4
+                size_hint: (0.55, 1)
+                Label:
+                    text: 'I/O'
+                    bold: True
+                Label:
+                    text: 'TIME'
+                    bold: True
+                Label:
+                    text: 'DOOR'
+                    bold: True
+                Label:
+                    text: 'Access Type'
+                    bold: True
+        TblLayout:
+            id: table_layout_admin
+            GridLayout:
+                id: info_admin
+                cols: 2
+                size_hint: (0.45, 1)
 
-<infoTab>:
+<InfoTab>:
     BoxLayout:
         orientation: 'vertical'
         FloatLayout:
@@ -156,65 +182,36 @@ class InfoTab(BoxLayout):
                 infoLabels.size_hint_x= 0.30
             info.add_widget(infoLabels)
 
-class infoTabAdmin(BoxLayout):
-    def __init__(self, **args):
-        super(infoTabAdmin, self).__init__(**args)
-        self.popUI()
+class InfoTabAdmin(BoxLayout):
+    def __init__(self, id, date):
+        super(InfoTabAdmin, self).__init__()
+        self.popUI(id, date)
+        self.openPopup()
 
-    def popUI(self):
-        overallLayout = BoxLayout(orientation='vertical')
-        self.add_widget(overallLayout)
+    def openPopup(self):
+        popup = ModalView(size_hint=(0.85, 0.85))
+        popup.add_widget(self)
+        #popup.bind(on_dismiss=self.stopClock)
+        popup.open()
 
-        """ Defining Header and closeBtn """
-
-        headerLayout = hdrLayout()
-        overallLayout.add_widget(headerLayout)
-
-        header = GridLayout(cols=4, size_hint=(0.55, 1))
-        headerLayout.add_widget(header)
-        headers = ['I/O', 'TIME', 'DOOR', 'Access Type']
-        for i in range(4):
-            headerLabel = Label(text=headers[i], bold=True)
-            header.add_widget(headerLabel)
-
-        global closeBtn
-        headerLayout.add_widget(closeBtn)
-
-        """ Table and info """
-
-        tableLayout = tblLayout()
-        overallLayout.add_widget(tableLayout)
+    def popUI(self, id, date):
+        from db import getInfo
+        getInfo.getUserInfo(id, date)
 
         tab = table.dataTableAdmin()
         tab.size_hint=(0.55, 1)
-        tableLayout.add_widget(tab)
-
-        """ Defining Info """
-
-        info = GridLayout(cols=2, size_hint=(0.45, 1))
-        tableLayout.add_widget(info)
+        self.ids.table_layout_admin.add_widget(tab)
 
         global TWH, AWH, NCH, ACH
-
-        #tw = ("%.2f"%(round(TWH[len(TWH)-1].total_seconds()/3600, 2)))
         tw = formatTime(TWH[len(TWH)-1])
-
-        #aw = ("%.2f"%(round(AWH[len(AWH)-1].total_seconds()/3600, 2)))
         aw = formatTime(AWH[len(AWH)-1])
-
-        #nc = ("%.2f"%(round(NCH[len(NCH)-1].total_seconds()/3600, 2)))
         nc = formatTime(NCH[len(NCH)-1])
-
-        #ac = ("%.2f"%(round(ACH[len(ACH)-1].total_seconds()/3600, 2)))
         ac = formatTime(ACH[len(ACH)-1])
 
         infoQ = ['Total Hours :', tw, 'Working Hours :', aw, 'Non-Completed Actual Hours:', nc, 'Additional Hours:', ac]
 
         for i in range(len(infoQ)):
-            infoLabels = infoLbl(text=infoQ[i])
+            infoLabels = InfoLbl(text=infoQ[i])
             if i % 2 == 1:
                 infoLabels.size_hint_x= 0.30
-            info.add_widget(infoLabels)
-
-def refreshTable():
-    print(children)
+            self.ids.info_admin.add_widget(infoLabels)

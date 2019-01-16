@@ -32,8 +32,35 @@ Builder.load_string("""
         Rectangle:
             pos: self.pos
             size: self.size
-<excelImpButton>:
-    text: "Excel Import"
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 10
+        spacing: 5
+        BoxLayout:
+            id: controlLayout
+            orientation: 'horizontal'
+            size_hint: (1, 0.06)
+            spacing: 5
+            ExcelImport:
+                on_release: self.scan()
+            CDatePicker:
+                text: "SELECT DATE"
+                size_hint: (0.5, 1)
+                pHint: (0.35, 0.35)
+                on_text: self.changeDate()
+            ExcelExport:
+                on_text: self.callexcel()
+        FloatLayout:
+            id: listLayout
+            size_hint: (1, 1)
+            SetButton:
+                on_release: self.openSettings()
+            LeaveDetails:
+                on_release: self.openDetPage()
+
+
+<ExcelImport>:
+    text: "Import Excel"
     size_hint: (0.5, 1)
     color: (0, 0, 0, 0)
     background_color: (1, 1, 1, 0)
@@ -46,7 +73,7 @@ Builder.load_string("""
             size_hint_x: None
         Label:
             size_hint_x: None
-            text: "Excel Import"
+            text: "SCAN"
             font_name: 'fonts/moon-bold.otf'
             color: (0, 0, 0, 1)
 
@@ -79,26 +106,7 @@ Builder.load_string("""
         x: self.parent.x
         keep_data: True
 
-<refButton>:
-    text: 'REFRESH'
-    color: (1, 1, 1, 0)
-    background_color: (0, 0, 0, 0)
-    pos_hint: {'right':1}
-    canvas:
-        Color:
-            rgba: (1, 1, 1, 0)
-        Ellipse:
-            pos: self.pos
-            size: self.size
-    Image:
-        id: refImg
-        source: 'icons/refresh.zip'
-        pos: self.parent.pos
-        size: self.parent.size
-        anim_delay: -1
-        anim_loop: 1
-
-<setButton>:
+<SetButton>:
     text: 'SETTINGS'
     color: (1, 1, 1, 0)
     background_color: (0, 0, 0, 0)
@@ -141,9 +149,11 @@ Builder.load_string("""
             color: (0, 0, 0, 1)
 """)
 
-"""
+class CDatePicker(DatePicker):
+    def changeDate(self):
+        usersList.date = self.text
+        print(usersList.date)
 
-"""
 class LeaveDetails(Button, MouseOver):
     def collide_point(self, x, y):
           return Vector(x, y).distance(self.center) <= self.width / 2
@@ -158,111 +168,12 @@ class LeaveDetails(Button, MouseOver):
     def on_exit(self):
         self.background_color = (0, 0, 0, 0)
 
-class excelImpButton(Button, MouseOver):
+class ExcelImport(Button, MouseOver):
     def on_hover(self):
         self.background_color = (1, 0, 1, 0.5)
 
     def on_exit(self):
         self.background_color = (0, 0, 0, 0)
-
-class ExcelExport(Spinner, MouseOver):
-    def on_hover(self):
-        self.background_color = (1, 0, 1, 0.5)
-
-    def on_exit(self):
-        self.background_color = (0, 0, 0, 0)
-
-class ExcelExported(Popup):
-    pass
-
-class refButton(Button, MouseOver):
-    def collide_point(self, x, y):
-          return Vector(x, y).distance(self.center) <= self.width / 2
-
-    def on_hover(self):
-        self.background_color = (1, 1, 1, 0.5)
-
-    def on_exit(self):
-        self.background_color = (0, 0, 0, 0)
-
-    def on_press(self):
-        self.ids.refImg.anim_delay = 0.01
-
-    def on_release(self):
-        self.ids.refImg.anim_delay = -1
-
-class setButton(Button, MouseOver):
-    def collide_point(self, x, y):
-          return Vector(x, y).distance(self.center) <= self.width / 2
-
-    def on_hover(self):
-        self.ids.setImg.anim_delay = 0.1
-
-    def on_exit(self):
-        self.ids.setImg.anim_delay = -1
-
-class AdminPage(Screen):
-    def __init__(self, **args):
-        super(AdminPage, self).__init__(**args)
-        self.user()
-
-    def user(self):
-
-        def callback(instance):
-            if(instance.text == 'Excel Import'):
-                self.excelOpen()
-            """if(instance.text == 'Excel Export'):
-                excelIO.excelExport(date.text)
-                ExcelExported().open()"""
-            if(instance.text == 'REFRESH'):
-                usersList.date.append(date.text)
-            if(instance.text == 'SETTINGS'):
-                settings.Settings()
-
-        def callexcel(spinner, text):
-            if text == 'DAY':
-                excelIO.excelExport(date.text)
-            if text == 'MONTH':
-                excelIO.exportMonth(date.text.split(".")[1], date.text.split(".")[2])
-
-
-        adminLayout = BoxLayout(orientation='vertical', padding=10, spacing=5)
-        self.add_widget(adminLayout)
-
-        controlLayout = BoxLayout(orientation='horizontal', size_hint=(1, 0.06),
-                                    spacing=5)
-        listLayout = FloatLayout(size_hint=(1, 1))
-        adminLayout.add_widget(controlLayout)
-        adminLayout.add_widget(listLayout)
-
-        excelImportBtn = excelImpButton()
-        excelImportBtn.bind(on_release=callback)
-        controlLayout.add_widget(excelImportBtn)
-
-        date = DatePicker(size_hint=(0.5, 1), pHint=(0.35, 0.35))
-        controlLayout.add_widget(date)
-
-        refreshBtn = refButton(size_hint_x=(0.07))
-        refreshBtn.bind(on_release=callback)
-        controlLayout.add_widget(refreshBtn)
-
-        excelExport = ExcelExport()
-        excelExport.bind(text=callexcel)
-        controlLayout.add_widget(excelExport)
-
-        settingsBtn = setButton()
-        settingsBtn.bind(on_release=callback)
-
-        leaveDetBtn = LeaveDetails()
-        leaveDetBtn.bind(on_release=callback)
-
-        usersListManip.getUserInfo()
-        usersList.date.append(date.text)
-        userList = usersList.userList()
-        userList.size_hint = (1, 1)
-        listLayout.add_widget(userList)
-        listLayout.add_widget(settingsBtn)
-        listLayout.add_widget(leaveDetBtn)
 
     def excelOpen(self):
 
@@ -289,3 +200,42 @@ class AdminPage(Screen):
         self.filePopup = Popup(title='Choose Excel', content=popupLayout, size_hint=(0.75, 0.75 ))
         closeBtn.bind(on_press=self.filePopup.dismiss)
         self.filePopup.open()
+
+class ExcelExport(Spinner, MouseOver):
+    def callexcel(self, spinner, text):
+        if text == 'DAY':
+            excelIO.excelExport(date.text)
+        if text == 'MONTH':
+            excelIO.exportMonth(date.text.split(".")[1], date.text.split(".")[2])
+
+    def on_hover(self):
+        self.background_color = (1, 0, 1, 0.5)
+
+    def on_exit(self):
+        self.background_color = (0, 0, 0, 0)
+
+class ExcelExported(Popup):
+    pass
+
+class SetButton(Button, MouseOver):
+    def collide_point(self, x, y):
+          return Vector(x, y).distance(self.center) <= self.width / 2
+
+    def on_hover(self):
+        self.ids.setImg.anim_delay = 0.1
+
+    def on_exit(self):
+        self.ids.setImg.anim_delay = -1
+
+    def openSettings(self):
+        settings.Settings()
+
+class AdminPage(Screen):
+    def __init__(self, **args):
+        super(AdminPage, self).__init__(**args)
+        self.user()
+
+    def user(self):
+        userList = usersList.UserList()
+        userList.size_hint = (1, 1)
+        self.ids.listLayout.add_widget(userList)
