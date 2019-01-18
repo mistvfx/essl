@@ -116,7 +116,7 @@ def openPopup(ua):
     cur.execute("SELECT Name FROM essl.user_master WHERE ID = '%d'"%(id[len(id)-1]))
     name = cur.fetchone()
 
-    getUserInfo()
+    getUserInfo(id[len(id)-1], date)
 
     if ua == 'user':
         tab = infoPopup.InfoTab(name, date)
@@ -127,4 +127,3 @@ def openPopup(ua):
     popup.add_widget(tab)
     #title="{}||{}".format(name[0], formatDate(date[len(date)-1])), content=tab,
     popup.open()
-    popUpCLoseBtn.bind(on_press=popup.dismiss)

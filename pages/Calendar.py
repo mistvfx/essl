@@ -238,7 +238,7 @@ class CalendarWidgetM(RelativeLayout):
 
         self.active_date[0] = int(inst.text)
 
-        getInfo.date.append(self.active_date)
+        getInfo.date = "{}:{}:{}".format(self.active_date[0], self.active_date[1], self.active_date[2])
 
         if self.as_popup:
             self.parent_popup.dismiss()

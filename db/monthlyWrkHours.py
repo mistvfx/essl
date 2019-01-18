@@ -85,6 +85,36 @@ def calArtistLeave(year, month, d):
     db.close()
     return leave - hDays
 
+def calArtistLeaveMon(year, month):
+    global id
+
+    totalDays = calendar.monthrange(year, month)[1]
+    Month = calendar.monthcalendar(year, month)
+    leave = 0
+    hDays = 0
+    holidays = getHolidays()
+    actualWorkingDays = []
+
+    db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
+    cur = db.cursor()
+    cur.execute("SELECT DISTINCT(MDate) from essl.`%d` WHERE YEAR(MDate) = '%d' AND MONTH(MDate) = '%d'" %(id[len(id)-1], int(year), int(month)))
+    for date in cur.fetchall():
+        actualWorkingDays.append(date[0].day)
+
+    for week in Month:
+        for day in week:
+            for i in range(len(holidays)):
+                if day == holidays[i][0] and month == holidays[i][1] and year == holidays[i][2]:
+                    hDays += 1
+            if day == week[6] or day in actualWorkingDays or day == 0:
+                continue
+            else :
+                leave += 1
+
+    cur.close()
+    db.close()
+    return leave - hDays
+
 def ArtistLeaveDates(year, month, id):
     from datetime import datetime
     today = datetime.today()

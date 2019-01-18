@@ -42,22 +42,18 @@ Builder.load_string("""
             size_hint: (1, 0.06)
             spacing: 5
             ExcelImport:
-                on_release: self.scan()
+                on_release: self.excelOpen()
             CDatePicker:
+                id: date
                 text: "SELECT DATE"
                 size_hint: (0.5, 1)
                 pHint: (0.35, 0.35)
                 on_text: self.changeDate()
             ExcelExport:
-                on_text: self.callexcel()
+                on_text: self.callexcel(self.text, date.text)
         FloatLayout:
             id: listLayout
             size_hint: (1, 1)
-            SetButton:
-                on_release: self.openSettings()
-            LeaveDetails:
-                on_release: self.openDetPage()
-
 
 <ExcelImport>:
     text: "Import Excel"
@@ -130,7 +126,6 @@ Builder.load_string("""
     color: (1, 1, 1, 0)
     background_color: (0, 0, 0, 0)
     pos_hint: {'y':0.1}
-    on_release: root.openDetPage()
     size_hint: (0.05, 0.1)
     canvas:
         Color:
@@ -139,28 +134,20 @@ Builder.load_string("""
             source: 'icons/attendance.png'
             pos: self.pos
             size: self.size
-    FloatLayout:
-        pos: self.pos
-        size: self.size
-        Label:
-            text: '0'
-            size: (min(self.width, self.height), min(self.width, self.height))
-            pos_hint: {'top':0, 'right':1}
-            color: (0, 0, 0, 1)
 """)
 
 class CDatePicker(DatePicker):
     def changeDate(self):
         usersList.date = self.text
-        print(usersList.date)
 
 class LeaveDetails(Button, MouseOver):
-    def collide_point(self, x, y):
-          return Vector(x, y).distance(self.center) <= self.width / 2
-
-    def openDetPage(self):
+    def on_release(self, *args):
         pop = Popup(title= 'Leave Details', content= leaveDet.LeaveDetLayout(), size_hint= (0.98, 0.98))
         pop.open()
+        return True
+
+    def collide_point(self, x, y):
+          return Vector(x, y).distance(self.center) <= self.width / 2
 
     def on_hover(self):
         self.background_color = (1, 0.5, 0.5, 0.5)
@@ -202,11 +189,11 @@ class ExcelImport(Button, MouseOver):
         self.filePopup.open()
 
 class ExcelExport(Spinner, MouseOver):
-    def callexcel(self, spinner, text):
+    def callexcel(self, text, date):
         if text == 'DAY':
-            excelIO.excelExport(date.text)
+            excelIO.excelExport(date)
         if text == 'MONTH':
-            excelIO.exportMonth(date.text.split(".")[1], date.text.split(".")[2])
+            excelIO.exportMonth(date.split(".")[1].zfill(2), date.split(".")[2].zfill(2))
 
     def on_hover(self):
         self.background_color = (1, 0, 1, 0.5)
@@ -218,6 +205,9 @@ class ExcelExported(Popup):
     pass
 
 class SetButton(Button, MouseOver):
+    def on_release(self, *args):
+        settings.Settings()
+
     def collide_point(self, x, y):
           return Vector(x, y).distance(self.center) <= self.width / 2
 
@@ -226,9 +216,6 @@ class SetButton(Button, MouseOver):
 
     def on_exit(self):
         self.ids.setImg.anim_delay = -1
-
-    def openSettings(self):
-        settings.Settings()
 
 class AdminPage(Screen):
     def __init__(self, **args):
@@ -239,3 +226,5 @@ class AdminPage(Screen):
         userList = usersList.UserList()
         userList.size_hint = (1, 1)
         self.ids.listLayout.add_widget(userList)
+        self.ids.listLayout.add_widget(SetButton())
+        self.ids.listLayout.add_widget(LeaveDetails())

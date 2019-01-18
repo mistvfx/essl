@@ -151,7 +151,7 @@ class InfoTab(BoxLayout):
         #tableLayout = tblLayout()
         #overallLayout.add_widget(tableLayout)
 
-        tab = table.dataTable()
+        tab = table.DataTable()
         tab.size_hint=(0.65, 1)
         self.ids.table_layout.add_widget(tab)
 
