@@ -164,9 +164,12 @@ class InfoTab(BoxLayout):
         global id, date
         from db import getInfo
         if date == '':
-            date = '05:12:2018'
+            return
 
-        info = getInfo.getUserInfo(id, date)
+        try:
+            info = getInfo.getUserInfo(id, date)
+        except Exception as e:
+            return
 
         self.tw = "Total Hours : {}".format(formatTime(info['TWH']))
         self.aw = "Working Hours : {}".format(formatTime(info['AWH']))

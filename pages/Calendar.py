@@ -132,7 +132,7 @@ class CalendarWidgetM(RelativeLayout):
 
     def create_month_scr(self, month, toogle_today=False):
         """ Screen with calendar for one month """
-        monthlyWrkHours.calArtistLeave(self.active_date[2], self.active_date[1], self.active_date[0])
+        monthlyWrkHours.calArtistLeave(self.active_date[2], str(self.active_date[1]).zfill(2), str(self.active_date[0]).zfill(2))
         #self.active_date[0] = day, self.active_date[1] = month, self.active_date[2] = year
 
         scr = Screen()
@@ -237,7 +237,7 @@ class CalendarWidgetM(RelativeLayout):
         global id
 
         self.active_date[0] = int(inst.text)
-        formatted_date = "{}:{}:{}".format(self.active_date[0], self.active_date[1], self.active_date[2])
+        formatted_date = "{}:{}:{}".format(str(self.active_date[0]).zfill(2), str(self.active_date[1]).zfill(2), self.active_date[2])
 
         getInfo.date = formatted_date
         userPage.date = formatted_date

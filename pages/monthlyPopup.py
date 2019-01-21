@@ -99,7 +99,7 @@ Builder.load_string("""
 """)
 
 month = []
-months = ['January ', 'Feburary ', 'March ', 'April ', 'May ', 'June ', 'July ', 'August ', 'September ', 'October ', 'November ', 'December ']
+months = ['January ', 'February ', 'March ', 'April ', 'May ', 'June ', 'July ', 'August ', 'September ', 'October ', 'November ', 'December ']
 
 def calTotWorkingDays(totDays, curMonth, givMonth, curDate, givYear):
     today = datetime.datetime.strftime(datetime.datetime.today(), '%d:%m:%Y')
@@ -164,7 +164,7 @@ def formatTime(time):
     if hours < 0:
         return ('0:0')
 
-    return ('{}:{}'.format(hours, minutes))
+    return ('{}:{}'.format(hours, str(minutes).zfill(2)))
 
 class PopLabel(Label, ):
     pass

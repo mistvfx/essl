@@ -38,7 +38,7 @@ Builder.load_string("""
 
 <BEtabs>:
     do_default_tab: False
-    
+
     TabbedPanelItem:
         text: 'PERMISSION'
         font_name: 'fonts/moon-bold.otf'

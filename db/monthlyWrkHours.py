@@ -47,6 +47,8 @@ def calMonTotWrkHrs(year, month):
 
 def calArtistLeave(year, month, d):
     global id
+    month = int(month)
+    d = int(d)
 
     totalDays = calendar.monthrange(year, month)[1]
     Month = calendar.monthcalendar(year, month)
