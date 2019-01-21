@@ -5,9 +5,15 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
 from kivy.lang import Builder
+from kivy.properties import *
+from kivy.clock import Clock
 
 from db import monthlyWrkHours
 import time
+import threading
+import datetime
+
+date = ''
 
 Builder.load_string("""
 <MonPop>:
@@ -19,6 +25,66 @@ Builder.load_string("""
         Rectangle:
             size: self.size
             pos: self.pos
+    PopLabel:
+        text:'PARTICULARS'
+        size_hint: (0.60, 0.25)
+    PopLabel:
+        text:'DEFAULT'
+        size_hint: (0.10, 0.25)
+    PopLabel:
+        text:'TARGET'
+        size_hint: (0.10, 0.25)
+    PopLabel:
+        text:'CURRENT'
+        size_hint: (0.10, 0.25)
+    PopLabel:
+        text:'INCOMPLETE'
+        size_hint: (0.10, 0.25)
+    PopLabel:
+        size_hint_x: 0.60
+        text: root.total_wrkhrs_info
+    PopLabel:
+        text: root.default_total_working_hours
+        size_hint_x: 0.10
+    PopLabel:
+        text: root.target_total_working_hours
+        size_hint_x: 0.10
+    PopLabel:
+        text: root.current_total_working_hours
+        size_hint_x: 0.10
+    PopLabel:
+        text: root.incomplete_total_working_hours
+        size_hint_x: 0.10
+    PopLabel:
+        size_hint_x: 0.60
+        text: root.actual_wrkhrs_info
+    PopLabel:
+        text: root.default_actual_working_hours
+        size_hint_x: 0.10
+    PopLabel:
+        text: root.target_actual_working_hours
+        size_hint_x: 0.10
+    PopLabel:
+        text: root.current_actual_working_hours
+        size_hint_x: 0.10
+    PopLabel:
+        text: root.incomplete_actual_working_hours
+        size_hint_x: 0.10
+    PopLabel:
+        size_hint_x: 0.60
+        text: root.wrkdays_info
+    PopLabel:
+        text: root.total_working_days
+        size_hint_x: 0.10
+    PopLabel:
+        text: root.artist_working_days
+        size_hint_x: 0.10
+    PopLabel:
+        text: '-'
+        size_hint_x: 0.10
+    PopLabel:
+        text: root.nonworking_days
+        size_hint_x: 0.10
 
 <PopLabel>:
     color: (0, 0, 0, 1)
@@ -36,9 +102,9 @@ month = []
 months = ['January ', 'Feburary ', 'March ', 'April ', 'May ', 'June ', 'July ', 'August ', 'September ', 'October ', 'November ', 'December ']
 
 def calTotWorkingDays(totDays, curMonth, givMonth, curDate, givYear):
+    today = datetime.datetime.strftime(datetime.datetime.today(), '%d:%m:%Y')
     holidays = monthlyWrkHours.getHolidays()
     calTotWorkingDays.artistLeaves = monthlyWrkHours.calArtistLeave(givYear, givMonth, curDate)
-    #calTotWorkingDays.officeDefault = totDays
     days = 0
     hDays = 0
     month = calendar.monthcalendar(givYear, givMonth)
@@ -49,8 +115,7 @@ def calTotWorkingDays(totDays, curMonth, givMonth, curDate, givYear):
                     hDays += 1
             if day == 0 or day == week[6]:
                 continue
-            if day == curDate and givMonth == curMonth:
-                #print(days, hDays, calTotWorkingDays.artistLeaves)
+            if str(day).zfill(2) == today.split(":")[0] and str(givMonth).zfill(2) == today.split(":")[1]:
                 calTotWorkingDays.officeDefault = days-hDays
                 return days-hDays-calTotWorkingDays.artistLeaves
             days += 1
@@ -59,7 +124,6 @@ def calTotWorkingDays(totDays, curMonth, givMonth, curDate, givYear):
 
     calTotWorkingDays.officeDefault = days-hDays
     return days-hDays-calTotWorkingDays.artistLeaves
-
 
 def workTime():
     StdWrkHrs = datetime.timedelta(hours=8, minutes=29, seconds=59)
@@ -71,6 +135,7 @@ def workTime():
         workTime.mont = int(months.index(mon[0])+1)
     except:
         workTime.mont = int(mon[0])
+
     date = str(datetime.date.today()).split("-")
 
     try:
@@ -105,14 +170,40 @@ class PopLabel(Label, ):
     pass
 
 class MonPop(GridLayout):
+    # total
+    total_wrkhrs_info = StringProperty('Total Working Hours : [font=fonts/GoogleSans-Regular.ttf]\n \n DEFAULT << 10:00:00 X No. of DEFAULT Working Days \n TARGET << 10:00:00 X No. of TARGET Working Days \n CURRENT << Sum of Daily Total Working Hours[/font]')
+    default_total_working_hours = StringProperty('')
+    target_total_working_hours = StringProperty('')
+    current_total_working_hours = StringProperty('')
+    incomplete_total_working_hours = StringProperty('')
+
+    # actual
+    actual_wrkhrs_info = StringProperty('Actual Working Hours : [font=fonts/GoogleSans-Regular.ttf]\n \n DEFAULT << 08:30:00 X No. of DEFAULT Working Days \n TARGET << 08:30:00 X No. of TARGET Working Days \n CURRENT << Sum of Daily Actual Working Hours[/font]')
+    default_actual_working_hours = StringProperty('')
+    target_actual_working_hours = StringProperty('')
+    current_actual_working_hours = StringProperty('')
+    incomplete_actual_working_hours = StringProperty('')
+
+    # working days
+    wrkdays_info = StringProperty('Working Days : [font=fonts/GoogleSans-Regular.ttf]\n \n DEFAULT << Office Working Days \n TARGET << Artist Working Days \n INCOMPLETE << Leaves[/font]')
+    total_working_days = StringProperty('')
+    artist_working_days = StringProperty('')
+    nonworking_days = StringProperty('')
+
     def __init__(self, **args):
         super(MonPop, self).__init__(**args)
         self.cols = 5
-        self.popUI()
+        self.DefTotWrkHrs = datetime.timedelta(hours=10, minutes=0, seconds=0)
+        self.StdWrkHrs = datetime.timedelta(hours=8, minutes=29, seconds=59)
+        self.t1 = threading.Thread(target=self.startClock(id, date))
+        self.t1.start()
+
+    def startClock(self, id, date):
+        self.dets = Clock.schedule_interval(lambda dt: self.popUI(), 0.5)
 
     def popUI(self):
-        DefTotWrkHrs = datetime.timedelta(hours=10, minutes=0, seconds=0)
-        StdWrkHrs = datetime.timedelta(hours=8, minutes=29, seconds=59)
+        workTime()
+
         actWorkingTime = ActualWorkingTime()
         totWorkingTime = TotalWorkingTime()
         if workTime.tarWorkingTime-actWorkingTime < datetime.timedelta():
@@ -120,8 +211,8 @@ class MonPop(GridLayout):
         else:
             reqWorkTime = (workTime.tarWorkingTime-actWorkingTime)
 
-        if workTime.totWorkingdays*DefTotWrkHrs > totWorkingTime:
-            reqTotTime = formatTime(workTime.totWorkingdays*DefTotWrkHrs-totWorkingTime)
+        if workTime.totWorkingdays*self.DefTotWrkHrs > totWorkingTime:
+            reqTotTime = formatTime(workTime.totWorkingdays*self.DefTotWrkHrs-totWorkingTime)
         else:
             reqTotTime = formatTime(datetime.timedelta())
 
@@ -133,9 +224,26 @@ class MonPop(GridLayout):
 
         rwt = formatTime(reqWorkTime)
 
+        #total
+        self.default_total_working_hours = formatTime(calTotWorkingDays.officeDefault*self.DefTotWrkHrs)
+        self.target_total_working_hours = formatTime(workTime.totWorkingdays*self.DefTotWrkHrs)
+        self.current_total_working_hours = twt
+        self.incomplete_total_working_hours = reqTotTime
+
+        #actual
+        self.default_actual_working_hours = formatTime(calTotWorkingDays.officeDefault*self.StdWrkHrs)
+        self.target_actual_working_hours = formatTime(workTime.totWorkingdays*self.StdWrkHrs)
+        self.current_actual_working_hours = awt
+        self.incomplete_actual_working_hours = rwt
+
+        # wrkdays
+        self.total_working_days = "{}".format(calTotWorkingDays.officeDefault)
+        self.artist_working_days = "{}".format(workTime.totWorkingdays)
+        self.nonworking_days = "{}".format(calTotWorkingDays.artistLeaves)
+
         """'Total Target Actual Working Hours : \n ( %d * 8:30 )'%(workTime.totWorkingdays), '-', '-', tawt,"""
 
-        details = ['PARTICULARS', 'DEFAULT', 'TARGET', 'CURRENT', 'INCOMPLETE',
+        """details = ['PARTICULARS', 'DEFAULT', 'TARGET', 'CURRENT', 'INCOMPLETE',
                 'Total Working Hours : [font=fonts/GoogleSans-Regular.ttf]\n \n DEFAULT << 10:00:00 X No. of DEFAULT Working Days \n TARGET << 10:00:00 X No. of TARGET Working Days \n CURRENT << Sum of Daily Total Working Hours[/font]', formatTime(calTotWorkingDays.officeDefault*DefTotWrkHrs), formatTime(workTime.totWorkingdays*DefTotWrkHrs), twt, reqTotTime,
                 'Actual Working Hours : [font=fonts/GoogleSans-Regular.ttf]\n \n DEFAULT << 08:30:00 X No. of DEFAULT Working Days \n TARGET << 08:30:00 X No. of TARGET Working Days \n CURRENT << Sum of Daily Actual Working Hours[/font]', formatTime(calTotWorkingDays.officeDefault*StdWrkHrs), formatTime(workTime.totWorkingdays*StdWrkHrs), awt, rwt,
                 'Working Days : [font=fonts/GoogleSans-Regular.ttf]\n \n DEFAULT << Office Working Days \n TARGET << Artist Working Days \n INCOMPLETE << Leaves[/font]', calTotWorkingDays.officeDefault, workTime.totWorkingdays, '-', calTotWorkingDays.artistLeaves]
@@ -149,7 +257,7 @@ class MonPop(GridLayout):
 
             if i in [0, 1, 2, 3, 4]:
                 lbl.size_hint_y = 0.25
-            self.add_widget(lbl)
+            self.add_widget(lbl)"""
 
 def pop():
     tab = MonPop()

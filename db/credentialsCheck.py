@@ -4,7 +4,7 @@ from db import getInfo, calcWrkHrs, monthlyWrkHours
 def checkCredentials(username, password):
     db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
     cur = db.cursor()
-    cur.execute("SELECT ID, Name, Department, Password FROM essl.user_master WHERE Status = 'OPEN' ")
+    cur.execute("SELECT ID, Name, Department, Password, Level FROM essl.user_master WHERE Status = 'OPEN' ")
 
     for data in cur.fetchall():
         if username == "" or password == "":
@@ -15,7 +15,11 @@ def checkCredentials(username, password):
                 db.close()
                 return 1
             elif str(data[2]) != 'ADMIN':
-                from pages import userPage
+                from pages import userPage, Calendar, infoPopup, table
+                Calendar.id = data[0]
+                infoPopup.id = data[0]
+                table.id = data[0]
+                table.lvl = data[4]
                 userPage.id = (data[0])
                 userPage.user = (str(data[1]))
                 userPage.department = (str(data[2]))

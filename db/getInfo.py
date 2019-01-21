@@ -96,17 +96,24 @@ def getUserInfo(id, date):
     NonWrkHours = StdWrkHrs - sumTime
     AdditionalHours = sumTime - StdWrkHrs
 
-    infoPopup.TWH.append(totalWorkingHours)
-    infoPopup.AWH.append(sumTime)
+    info = {'TWH': totalWorkingHours,
+            'AWH': sumTime}
+    infoPopup.TWH = (totalWorkingHours)
+    infoPopup.AWH = (sumTime)
     if sumTime < StdWrkHrs:
-        infoPopup.NCH.append(NonWrkHours)
-        infoPopup.ACH.append(datetime.timedelta())
+        infoPopup.NCH = (NonWrkHours)
+        info['NCH'] = NonWrkHours
+        info['ACH'] = datetime.timedelta()
+        infoPopup.ACH = (datetime.timedelta())
     else:
-        infoPopup.NCH.append(datetime.timedelta())
-        infoPopup.ACH.append(AdditionalHours)
+        infoPopup.NCH = (datetime.timedelta())
+        info['NCH'] = datetime.timedelta()
+        info['ACH'] = AdditionalHours
+        infoPopup.ACH = (AdditionalHours)
 
     cur.close()
     db.close()
+    return info
 
 def openPopup(ua):
     global id, date
@@ -119,11 +126,12 @@ def openPopup(ua):
     getUserInfo(id[len(id)-1], date)
 
     if ua == 'user':
-        tab = infoPopup.InfoTab(name, date)
+        pass
+        #tab = infoPopup.InfoTab(name, date)
     elif ua == 'admin':
         tab = infoPopup.InfoTabAdmin(name, date)
 
-    popup = ModalView(size_hint=(0.85, 0.85))
-    popup.add_widget(tab)
+    #popup = ModalView(size_hint=(0.85, 0.85))
+    #popup.add_widget(tab)
     #title="{}||{}".format(name[0], formatDate(date[len(date)-1])), content=tab,
-    popup.open()
+    #popup.open()

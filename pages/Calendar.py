@@ -22,6 +22,8 @@ holidays = []
 leaves = []
 artistHolidays = 0
 
+id = 0
+
 Builder.load_string("""
 
 <arrowBtn>:
@@ -117,14 +119,9 @@ class CalendarWidgetM(RelativeLayout):
         self.add_widget(self.left_arrow)
         self.add_widget(self.right_arrow)
 
-        def callback(instance):
-            monthlyPopup.month.append(self.title)
-            monthlyPopup.workTime()
-            monthlyPopup.pop()
-
         # Title
         self.title_label = monthBtn(text=self.title, pos_hint={"top": 1, "center_x": .5}, size_hint=(None, 0.15), halign=("center"))
-        self.title_label.bind(on_press=callback)
+        monthlyPopup.month.append(self.title)
         self.add_widget(self.title_label)
 
         # ScreenManager
@@ -235,15 +232,25 @@ class CalendarWidgetM(RelativeLayout):
 
     def get_btn_value(self, inst):
         """ Get day value from pressed button """
+        from pages import userPage, infoPopup, table, monthlyPopup
+
+        global id
 
         self.active_date[0] = int(inst.text)
+        formatted_date = "{}:{}:{}".format(self.active_date[0], self.active_date[1], self.active_date[2])
 
-        getInfo.date = "{}:{}:{}".format(self.active_date[0], self.active_date[1], self.active_date[2])
+        getInfo.date = formatted_date
+        userPage.date = formatted_date
+        infoPopup.date = formatted_date
+        table.date = formatted_date
+        monthlyPopup.date = formatted_date
 
         if self.as_popup:
             self.parent_popup.dismiss()
 
-        try:
+        #getInfo.getUserInfo(id, formatted_date)
+
+        """try:
             getInfo.openPopup('user')
         except Exception as e:
             print(e)
@@ -253,7 +260,7 @@ class CalendarWidgetM(RelativeLayout):
             closePopBtn = Button(text="OK", size_hint=(1, 0.25))
             closePopBtn.bind(on_release=callback)
             pop = Dialog.dialog("No Data !!!", "No data Available for the selected date !!", closePopBtn)
-            pop.open()
+            pop.open()"""
 
     def go_prev(self, inst):
         """ Go to screen with previous month """
@@ -281,6 +288,9 @@ class CalendarWidgetM(RelativeLayout):
 
         self.title_label.text = self.title
 
+        # assign title to monthlyPopup
+        monthlyPopup.month.append(self.title)
+
     def go_next(self, inst):
         """ Go to screen with next month """
         monthlyWrkHours.calArtistLeave(self.quarter_nums[2][0], self.quarter_nums[2][1], self.active_date[0])
@@ -306,6 +316,9 @@ class CalendarWidgetM(RelativeLayout):
                                   self.active_date[2])
 
         self.title_label.text = self.title
+
+        # assign title to monthlyPopup
+        monthlyPopup.month.append(self.title)
 
     def on_touch_move(self, touch):
         """ Switch months pages by touch move """

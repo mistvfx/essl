@@ -27,6 +27,7 @@ from pages import Calendar, table
 id = ''
 user = ''
 department = ''
+date = ''
 
 def init_data(data):
     global id, username, department
@@ -39,6 +40,7 @@ def init_data(data):
 Builder.load_string("""
 #:import Window kivy.core.window.Window
 #:import CalendarWidgetM pages.Calendar
+#:import InfoTab pages.infoPopup
 <UserPage>:
     canvas.before:
         Color:
@@ -50,9 +52,21 @@ Builder.load_string("""
         size: (Window.width, Window.height)
         UserLabel:
             id: userinfo
-        CalendarWidgetM:
-            size_hint:(0.75, 0.75)
-            pos_hint:{'center_y':0.5, 'center_x':0.5}
+        BoxLayout:
+            orientation: 'horizontal'
+            spacing: 5
+            size_hint_y: 0.90
+            BoxLayout:
+                id: calendar_and_totalinfo
+                orientation: 'vertical'
+                spacing: 5
+                CalendarWidgetM:
+                    size_hint:(1, 0.50)
+                    pos_hint:{'center_y':0.5, 'center_x':0.5}
+                MonPop:
+                    size_hint:(1, 0.50)
+            InfoTab:
+                size_hint:(1, 1)
         OtherButton:
             pos_hint: {'right':1}
             on_release: root.callback()
@@ -61,7 +75,7 @@ Builder.load_string("""
         OtherLayout:
             orientation: 'horizontal'
             size_hint: (0.75, 0.05)
-            pos_hint: {'center_y':0.08, 'center_x':0.5}
+            pos_hint: {'center_y':0.92, 'center_x':0.5}
             spacing: 10
             padding: (10, 0, 0, 10)
             BoxLayout:
@@ -147,7 +161,7 @@ Builder.load_string("""
 
 <UserLabel>:
     size_hint_y: 0.10
-    pos_hint: {'top':1}
+    pos_hint: {'center_y':0.98}
     bold: True
     color: (0, 0, 0, 1)
     font_name: 'fonts/moon-bold.otf'

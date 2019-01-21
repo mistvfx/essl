@@ -4,21 +4,28 @@ from kivy.uix.label import Label
 from kivy.uix.button import Button
 from kivy.uix.popup import Popup
 from kivy.uix.modalview import ModalView
+from kivy.properties import *
 from kivy.lang import Builder
+from kivy.clock import Clock
 import datetime
+import threading
 
 from pages import table
 
 closeBtn = Button()
-TWH = [0]*1
-AWH = [0]*1
-NCH = [0]*1
-ACH = [0]*1
+TWH = 0
+AWH = 0
+NCH = 0
+ACH = 0
+
+id = ''
+date = ''
 
 Builder.load_string("""
+#:import DataTable pages.table
 <HdrLayout>:
     orientation: 'horizontal'
-    size_hint: (1, 0.10)
+    size_hint: (1, 0.05)
     canvas.before:
         Color:
             rgba: (0, 0, 0, 1)
@@ -77,31 +84,44 @@ Builder.load_string("""
                 size_hint: (0.45, 1)
 
 <InfoTab>:
+    orientation: 'vertical'
     BoxLayout:
+        canvas.before:
+            Color:
+                rgba: (1, 0, 1, 1)
+            Rectangle:
+                size: self.size
+                pos: self.pos
         orientation: 'vertical'
-        FloatLayout:
-            pos: self.pos
-            size: self.size
-            size_hint_y: 0.06
+        size_hint: (1, 0.25)
+        InfoLbl:
+            text: root.tw
+        InfoLbl:
+            text: root.aw
+        InfoLbl:
+            text: root.nc
+        InfoLbl:
+            text: root.ac
+    HdrLayout:
+        GridLayout:
+            cols:4
+            size_hint: (1, 1)
             Label:
-                id: userinfo
-                font_name: 'fonts/GoogleSans-Bold.ttf'
-                pos_hint: {'center_x':0.5, 'center_y':0.5}
-        HdrLayout:
-            GridLayout:
-                cols:3
-                size_hint: (0.65, 1)
-                Label:
-                    text: 'I/O'
-                    bold: True
-                Label:
-                    text: 'TIME'
-                    bold: True
-                Label:
-                    text: 'DOOR'
-                    bold: True
-        TblLayout:
-            id: table_layout
+                text: 'I/O'
+                bold: True
+            Label:
+                text: 'TIME'
+                bold: True
+            Label:
+                text: 'DOOR'
+                bold: True
+            Label:
+                text: 'ACCESS TYPE'
+                bold: True
+    TblLayout:
+        DataTable:
+            size_hint: (0.65, 1)
+
 """)
 
 class HdrLayout(BoxLayout):
@@ -114,7 +134,10 @@ class InfoLbl(Label):
     pass
 
 def formatTime(time):
-    seconds = time.total_seconds()
+    try:
+        seconds = time.total_seconds()
+    except:
+        seconds = 0
     hours = int(seconds / 3600)
     minutes = int((seconds % 3600) / 60)
     seconds = int(seconds % 60)
@@ -122,65 +145,33 @@ def formatTime(time):
     return ('{}:{}'.format(hours, minutes))
 
 class InfoTab(BoxLayout):
-    def __init__(self, name, date):
-        super(InfoTab, self).__init__()
-        self.ids.userinfo.text = '{}|{}'.format(name[0], date[len(date)-1])
-        self.popUI()
+    tw = StringProperty('')
+    aw = StringProperty('')
+    nc = StringProperty('')
+    ac = StringProperty('')
 
-    def popUI(self):
-        #overallLayout = BoxLayout(orientation='vertical')
-        #self.add_widget(overallLayout)
+    def __init__(self, **kwargs):
+        super(InfoTab, self).__init__(**kwargs)
+        self.t1 = threading.Thread(target=self.startClock())
+        self.t1.start()
+        #self.popInfo()
 
-        """ Defining Header and closeBtn """
+    def startClock(self):
+        self.clock = Clock.schedule_interval(lambda dt: self.popInfo(), 0.5)
 
-        #headerLayout = hdrLayout()
-        #overallLayout.add_widget(headerLayout)
+    def popInfo(self):
+        #global TWH, AWH, NCH, ACH,
+        global id, date
+        from db import getInfo
+        if date == '':
+            date = '05:12:2018'
 
-        #header = GridLayout(cols=3, size_hint=(0.65, 1))
-        #headerLayout.add_widget(header)
-        #headers = ['I/O', 'TIME', 'DOOR']
-        #for i in range(3):
-            #headerLabel = Label(text=headers[i], bold=True)
-            #header.add_widget(headerLabel)
+        info = getInfo.getUserInfo(id, date)
 
-        #global closeBtn
-        #headerLayout.add_widget(closeBtn)
-
-        """ Table and info """
-
-        #tableLayout = tblLayout()
-        #overallLayout.add_widget(tableLayout)
-
-        tab = table.DataTable()
-        tab.size_hint=(0.65, 1)
-        self.ids.table_layout.add_widget(tab)
-
-        """ Defining Info """
-
-        info = GridLayout(cols=2, size_hint=(0.35, 1))
-        self.ids.table_layout.add_widget(info)
-
-        global TWH, AWH, NCH, ACH
-
-        #tw = ("%.2f"%(round(TWH[len(TWH)-1].total_seconds()/3600, 2)))
-        tw = formatTime(TWH[len(TWH)-1])
-
-        #aw = ("%.2f"%(round(AWH[len(AWH)-1].total_seconds()/3600, 2)))
-        aw = formatTime(AWH[len(AWH)-1])
-
-        #nc = ("%.2f"%(round(NCH[len(NCH)-1].total_seconds()/3600, 2)))
-        nc = formatTime(NCH[len(NCH)-1])
-
-        #ac = ("%.2f"%(round(ACH[len(ACH)-1].total_seconds()/3600, 2)))
-        ac = formatTime(ACH[len(ACH)-1])
-
-        infoQ = ['Total Hours :', tw, 'Working Hours :', aw, 'Non-Completed Actual Hours:', nc, 'Additional Hours:', ac]
-
-        for i in range(len(infoQ)):
-            infoLabels = InfoLbl(text=infoQ[i])
-            if i % 2 == 1:
-                infoLabels.size_hint_x= 0.30
-            info.add_widget(infoLabels)
+        self.tw = "Total Hours : {}".format(formatTime(info['TWH']))
+        self.aw = "Working Hours : {}".format(formatTime(info['AWH']))
+        self.nc = "Non-Completed Actual Hours : {}".format(formatTime(info['NCH']))
+        self.ac = "Additional Hours : {}".format(formatTime(info['ACH']))
 
 class InfoTabAdmin(BoxLayout):
     def __init__(self, id, date):
@@ -198,15 +189,15 @@ class InfoTabAdmin(BoxLayout):
         from db import getInfo
         getInfo.getUserInfo(id, date)
 
-        tab = table.dataTableAdmin()
+        tab = table.DataTableAdmin()
         tab.size_hint=(0.55, 1)
         self.ids.table_layout_admin.add_widget(tab)
 
         global TWH, AWH, NCH, ACH
-        tw = formatTime(TWH[len(TWH)-1])
-        aw = formatTime(AWH[len(AWH)-1])
-        nc = formatTime(NCH[len(NCH)-1])
-        ac = formatTime(ACH[len(ACH)-1])
+        tw = formatTime(TWH)
+        aw = formatTime(AWH)
+        nc = formatTime(NCH)
+        ac = formatTime(ACH)
 
         infoQ = ['Total Hours :', tw, 'Working Hours :', aw, 'Non-Completed Actual Hours:', nc, 'Additional Hours:', ac]
 

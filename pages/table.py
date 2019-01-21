@@ -7,30 +7,49 @@ from kivy.uix.label import Label
 from kivy.graphics import Color, Rectangle
 from kivy.uix.popup import Popup
 from kivy.uix.splitter import Splitter
-#from kivy.app import runTouchApp
+from kivy.uix.recycleview import RecycleView
+from kivy.uix.recycleview.views import RecycleDataViewBehavior
+import threading
+from kivy.clock import Clock
+from kivy.properties import *
 from kivy.app import App
 from kivy.lang import Builder
 
-from db import userSettings
+from db import userSettings, getInfo
 
 io = ['I/O']*1
 time = ['TIME']*1
 door = ['DOOR']*1
 accType = ['ACCESS TYPE']*1
+
 lvl = 0
 id = 0
 date = 0
 
 Builder.load_string("""
+<DataBox>:
+    orientation: 'horizontal'
+    spacing: 2
+    DataLbl:
+        id: ios
+    DataLbl:
+        id: time
+    DataLbl:
+        id: door
+    DataLbl:
+        id: acc_type
+
 <DataLbl>:
     color: (0, 0, 0, 1)
+    markup: True
     bold: True
+    background_color: (1, 1, 1, 1)
     canvas.before:
         Color:
             rgba: (1, 1, 1, 1)
         Rectangle:
-            size: self.size
             pos: self.pos
+            size: self.size
 
 <DataLblM>:
     FloatLayout:
@@ -48,6 +67,21 @@ Builder.load_string("""
                 Rectangle:
                     pos: self.pos
                     size: self.size
+
+<DataTable>:
+    data: root.details
+    viewclass: 'DataBox'
+    RecycleBoxLayout:
+        size_hint: (1,None)
+        height: self.minimum_height
+        spacing: 2
+        orientation: 'vertical'
+        canvas.before:
+            Color:
+                rgba: (0, 0, 0, 1)
+            Rectangle:
+                size: self.size
+                pos: self.pos
 
 """)
 class DataLbl(Label):
@@ -71,6 +105,23 @@ class DataLbl(Label):
         self.rect.pos = self.pos
         self.rect.size = self.size
 
+#class DataBox(BoxLayout):
+class DataBox(RecycleDataViewBehavior, BoxLayout):
+    ''' Add selection support to the Label '''
+    index = None
+    #cols = 3
+
+    def refresh_view_attrs(self, rv, index, data):
+        ''' Catch and handle the view changes '''
+        self.index = index
+        self.ids.ios.text = data['io']['text']
+        self.ids.time.text = data['time']['text']
+        self.ids.door.text = data['door']['text']
+        self.ids.acc_type.text = data['acc_type']['text']
+        return super(DataBox, self).refresh_view_attrs(
+            rv, index, data)
+
+
 class DataLblM(DataLbl):
     def getInfo(self, data):
         self.data = data
@@ -88,25 +139,44 @@ class DataLblM(DataLbl):
         popup = Popup(title="TIMING FIX", content=setLayout, size_hint=(0.65, 0.65))
         popup.open()
 
-class DataTable(ScrollView):
+class DataTable(RecycleView):
+    details = ListProperty(None)
     def __init__(self, **args):
         super(DataTable, self).__init__(**args)
-        self.as_popup="True"
-        self.size_hint=(1, 1)
-        #self.size=(Window.width, Window.height)
-        self.tableUI()
-
-    def tableUI(self):
-        global io, time, door, lvl
-        level = { '1': ['MM', 'ROTO', 'PAINT', 'CONFERENCE ROOM', 'TRAINING-1', 'IT', 'HR', 'SERVER ROOM', 'STORE'],
+        self.level = { '1': ['MM', 'ROTO', 'PAINT', 'CONFERENCE ROOM', 'TRAINING-1', 'IT', 'HR', 'SERVER ROOM', 'STORE'],
                 '2': ['MM', 'ROTO', 'PAINT', 'CONFERENCE ROOM', 'TRAINING-1', 'HR'],
                 '3': ['MM', 'ROTO', 'PAINT', 'CONFERENCE ROOM', 'TRAINING-1'],
                 '4': ['MM', 'ROTO', 'CONFERENCE ROOM'],
                 '5': ['ROTO', 'CONFERENCE ROOM'],
                 '6': ['MM', 'CONFERENCE ROOM', 'TRAINING-1'],
                 '7': ['ROTO', 'CONFERENCE ROOM', 'TRAINING-1']}
+        self.size_hint=(1, 1)
+        self.t1 = threading.Thread(target=self.startClock(id, date))
+        self.t1.start()
 
-        layout = GridLayout(cols=3, spacing=5, size_hint_y=None)
+    def startClock(self, id, date):
+        self.dets = Clock.schedule_interval(lambda dt: self.tableUI(), 0.5)
+
+    def tableUI(self):
+        del self.details[:]
+        global io, time, door, lvl, accType
+
+        #self.details = [{'text': "{}   |   {}  |   {}  |   {}".format(io[i], time[i], door[i], accType[i]), 'size_hint':(1, None)} for i in range(len(io))]
+        for i in range(len(io)):
+            if door[i] not in self.level[lvl] and door[i] != 'MAINDOOR':
+                continue
+            self.details.append({'io': {'text': "{}".format(io[i])}, 'time': {'text': "{}".format(time[i])}, 'door': {'text': "{}".format(door[i])}, 'acc_type': {'text': "{}".format(accType[i])}, 'size_hint': (1, None), 'height': 20})
+            #if door[i] in self.level[lvl] and io[i] == 'In' and door[i+1] == door[i] and io[i+1] == 'Out':
+            #    self.details.append({'text': "{}   |   {}  |   {}  |   {}".format(io[i], time[i], door[i], accType[i]), 'size_hint':(1, None), 'height':15, 'background_color':(0, 1, 0, 0.50)})
+            #elif door[i-1] in self.level[lvl] and io[i-1] == 'In' and door[i-1] == door[i] and io[i] == 'Out':
+            #    self.details.append({'text': "{}   |   {}  |   {}  |   {}".format(io[i], time[i], door[i], accType[i]), 'size_hint':(1, None), 'height':15, 'background_color':(0, 1, 0, 0.50)})
+            #elif door[i] in self.level[lvl]:
+            #    self.details.append({'text': "{}   |   {}  |   {}  |   {}".format(io[i], time[i], door[i], accType[i]), 'size_hint':(1, None), 'height':15, 'background_color':(1, 0, 0, 0.50)})
+            #else:
+            #    self.details.append({'text': "{}   |   {}  |   {}  |   {}".format(io[i], time[i], door[i], accType[i]), 'size_hint':(1, None), 'height':15})
+        del io[:]; del time[:]; del door[:]; del accType[:];
+
+        """layout = GridLayout(cols=3, spacing=5, size_hint_y=None)
         layout.bind(minimum_height=layout.setter('height'))
 
         i=1; j=1; k=1;
@@ -155,18 +225,18 @@ class DataTable(ScrollView):
                 break
             i+=1
         self.add_widget(layout)
-        del io[:]; del time[:]; del door[:];
+        del io[:]; del time[:]; del door[:];"""
 
-class dataTableAdmin(ScrollView):
+class DataTableAdmin(ScrollView):
     def __init__(self, **args):
-        super(dataTableAdmin, self).__init__(**args)
+        super(DataTableAdmin, self).__init__(**args)
         self.as_popup="True"
         self.size_hint=(1, 1)
         #self.size=(Window.width, Window.height)
         self.tableUI()
 
     def tableUI(self):
-        global io, time, door
+        global io, time, door, accType
         level = { '1': ['MM', 'ROTO', 'PAINT', 'CONFERENCE ROOM', 'TRAINING-1', 'IT', 'HR', 'SERVER ROOM', 'STORE'],
                 '2': ['MM', 'ROTO', 'PAINT', 'CONFERENCE ROOM', 'TRAINING-1', 'HR'],
                 '3': ['MM', 'ROTO', 'PAINT', 'CONFERENCE ROOM', 'TRAINING-1'],
@@ -238,4 +308,4 @@ class dataTableAdmin(ScrollView):
                 break
             i+=1
         self.add_widget(layout)
-        del io[:]; del time[:]; del door[:];
+        del io[:]; del time[:]; del door[:]; del accType[:]
