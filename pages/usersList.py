@@ -144,7 +144,13 @@ class DayBtn(Button, MouseOver):
     def getDayInfo(self, artistID):
         global date
         from pages import infoPopup
-        infoPopup.InfoTabAdmin(int(artistID.split(":")[0]), formatDate(date))
+        try:
+            infoPopup.InfoTabAdmin(int(artistID.split(":")[0]), formatDate(date))
+        except Exception as e:
+            closePopBtn = Button(text="OK", size_hint=(1, 0.25))
+            pop = Dialog.dialog("No Data !!", "No Data Available For this Date", closePopBtn)
+            closePopBtn.bind(on_release=pop.dismiss)
+            pop.open()
 
 class SettingsBtn(Button, MouseOver):
     def on_hover(self):
