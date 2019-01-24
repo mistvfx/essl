@@ -74,7 +74,10 @@ class DeleteDataDay(BoxLayout):
         self.add_widget(delBtn)
 
     def deleteAllData(self, delDate):
-        db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
+        try:
+            db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True)
+        except:
+            db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
         cur = db.cursor()
         cur1 = db.cursor()
 
@@ -117,7 +120,10 @@ class DeleteDataMonth(BoxLayout):
         self.add_widget(delBtn)
 
     def deleteAllData(self, month, year):
-        db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
+        try:
+            db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True)
+        except:
+            db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
         cur = db.cursor()
         cur1 = db.cursor()
 

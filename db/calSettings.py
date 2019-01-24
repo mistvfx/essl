@@ -258,7 +258,10 @@ import pymysql
 
 def paintDates():
     global holiday, halfday
-    db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
+    try:
+        db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True)
+    except:
+        db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
     cur = db.cursor()
     cur.execute("SELECT DAY, MONTH, YEAR, DETAIL FROM essl.month_details")
 
@@ -291,7 +294,10 @@ def setup():
                 pop.dismiss()
         global selectedDates
         if instance.text == 'SAVE':
-            db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
+            try:
+                db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True)
+            except:
+                db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
             cur = db.cursor()
             closePopBtn = Button(text="OK", size_hint=(1, 0.25))
             closePopBtn.bind(on_release=call)

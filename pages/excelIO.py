@@ -48,7 +48,10 @@ def formatTime(time):
     return ('{}:{}:{}'.format(hours, minutes, seconds))
 
 def excelManip(filePath):
-    db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
+    try:
+        db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True)
+    except:
+        db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
     cur = db.cursor()
     cur1 = db.cursor()
     print(filePath[0])
@@ -104,7 +107,10 @@ def formatDate(date):
 def excelExport(date):
     StdWrkHrs = datetime.timedelta(hours=8, minutes=29, seconds=59)
     absent = datetime.timedelta()
-    db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
+    try:
+        db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True)
+    except:
+        db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
     cur = db.cursor()
     cur.execute("SELECT ID, Name, Department, Level FROM essl.user_master WHERE ID != '1000'")
     cur1 = db.cursor()
@@ -259,7 +265,10 @@ def exportMonth(month, year):
     absent = datetime.timedelta()
     totalDays = calendar.monthrange(int(year), int(month))[1]
     #Month = calendar.monthcalendar(year, month)
-    db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
+    try:
+        db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True)
+    except:
+        db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
     cur = db.cursor()
     cur1 = db.cursor()
     cur2 = db.cursor()

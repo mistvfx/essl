@@ -37,7 +37,10 @@ def calActualWorkingHours(io, time, door, lvl):
     return sumTime
 
 def calMon(id, date):
-    db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
+    try:
+        db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True)
+    except:
+        db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
     cur = db.cursor()
 
     cur.execute("SELECT IO, MTIME, DOOR FROM essl.`%d` WHERE MDATE = '%s' ORDER BY MTIME ASC" %(id, date))
@@ -65,7 +68,10 @@ def calMon(id, date):
 
 def getUserTime():
     StdWrkHrs = datetime.timedelta(hours=8, minutes=29, seconds=59)
-    db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
+    try:
+        db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True)
+    except:
+        db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
     cur = db.cursor()
     cur.execute("SELECT DISTINCT(MDATE) FROM essl.`%d` ORDER BY MDATE ASC" %(id[int(len(id)-1)]))
     cur1 = db.cursor()
