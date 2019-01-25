@@ -9,10 +9,7 @@ def send_mail(data):
     TYPE = data[3]
     REASON = data[4]
 
-    try:
-        db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True)
-    except:
-        db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
+    db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True, connect_timeout=1)
     cur = db.cursor()
     cur.execute("SELECT Name, Department, email FROM essl.`user_master` WHERE ID = '%s'"%(ID))
     db_data = cur.fetchone()
@@ -730,10 +727,7 @@ def send_reply(NAME, EMAIL):
     print("Reply sent")
 
 def accepted_mail(id, from_date):
-    try:
-        db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True)
-    except:
-        db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
+    db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True, connect_timeout=1)
     cur = db.cursor()
     cur.execute("SELECT Name, email FROM essl.`user_master` WHERE ID = '%s'"%(id))
     db_data = cur.fetchone()
@@ -1084,10 +1078,7 @@ def accepted_mail(id, from_date):
     print("Accept Reply Sent")
 
 def declined_mail(id, from_date):
-    try:
-        db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True)
-    except:
-        db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
+    db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True, connect_timeout=1)
     cur = db.cursor()
     cur.execute("SELECT Name, email FROM essl.`user_master` WHERE ID = '%s'"%(id))
     db_data = cur.fetchone()

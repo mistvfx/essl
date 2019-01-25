@@ -122,6 +122,7 @@ class CalendarWidgetS(RelativeLayout):
                     self.tbtn = ToggleBtn(text=str(day[0]), color=(0, 0, 0, 1))
                 else:
                     self.tbtn = ToggleBtn(text=str(day[0]), color=(0, 0, 0, 1))
+                    print(self.active_date, holiday)
                     for i in range(len(holiday)):
                         if self.active_date[2] == holiday[i][2]:
                             if self.active_date[1] == holiday[i][1]:
@@ -179,13 +180,15 @@ class CalendarWidgetS(RelativeLayout):
 
         self.active_date[0] = int(inst.text)
 
+        selected = [self.active_date[0], self.active_date[1], self.active_date[2]]
+
         global selectedDates
 
-        if [self.active_date[0], self.quarter_nums[0][1]+1, self.quarter_nums[0][0]] in selectedDates:
-            selectedDates.remove([self.active_date[0], self.quarter_nums[0][1]+1, self.quarter_nums[0][0]])
+        if selected in selectedDates:
+            selectedDates.remove(selected)
             print(selectedDates)
         else:
-            selectedDates.append([self.active_date[0], self.quarter_nums[0][1]+1, self.quarter_nums[0][0]])
+            selectedDates.append(selected)
             print(selectedDates)
 
         if self.as_popup:
@@ -258,10 +261,7 @@ import pymysql
 
 def paintDates():
     global holiday, halfday
-    try:
-        db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True)
-    except:
-        db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
+    db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True, connect_timeout=1)
     cur = db.cursor()
     cur.execute("SELECT DAY, MONTH, YEAR, DETAIL FROM essl.month_details")
 
@@ -294,10 +294,7 @@ def setup():
                 pop.dismiss()
         global selectedDates
         if instance.text == 'SAVE':
-            try:
-                db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True)
-            except:
-                db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
+            db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True, connect_timeout=1)
             cur = db.cursor()
             closePopBtn = Button(text="OK", size_hint=(1, 0.25))
             closePopBtn.bind(on_release=call)

@@ -30,8 +30,6 @@ Window.maximize()
 Config.set('input', 'mouse', 'mouse,disable_multitouch')
 
 Builder.load_string("""
-#:include themes/TextBox.kv
-
 <LoginScrnBg>:
     canvas:
         Color:
@@ -40,22 +38,26 @@ Builder.load_string("""
             size: self.size
             pos: self.pos
         Color:
-            rgba: (0.5, 0.5, 1, 0.85)
+            rgba: (49/255, 27/255, 146/255, 1)
         Rectangle:
             size: self.size[0], self.size[1]
-            pos: self.pos
+            pos: self.pos[0], self.pos[1]
+        Color:
+            rgba: (230/255, 81/255, 0/255, 1)
+        Rectangle:
+            size: self.size[0]*0.5, self.size[1]
+            pos: self.pos[0], self.pos[1]
 
 <LoginScrn>:
     padding: 10
     orientation: 'horizontal'
-    size_hint: 0.65, 0.75
+    size_hint: 1, 0.75
     canvas.before:
         Color:
             rgba: (1, 1, 1, 1)
-        RoundedRectangle:
-            size: self.size
-            pos: self.pos
-            radius: [0, 50, 0, 50]
+        Rectangle:
+            size: self.size[0], self.size[1]
+            pos: self.pos[0], self.pos[1]
     Image:
         size_hint_x: 0.75
         source: 'icons/logo.png'
@@ -75,9 +77,10 @@ Builder.load_string("""
 
 <Lbl>:
     font_name: 'fonts/GoogleSans-Bold.ttf'
-    size_hint_x: 0.22
+    size_hint_x: 0.20
     size_hint_y: None
     text_size: self.width, None
+    size: self.texture_size
     height: self.texture_size[1]
     halign: "center"
     valign: "middle"
@@ -88,7 +91,7 @@ Builder.load_string("""
             rgba: (1, 1, 1, 1)
         Rectangle:
             pos: self.pos
-            size: self.size
+            size: self.texture_size
 
 <In>:
     font_name: 'fonts/GoogleSans-Regular.ttf'

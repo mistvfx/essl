@@ -17,27 +17,27 @@ date = ''
 
 Builder.load_string("""
 <MonPop>:
-    spacing: 10
-    padding: (10, 10, 10, 10)
+    spacing: 1
+    padding: (2, 2, 2, 2)
     canvas.before:
         Color:
-            rgba: (0, 0, 0, 1)
+            rgba: (158/255, 158/255, 158/255, 1)
         Rectangle:
             size: self.size
             pos: self.pos
-    PopLabel:
+    MonLabel_Header:
         text:'PARTICULARS'
         size_hint: (0.60, 0.25)
-    PopLabel:
+    MonLabel_Header:
         text:'DEFAULT'
         size_hint: (0.10, 0.25)
-    PopLabel:
+    MonLabel_Header:
         text:'TARGET'
         size_hint: (0.10, 0.25)
-    PopLabel:
+    MonLabel_Header:
         text:'CURRENT'
         size_hint: (0.10, 0.25)
-    PopLabel:
+    MonLabel_Header:
         text:'INCOMPLETE'
         size_hint: (0.10, 0.25)
     PopLabel:
@@ -55,19 +55,19 @@ Builder.load_string("""
     PopLabel:
         text: root.incomplete_total_working_hours
         size_hint_x: 0.10
-    PopLabel:
+    PopLabel1:
         size_hint_x: 0.60
         text: root.actual_wrkhrs_info
-    PopLabel:
+    PopLabel1:
         text: root.default_actual_working_hours
         size_hint_x: 0.10
-    PopLabel:
+    PopLabel1:
         text: root.target_actual_working_hours
         size_hint_x: 0.10
-    PopLabel:
+    PopLabel1:
         text: root.current_actual_working_hours
         size_hint_x: 0.10
-    PopLabel:
+    PopLabel1:
         text: root.incomplete_actual_working_hours
         size_hint_x: 0.10
     PopLabel:
@@ -93,6 +93,28 @@ Builder.load_string("""
     canvas.before:
         Color:
             rgba: (1, 1, 1, 1)
+        Rectangle:
+            size: self.size
+            pos: self.pos
+
+<PopLabel1@PopLabel>:
+    color: (0, 0, 0, 1)
+    font_name: 'fonts/GoogleSans-Bold.ttf'
+    markup: True
+    canvas.before:
+        Color:
+            rgba: (224/255, 224/255, 224/255, 1)
+        Rectangle:
+            size: self.size
+            pos: self.pos
+
+<MonLabel_Header>:
+    color: (0, 0, 0, 1)
+    font_name: 'fonts/GoogleSans-Bold.ttf'
+    markup: True
+    canvas.before:
+        Color:
+            rgba: (79/255, 195/255, 247/255, 1)
         Rectangle:
             size: self.size
             pos: self.pos
@@ -166,7 +188,10 @@ def formatTime(time):
 
     return ('{}:{}'.format(hours, str(minutes).zfill(2)))
 
-class PopLabel(Label, ):
+class PopLabel(Label):
+    pass
+
+class MonLabel_Header(Label):
     pass
 
 class MonPop(GridLayout):

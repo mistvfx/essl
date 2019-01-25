@@ -62,10 +62,7 @@ def getUserInfo(id, date):
     StdWrkHrs = datetime.timedelta(hours=8, minutes=29, seconds=59)
     formattedDate = formatDate(date)
     #print(formattedDate)
-    try:
-        db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True)
-    except:
-        db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
+    db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True, connect_timeout=1)
     cur = db.cursor()
     cur.execute("SELECT IO, MTIME, MDATE, DOOR, AccType FROM essl.`%d` WHERE MDATE = '%s' ORDER BY MTIME ASC" %(id, formattedDate))
 
@@ -121,10 +118,7 @@ def getUserInfo(id, date):
 def openPopup(ua):
     global id, date
 
-    try:
-        db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True)
-    except:
-        db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
+    db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True, connect_timeout=1)
     cur = db.cursor()
     cur.execute("SELECT Name FROM essl.user_master WHERE ID = '%d'"%(id[len(id)-1]))
     name = cur.fetchone()

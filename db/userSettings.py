@@ -155,10 +155,7 @@ class RemTime(FloatLayout):
         self.data = [IO, Time, Door, AccType]
 
     def remTime(self):
-        try:
-            db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True)
-        except:
-            db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
+        db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True, connect_timeout=1)
         cur = db.cursor()
         def callback(instance):
             if instance.text == 'OK':
@@ -190,10 +187,7 @@ class TimingFix(BoxLayout):
         self.io = io
 
     def Time(self, time):
-        try:
-            db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True)
-        except:
-            db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
+        db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True, connect_timeout=1)
         cur = db.cursor()
         def callback(instance):
             if instance.text == 'OK':
@@ -238,10 +232,7 @@ class Permission(AnchorLayout):
             pop = Dialog.dialog("No TIME !!!", "Please Enter valid HOURS !!", closePopBtn)
             pop.open()
         else:
-            try:
-                db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True)
-            except:
-                db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
+            db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True, connect_timeout=1)
             cur = db.cursor()
             cur.execute("INSERT INTO essl.`leave_details` (ID, from_date, to_date, Reason, Status, app_date) VALUES('%d', '%s', '%s', '%s', 'PE', '%s')" %(int(self.data[0]), self.data[1], self.data[1], time, self.data[1]))
             cur.close()
@@ -261,10 +252,7 @@ class Permission(AnchorLayout):
 class Level(BoxLayout):
     def submitLvl(self, lvl):
         global id
-        try:
-            db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True)
-        except:
-            db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
+        db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True, connect_timeout=1)
         cur = db.cursor()
         cur.execute("UPDATE essl.user_master SET Level = '%d' WHERE ID = '%d'"%(int(lvl), int(id)))
         cur.close()
@@ -273,10 +261,7 @@ class Level(BoxLayout):
     def change_user_status(self):
         global id
         print(id)
-        try:
-            db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True)
-        except:
-            db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
+        db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True, connect_timeout=1)
         cur = db.cursor()
         cur.execute("UPDATE essl.user_master SET Status = 'CLOSED' WHERE ID = '%d'"%(int(id)))
         cur.close()

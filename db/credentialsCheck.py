@@ -2,10 +2,7 @@ import pymysql
 from db import getInfo, calcWrkHrs, monthlyWrkHours
 
 def checkCredentials(username, password):
-    try:
-        db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True)
-    except:
-        db = pymysql.connect("127.0.0.1", "mcheck", "py@123", "essl", autocommit=True)
+    db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True, connect_timeout=1)
     cur = db.cursor()
     cur.execute("SELECT ID, Name, Department, Password, Level FROM essl.user_master WHERE Status = 'OPEN' ")
 
@@ -37,3 +34,6 @@ def checkCredentials(username, password):
     cur.close()
     db.close()
     return 0
+
+
+#db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True, connect_timeout=1)

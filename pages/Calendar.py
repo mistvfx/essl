@@ -106,6 +106,7 @@ class CalendarWidgetM(RelativeLayout):
         self.as_popup = as_popup
         self.touch_switch = touch_switch
         self.prepare_data()
+        monthlyWrkHours.getHolidays()
         self.init_ui()
 
     def init_ui(self):
@@ -161,8 +162,6 @@ class CalendarWidgetM(RelativeLayout):
                     self.tbtn = CalNormalButton(text=str(day[0]), background_color=(0.5, 0.5, 0.5, 1), color=(1, 1, 1, 1))
                 else:
                     self.tbtn = CalNormalButton(text=str(day[0]), background_color=(255, 255, 255, 1), color=(0, 0, 0, 1))
-                    #if day[0] < self.active_date[0] and self.active_date[1] <= datetime.now().month:
-                    #    self.tbtn.background_color=(255, 255, 0, 1)
                     for i in range(len(aboveSWH)):
                         if self.active_date[2] == aboveSWH[i][2]:
                             if self.active_date[1] == aboveSWH[i][1]:
@@ -182,7 +181,7 @@ class CalendarWidgetM(RelativeLayout):
                         if self.active_date[2] == leaves[i][2]:
                             if self.active_date[1] == leaves[i][1]:
                                 if day[0] == (leaves[i][0]):
-                                    self.tbtn.background_color=(255, 255, 0, 0.7)
+                                    self.tbtn.background_color=(255, 195, 0, 0.7)
                     for i in range(len(holidays)):
                         if self.active_date[2] == holidays[i][2]:
                             if self.active_date[1] == holidays[i][1]:

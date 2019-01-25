@@ -19,6 +19,7 @@ from kivy.uix.modalview import ModalView
 from kivy.graphics import *
 from kivy.lang import Builder
 from kivy.properties import NumericProperty
+from pages.navigationdrawer import NavigationDrawer
 
 from db import getInfo, usersListManip
 from pages import Calendar, table
@@ -41,10 +42,11 @@ Builder.load_string("""
 #:import Window kivy.core.window.Window
 #:import CalendarWidgetM pages.Calendar
 #:import InfoTab pages.infoPopup
+#:import NavigationDrawer pages.navigationdrawer
 <UserPage>:
     canvas.before:
         Color:
-            rgba: (0.9, 0.9, 0.9, 1)
+            rgba: (189/255, 189/255, 189/255, 1)
         Rectangle:
             pos: self.pos
             size: self.size
@@ -54,6 +56,7 @@ Builder.load_string("""
             id: userinfo
         BoxLayout:
             orientation: 'horizontal'
+            padding: (5, 0, 5, 5)
             spacing: 5
             size_hint_y: 0.90
             BoxLayout:
@@ -68,10 +71,10 @@ Builder.load_string("""
             InfoTab:
                 size_hint:(1, 1)
         OtherButton:
-            pos_hint: {'right':1}
+            pos_hint: {'top':1}
             on_release: root.callback()
         LeaveDetBtn:
-            pos_hint: {'right': 1, 'top':0.2}
+            pos_hint: {'right': 1, 'top':1}
         OtherLayout:
             orientation: 'horizontal'
             size_hint: (0.75, 0.05)

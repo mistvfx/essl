@@ -43,11 +43,12 @@ Builder.load_string("""
             pos: self.pos
 
 <InfoLbl>:
-    color: (0, 0, 0, 1)
-    bold: True
+    color: (1, 1, 1, 1)
+    font_name: 'fonts/GoogleSans-Bold.ttf'
+    #text_size: self.size
     canvas.before:
         Color:
-            rgba: (1, 1, 1, 1)
+            rgba: (124/255, 77/255, 255/255, 1)
         Rectangle:
             size: self.size
             pos: self.pos
@@ -85,39 +86,87 @@ Builder.load_string("""
 
 <InfoTab>:
     orientation: 'vertical'
-    BoxLayout:
-        canvas.before:
-            Color:
-                rgba: (1, 0, 1, 1)
-            Rectangle:
-                size: self.size
-                pos: self.pos
-        orientation: 'vertical'
-        size_hint: (1, 0.25)
-        InfoLbl:
-            text: root.tw
-        InfoLbl:
-            text: root.aw
-        InfoLbl:
-            text: root.nc
-        InfoLbl:
-            text: root.ac
+    spacing: 5
+    StackLayout:
+        pos: self.parent.pos
+        size: self.parent.size
+        size_hint_y: 0.25
+        orientation: 'lr-tb'
+        BoxLayout:
+            orientation: 'horizontal'
+            size_hint_x: 0.25
+            canvas.before:
+                Color:
+                    rgba: (98/255, 0/255, 234/255, 1)
+                Rectangle:
+                    size: self.size
+                    pos: self.pos
+            Image:
+                source: 'icons/time.png'
+        GridLayout:
+            size_hint_x: 0.75
+            spacing: 1
+            cols: 2
+            rows: 2
+            canvas.before:
+                Color:
+                    rgba: (98/255, 0/255, 234/255, 1)
+                Rectangle:
+                    size: self.size
+                    pos: self.pos
+            InfoLbl:
+                text: root.tw
+            InfoLbl:
+                text: root.aw
+            InfoLbl:
+                text: root.nc
+            InfoLbl:
+                text: root.ac
     HdrLayout:
         GridLayout:
             cols:4
             size_hint: (1, 1)
+            spacing: 1
             Label:
                 text: 'I/O'
                 bold: True
+                background_color: (1, 1, 1, 1)
+                canvas.before:
+                    Color:
+                        rgba: (76/255, 175/255, 80/255, 1)
+                    Rectangle:
+                        size: self.size
+                        pos: self.pos
             Label:
                 text: 'TIME'
                 bold: True
+                background_color: (1, 1, 1, 1)
+                canvas.before:
+                    Color:
+                        rgba: (76/255, 175/255, 80/255, 1)
+                    Rectangle:
+                        size: self.size
+                        pos: self.pos
             Label:
                 text: 'DOOR'
                 bold: True
+                background_color: (1, 1, 1, 1)
+                canvas.before:
+                    Color:
+                        rgba: (76/255, 175/255, 80/255, 1)
+                    Rectangle:
+                        size: self.size
+                        pos: self.pos
             Label:
                 text: 'ACCESS TYPE'
                 bold: True
+                background_color: (1, 1, 1, 1)
+                canvas.before:
+                    Color:
+                        rgba: (76/255, 175/255, 80/255, 1)
+                    Rectangle:
+                        size: self.size
+                        pos: self.pos
     TblLayout:
         DataTable:
             size_hint: (0.65, 1)

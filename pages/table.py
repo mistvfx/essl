@@ -29,7 +29,7 @@ date = 0
 Builder.load_string("""
 <DataBox>:
     orientation: 'horizontal'
-    spacing: 2
+    spacing: 1
     DataLbl:
         id: ios
     DataLbl:
@@ -161,10 +161,10 @@ class DataTable(RecycleView):
         self.check = Clock.schedule_interval(lambda dt: self.check_date_change(), 0.5)
 
     def check_date_change(self):
-        print(self.previous_date, date)
         try:
             if self.previous_date != date:
                 self.previous_date = date
+                del self.details[:]
                 self.tableUI()
             else:
                 pass
