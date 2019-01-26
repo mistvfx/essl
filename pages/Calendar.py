@@ -2,6 +2,7 @@ from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.relativelayout import RelativeLayout
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.button import Button
+from kivy.uix.togglebutton import ToggleButton
 from kivy.uix.label import Label
 from kivy.core.window import Window
 from kivy.properties import NumericProperty, ReferenceListProperty, ObjectProperty
@@ -63,6 +64,7 @@ Builder.load_string("""
             size: self.size
 
 <CalNormalButton>:
+    background_color: (1, 1, 1, 1) if self.state == 'normal' else (0, 0, 0, 0.5)
     FloatLayout:
         pos: self.parent.pos
         size: self.parent.size

@@ -20,16 +20,15 @@ import openpyxl
 from kivy.lang import Builder
 
 Builder.load_string("""
-<excelLoading>:
-    Image:
-        source: 'icons/loading.gif'
-        size: self.parent.size
-        y: self.parent.y
-        x: self.parent.x
-        keep_data: True
+<ExcelLoading>:
+    source: 'icons/export.gif'
+    size: self.parent.size
+    y: self.parent.y
+    x: self.parent.x
+    keep_data: True
 """)
 
-class excelLoading(Image):
+class ExcelLoading(Image):
     pass
 
 def excelUpPB():
@@ -106,7 +105,7 @@ def excelExport(date):
     absent = datetime.timedelta()
     db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True, connect_timeout=1)
     cur = db.cursor()
-    cur.execute("SELECT ID, Name, Department, Level FROM essl.user_master WHERE ID != '1000'")
+    cur.execute("SELECT ID, Name, Department, Level FROM essl.user_master WHERE ID != '1000' AND Status = 'OPEN'")
     cur1 = db.cursor()
 
     Artist_Code = []
@@ -285,7 +284,7 @@ def exportMonth(month, year):
     AH_Decimal = []
     AHD_Decimal = []
 
-    cur.execute("SELECT ID, Name, Department, Level FROM essl.user_master WHERE ID != '1000'")
+    cur.execute("SELECT ID, Name, Department, Level FROM essl.user_master WHERE ID != '1000' AND Status = 'OPEN'")
 
     for data in cur.fetchall():
         artistID.append(data[0])
