@@ -494,14 +494,8 @@ class LeaveLayout(BoxLayout):
         eup = ExchangeMail.send_mail([id, from_date, to_date, type, reason])
         up = leaveData.upload_to_db(id, from_date, to_date, type, reason)
         if up == 1:
-            def callback(instance):
-                if instance.text == 'OK':
-                    pop.dismiss()
-                    return 0
-            closePopBtn = Button(text="OK", size_hint=(1, 0.25))
-            closePopBtn.bind(on_release=callback)
-            pop = Dialog.dialog("Success !!!", "Leave request has been successfully submitted", closePopBtn)
-            pop.open()
+            from pages import kivytoast
+            kivytoast.toast('Leave request has been successfully submitted', (0, 1, 0, 0.5), length_long=True)
 
     def format_date(self, date):
         date = date.split(".")

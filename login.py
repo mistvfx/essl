@@ -23,7 +23,7 @@ import tempfile
 from kivy.config import Config
 
 from db.credentialsCheck import checkCredentials
-from pages import adminPage
+from pages import adminPage, kivytoast
 from pages.specialFeatures import *
 
 Window.maximize()
@@ -43,7 +43,7 @@ Builder.load_string("""
             size: self.size[0], self.size[1]
             pos: self.pos[0], self.pos[1]
         Color:
-            rgba: (230/255, 81/255, 0/255, 1)
+            rgba: (64/255, 28/255, 164/255, 1)
         Rectangle:
             size: self.size[0]*0.5, self.size[1]
             pos: self.pos[0], self.pos[1]
@@ -126,18 +126,7 @@ Builder.load_string("""
             rgba: (0, 0, 0, 1)
         Line:
             rectangle: (self.pos[0], self.pos[1], self.size[0], self.size[1])
-
-<LogoutButton>:
-    color: (0, 0, 0, 0)
-    background_color: (0, 0, 0, 0)
-    size: (min(self.width, self.height), min(self.width, self.height))
-    canvas:
-        Color:
-            rgba: ((0.5,0.5,1,0.85) if self.state == "normal" else (0.5,0.5,0.5,1))
-        Rectangle:
-            source: 'icons/logout.png'
-            pos: self.pos
-            size: self.size
+            width: 2
 
 <LoginWindow>:
     LoginScrnBg:
@@ -187,26 +176,17 @@ Builder.load_string("""
 class Lbl(Label):
     pass
 
-class LogoutButton(Button):
-    pass
-
 class LoginScrnBg(AnchorLayout):
     pass
 
 class LoginButton(Button, MouseOver):
     def on_hover(self):
         self.color = (1, 1, 1, 1)
-        with self.canvas.before:
-            Color(0, 0, 0, 1)
-            Rectangle(size=(self.size), pos=(self.pos))
+        self.background_color = (0, 0, 0, 1)
 
     def on_exit(self):
         self.color = (0, 0, 0, 1)
-        with self.canvas.before:
-            Color(1, 1, 1, 1)
-            Rectangle(size=(self.size), pos=(self.pos))
-            Color(0, 0, 0, 1)
-            Line(rectangle=(self.pos[0], self.pos[1], self.size[0], self.size[1]))
+        self.background_color = (1, 1, 1, 0)
 
 class userNameBox(TextInput):
     pass
@@ -269,12 +249,12 @@ class LoginWindow(Screen):
         if login == 1:
             ScreenManagement.sm.add_widget(adminPage.AdminPage(name='admin'))
             ScreenManagement.sm.current = 'admin'
-        elif login[0] == 2:
+        elif login == 2:
             from pages import userPage
             ScreenManagement.sm.add_widget(userPage.UserPage(name='user'))
             ScreenManagement.sm.current = 'user'
         else:
-            print("Wrong Login")
+            kivytoast.toast('Wrong Login Credentials!', (1, 0, 0, 0.5), length_long=True)
 
 class ScreenManagement(ScreenManager):
     sm = ScreenManager()

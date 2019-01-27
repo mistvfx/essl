@@ -29,7 +29,7 @@ def checkCredentials(username, password):
                 monthlyWrkHours.id.append(int(data[0]))
                 cur.close()
                 db.close()
-                return ([2, data[0], data[1], data[2]])
+                return 2
 
     cur.close()
     db.close()

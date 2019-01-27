@@ -46,6 +46,7 @@ Builder.load_string("""
     color: (1, 1, 1, 1)
     font_name: 'fonts/GoogleSans-Bold.ttf'
     #text_size: self.size
+    markup: True
     canvas.before:
         Color:
             rgba: (124/255, 77/255, 255/255, 1)
@@ -87,6 +88,17 @@ Builder.load_string("""
 <InfoTab>:
     orientation: 'vertical'
     spacing: 5
+    Label:
+        text: root.date_text
+        size_hint_y: 0.05
+        color: (1, 1, 1, 1)
+        font_name: 'fonts/GoogleSans-Bold.ttf'
+        canvas.before:
+            Color:
+                rgba: (230/255, 81/255, 0/255, 1)
+            Rectangle:
+                size: self.size
+                pos: self.pos
     StackLayout:
         pos: self.parent.pos
         size: self.parent.size
@@ -122,6 +134,9 @@ Builder.load_string("""
                 text: root.nc
             InfoLbl:
                 text: root.ac
+
+<UserTable>:
+    orientation: 'vertical'
     HdrLayout:
         GridLayout:
             cols:4
@@ -193,11 +208,20 @@ def formatTime(time):
 
     return ('{}:{}'.format(hours, minutes))
 
+class UserTable(BoxLayout):
+    def __init__(self, **kwargs):
+        super(UserTable, self).__init__(**kwargs)
+        view = ModalView(size_hint=(0.75, 0.75), background_color=(0, 0, 0, 0.6))
+        view.add_widget(self)
+        view.open()
+
 class InfoTab(BoxLayout):
     tw = StringProperty('')
     aw = StringProperty('')
     nc = StringProperty('')
     ac = StringProperty('')
+
+    date_text = StringProperty('')
 
     def __init__(self, **kwargs):
         super(InfoTab, self).__init__(**kwargs)
@@ -214,16 +238,16 @@ class InfoTab(BoxLayout):
         from db import getInfo
         if date == '':
             return
-
+        self.date_text = str(date)
         try:
             info = getInfo.getUserInfo(id, date)
         except Exception as e:
             return
 
-        self.tw = "Total Hours : {}".format(formatTime(info['TWH']))
-        self.aw = "Working Hours : {}".format(formatTime(info['AWH']))
-        self.nc = "Non-Completed Actual Hours : {}".format(formatTime(info['NCH']))
-        self.ac = "Additional Hours : {}".format(formatTime(info['ACH']))
+        self.tw = "Total Hours \n\n \t    {}".format(formatTime(info['TWH']))
+        self.aw = "Working Hours \n\n \t      {}".format(formatTime(info['AWH']))
+        self.nc = "Non-Completed Actual Hours \n\n \t                     {}".format(formatTime(info['NCH']))
+        self.ac = "Additional Hours \n\n \t         {}".format(formatTime(info['ACH']))
 
 class InfoTabAdmin(BoxLayout):
     def __init__(self, id, date):

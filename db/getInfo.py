@@ -71,10 +71,10 @@ def getUserInfo(id, date):
     doors = []
 
     for data in cur.fetchall():
-        table.io.append(data[0])
-        table.time.append(data[1])
-        table.door.append(data[3])
-        table.accType.append(data[4])
+        #table.io.append(data[0])
+        #table.time.append(data[1])
+        #table.door.append(data[3])
+        #table.accType.append(data[4])
         ios.append(data[0])
         timings.append(data[1])
         doors.append(data[3])
@@ -114,6 +114,23 @@ def getUserInfo(id, date):
     cur.close()
     db.close()
     return info
+
+def get_IO_info(id, date):
+    #formattedDate = formatDate(date)
+    #print(formattedDate)
+    db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True, connect_timeout=1)
+    cur = db.cursor()
+    cur.execute("SELECT IO, MTIME, MDATE, DOOR, AccType FROM essl.`%d` WHERE MDATE = '%s' ORDER BY MTIME ASC" %(id, date))
+
+    ios = []
+    timings = []
+    doors = []
+
+    for data in cur.fetchall():
+        table.io.append(data[0])
+        table.time.append(data[1])
+        table.door.append(data[3])
+        table.accType.append(data[4])
 
 def openPopup(ua):
     global id, date

@@ -69,7 +69,7 @@ Builder.load_string("""
             size_hint_x: None
         Label:
             size_hint_x: None
-            text: "SCAN"
+            text: "Import Excel"
             font_name: 'fonts/moon-bold.otf'
             color: (0, 0, 0, 1)
 

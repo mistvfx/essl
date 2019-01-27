@@ -22,7 +22,7 @@ from kivy.properties import NumericProperty
 from pages.navigationdrawer import NavigationDrawer
 
 from db import getInfo, usersListManip
-from pages import Calendar, table, navigationdrawer
+from pages import Calendar, table, navigationdrawer, infoPopup
 
 #logoutButton = Button()
 id = ''
@@ -89,7 +89,7 @@ Builder.load_string("""
 
             # nav-open button
             Button:
-                size_hint: (0.04, 0.08)
+                size_hint: (0.03, 0.06)
                 pos_hint: {'top':1}
                 on_release: nav.toggle_state()
                 background_normal: 'icons/nav_open.png'
@@ -98,22 +98,58 @@ Builder.load_string("""
                 id: userinfo
                 pos_hint: {'center_y':0.98}
             OtherLayout:
+
+            # calendar - daily - monthly
             BoxLayout:
-                orientation: 'horizontal'
-                padding: (5, 0, 5, 5)
+                orientation: 'vertical'
+                padding: (25, 0, 25, 25)
                 spacing: 5
                 size_hint_y: 0.90
                 BoxLayout:
                     id: calendar_and_totalinfo
-                    orientation: 'vertical'
+                    orientation: 'horizontal'
                     spacing: 5
                     CalendarWidgetM:
-                        size_hint:(1, 0.50)
+                        size_hint:(1, 1)
                         pos_hint:{'center_y':0.5, 'center_x':0.5}
-                    MonPop:
-                        size_hint:(1, 0.50)
-                InfoTab:
-                    size_hint:(1, 1)
+                    InfoTab:
+                        size_hint:(1, 1)
+                        BoxLayout:
+                            orientation: 'horizontal'
+                            size_hint_y: 0.1
+                            padding: (20, 15, 20, 15)
+                            spacing: 5
+                            canvas.before:
+                                Color:
+                                    rgba: (100/255, 200/255, 80/255, 1)
+                                Rectangle:
+                                    size: self.size
+                                    pos: self.pos
+                            Button:
+                                text: 'Show Time Logs'
+                                font_name: 'fonts/GoogleSans-Bold.ttf'
+                                background_color: (1, 1, 1, 0)
+                                on_release: root.open_io_pop()
+                                canvas.before:
+                                    Color:
+                                        rgba: (76/255, 175/255, 80/255, 1)
+                                    RoundedRectangle:
+                                        size: self.size
+                                        pos: self.pos
+                            Button:
+                                text: 'TO_BE_ADDED'
+                                font_name: 'fonts/GoogleSans-Bold.ttf'
+                                background_color: (1, 1, 1, 0)
+                                canvas.before:
+                                    Color:
+                                        rgba: (76/255, 175/255, 80/255, 1)
+                                    RoundedRectangle:
+                                        size: self.size
+                                        pos: self.pos
+                MonPop:
+                    size_hint:(0.75, 0.65)
+                    pos_hint: {'center_x':0.5}
+
 
 <OtherLayout>:
     orientation: 'horizontal'
@@ -317,6 +353,9 @@ class UserPage(Screen):
         view = ModalView(size_hint=(0.5, 0.75), background_color=(0, 0, 0, 0.6))
         view.add_widget(leaveReq.LeaveLayout())
         view.open()
+
+    def open_io_pop(self):
+        infoPopup.UserTable()
 
 class MailInfo(BoxLayout):
     def submit_email(self, mail):

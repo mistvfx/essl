@@ -151,28 +151,9 @@ class DataTable(RecycleView):
                 '6': ['MM', 'CONFERENCE ROOM', 'TRAINING-1'],
                 '7': ['ROTO', 'CONFERENCE ROOM', 'TRAINING-1']}
         self.size_hint=(1, 1)
-        self.t = threading.Thread(target=self.startClock())
-        self.t.start()
+        getInfo.get_IO_info(id, date)
+        self.tableUI()
         self.previous_date = 0
-        #self.t1 = threading.Thread(target=self.startClock1(id, date))
-        #self.t1.start()
-
-    def startClock(self):
-        self.check = Clock.schedule_interval(lambda dt: self.check_date_change(), 0.5)
-
-    def check_date_change(self):
-        try:
-            if self.previous_date != date:
-                self.previous_date = date
-                del self.details[:]
-                self.tableUI()
-            else:
-                pass
-        except Exception as e:
-            self.previous_date = date
-
-    def startClock1(self, id, date):
-        self.dets = Clock.schedule_interval(lambda dt: self.tableUI(), 0.5)
 
     def tableUI(self):
         global io, time, door, lvl, accType

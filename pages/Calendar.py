@@ -64,7 +64,7 @@ Builder.load_string("""
             size: self.size
 
 <CalNormalButton>:
-    background_color: (1, 1, 1, 1) if self.state == 'normal' else (0, 0, 0, 0.5)
+    background_color: (1, 1, 1, 1)
     FloatLayout:
         pos: self.parent.pos
         size: self.parent.size
@@ -192,10 +192,10 @@ class CalendarWidgetM(RelativeLayout):
 
                 self.tbtn.bind(on_press=self.get_btn_value)
 
-                if toogle_today:
+                """if toogle_today:
                     # Down today button
                     if day[0] == self.active_date[0] and day[2] == 1:
-                        self.tbtn.state = "down"
+                        self.tbtn.state = "down"""
                 # Disable buttons with days from other months
                 if day[2] == 0:
                     self.tbtn.text = " "
