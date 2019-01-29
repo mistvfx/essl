@@ -14,7 +14,7 @@ from kivy.properties import *
 from kivy.graphics import *
 from kivy.lang import Builder
 
-from pages import table, monthlyPopup, Dialog
+from pages import table, monthlyPopup, Dialog, kivytoast
 from pages.specialFeatures import *
 from db import getInfo, monthlyWrkHours, userSettings
 import datetime
@@ -147,10 +147,10 @@ class DayBtn(Button, MouseOver):
         try:
             infoPopup.InfoTabAdmin(int(artistID.split(":")[0]), formatDate(date))
         except Exception as e:
-            closePopBtn = Button(text="OK", size_hint=(1, 0.25))
-            pop = Dialog.dialog("No Data !!", "No Data Available For this Date", closePopBtn)
-            closePopBtn.bind(on_release=pop.dismiss)
-            pop.open()
+            if date == 'SELECT DATE':
+                kivytoast.toast('Select Date !', (1, 0, 0, 0.5), length_long=True)
+            else:
+                kivytoast.toast('No Data Available for this date', (0, 1, 1, 0.5), length_long=True)
 
 class SettingsBtn(Button, MouseOver):
     def on_hover(self):
@@ -161,7 +161,7 @@ class SettingsBtn(Button, MouseOver):
 
     def settingsPop(self, artistID):
         global date
-        userSettings.userSettingPop(artistID, date).open()
+        userSettings.Level(artistID, date).open()
 
 class MonthInfoBtn(Button, MouseOver):
     def on_hover(self):
@@ -172,12 +172,16 @@ class MonthInfoBtn(Button, MouseOver):
 
     def getMonthInfo(self, artistID):
         global date
-
-        monthlyWrkHours.id.append(int(artistID.split(":")[0]))
-        monthlyPopup.month.append(formatDateTitle(date))
-
-        monthlyPopup.workTime()
-        monthlyPopup.pop()
+        try:
+            monthlyWrkHours.id.append(int(artistID.split(":")[0]))
+            monthlyPopup.month.append(formatDateTitle(date))
+            monthlyPopup.workTime()
+            monthlyPopup.pop()
+        except Exception as e:
+            if date == 'SELECT DATE':
+                kivytoast.toast('Select Date !', (1, 0, 0, 0.5), length_long=True)
+            else:
+                kivytoast.toast('Error Retrieving Data', (0, 1, 1, 0.5), length_long=True)
 
 class UserList(ScrollView):
     def __init__(self):

@@ -9,7 +9,7 @@ from KivyCalendar import DatePicker
 from kivy.lang import Builder
 import re
 
-from pages import Dialog
+from pages import Dialog, kivytoast
 
 Builder.load_string("""
 <AddPermission>:
@@ -73,8 +73,7 @@ class AddPermission(BoxLayout):
         closePopBtn = Button(text="OK", size_hint=(1, 0.25))
         closePopBtn.bind(on_release=callback)
         if hours == '' or self.department == 'DEPARTMENT' or self.department == '':
-            pop = Dialog.dialog("No TIME !!!", "Please Enter valid DATA !!", closePopBtn)
-            pop.open()
+            kivytoast.toast('Please Enter Valid Details !', (1, 0, 0, 0.5))
         elif self.department == 'ALL':
             db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True, connect_timeout=1)
             cur = db.cursor()
@@ -87,8 +86,7 @@ class AddPermission(BoxLayout):
             cur.close()
             cur1.close()
             db.close()
-            pop = Dialog.dialog("SUCCESS", "Successfully added the permission time", closePopBtn)
-            pop.open()
+            kivytoast.toast('Added Permission Time', (0, 1, 0, 0.5), length_long=True)
         else:
             db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True, connect_timeout=1)
             cur = db.cursor()
@@ -101,8 +99,7 @@ class AddPermission(BoxLayout):
             cur.close()
             cur1.close()
             db.close()
-            pop = Dialog.dialog("SUCCESS", "Successfully added the permission time", closePopBtn)
-            pop.open()
+            kivytoast.toast('Added Permission Time', (0, 1, 0, 0.5), length_long=True)
 
     def checkText(self, text):
         time = re.compile(r'[0-2][0-9]:[0-6][0-9]:[0-6][0-9]')

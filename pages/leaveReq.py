@@ -12,7 +12,7 @@ from kivy.uix.textinput import TextInput
 from kivy.graphics import *
 
 from db import leaveData, ExchangeMail
-from pages import Dialog
+from pages import Dialog, kivytoast
 from pages.specialFeatures import *
 
 Data = []
@@ -495,7 +495,7 @@ class LeaveLayout(BoxLayout):
         up = leaveData.upload_to_db(id, from_date, to_date, type, reason)
         if up == 1:
             from pages import kivytoast
-            kivytoast.toast('Leave request has been successfully submitted', (0, 1, 0, 0.5), length_long=True)
+            kivytoast.toast('Leave request submitted', (0, 1, 0, 0.5), length_long=True)
 
     def format_date(self, date):
         date = date.split(".")

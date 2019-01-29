@@ -12,7 +12,7 @@ from datetime import datetime
 from kivy.lang import Builder
 
 
-from pages import calendar_data as cal_data, Dialog
+from pages import calendar_data as cal_data, Dialog, kivytoast
 
 selectedDates = []
 holiday = []
@@ -186,10 +186,10 @@ class CalendarWidgetS(RelativeLayout):
 
         if selected in selectedDates:
             selectedDates.remove(selected)
-            print(selectedDates)
+            #print(selectedDates)
         else:
             selectedDates.append(selected)
-            print(selectedDates)
+            #print(selectedDates)
 
         if self.as_popup:
             self.parent_popup.dismiss()
@@ -301,13 +301,11 @@ def setup():
             if holidayBtn.state == 'down':
                 for date in selectedDates:
                     cur.execute("INSERT INTO essl.month_details (DAY, MONTH, YEAR, DETAIL) VALUES(%d, %d, %d, 'HOLIDAY')" %(date[0], date[1], date[2]))
-                pop = Dialog.dialog("Changes Applied !", "HOLIDAYS Applied ", closePopBtn)
-                pop.open()
+                kivytoast.toast('Holidays Applied', (0, 1, 0, 0.5), length_long=True)
             elif halfdayBtn.state == 'down':
                 for date in selectedDates:
                     cur.execute("INSERT INTO essl.month_details (DAY, MONTH, YEAR, DETAIL) VALUES(%d, %d, %d, 'HALFDAY')" %(date[0], date[1], date[2]))
-                pop = Dialog.dialog("Changes Applied !", "HALFDAYS Applied ", closePopBtn)
-                pop.open()
+                kivytoast.toast('Halfdays Applied', (0, 1, 0, 0.5), length_long=True)
 
             cur.close()
             db.close()

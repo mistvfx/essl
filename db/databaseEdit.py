@@ -12,7 +12,7 @@ from kivy.uix.spinner import Spinner
 from kivy.uix.carousel import Carousel
 from kivy.lang import Builder
 
-from pages import Dialog
+from pages import Dialog, kivytoast
 
 Builder.load_string("""
 <DBtabs>:
@@ -84,14 +84,7 @@ class DeleteDataDay(BoxLayout):
                 continue
             cur1.execute("DELETE FROM essl.%d WHERE MDATE = '%s'"%(id[0], delDate))
 
-        def callback(instance):
-            if instance.text == 'OK':
-                pop.dismiss()
-                return 0
-        closePopBtn = Button(text="OK", size_hint=(1, 0.25))
-        closePopBtn.bind(on_release=callback)
-        pop = Dialog.dialog("DELETED SUCCESSFULLY!!!", "All data for the selected date has been deleted successfully !!", closePopBtn)
-        pop.open()
+        kivytoast.toast('Delete Successfull', (1, 1, 0, 0.5), length_long=True)
 
 class DeleteDataMonth(BoxLayout):
     def __init__(self, **args):
@@ -127,14 +120,7 @@ class DeleteDataMonth(BoxLayout):
                 continue
             cur1.execute("DELETE FROM essl.%d WHERE YEAR(MDATE) = '%s' AND MONTH(MDATE) = '%s'"%(id[0], year, month))
 
-        def callback(instance):
-            if instance.text == 'OK':
-                pop.dismiss()
-                return 0
-        closePopBtn = Button(text="OK", size_hint=(1, 0.25))
-        closePopBtn.bind(on_release=callback)
-        pop = Dialog.dialog("DELETED SUCCESSFULLY!!!", "All data for the %s-%s has been deleted successfully !!"%(month, year), closePopBtn)
-        pop.open()
+        kivytoast.toast("Delete Successfull", (1, 0, 0, 0.5), length_long=True)
 
 def setup():
     popup = Popup(title='Database Edits', content=DBtabs(), size_hint=(0.75, 0.75))

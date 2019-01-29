@@ -29,7 +29,6 @@ def calMonTotWrkHrs(year, month):
     cur2 = db.cursor()
     cur.execute("SELECT DISTINCT(MDate) from essl.`%d` WHERE YEAR(MDate) = '%d' AND MONTH(MDate) = '%d'" %(id[len(id)-1], int(year), int(month)))
     for date in cur.fetchall():
-        #print(date[0].day)
         cur1.execute("SELECT MIN(MTIME), MAX(MTIME) FROM essl.`%d` WHERE MDate = '%s'" %(id[len(id)-1], date[0]))
         cur2.execute("SELECT DOOR, MTIME FROM essl.`%d` WHERE MDate = '%s'" %(id[len(id)-1], date[0]))
 

@@ -251,18 +251,6 @@ class CalendarWidgetM(RelativeLayout):
 
         #getInfo.getUserInfo(id, formatted_date)
 
-        """try:
-            getInfo.openPopup('user')
-        except Exception as e:
-            print(e)
-            def callback(instance):
-                if instance.text == 'OK':
-                    pop.dismiss()
-            closePopBtn = Button(text="OK", size_hint=(1, 0.25))
-            closePopBtn.bind(on_release=callback)
-            pop = Dialog.dialog("No Data !!!", "No data Available for the selected date !!", closePopBtn)
-            pop.open()"""
-
     def go_prev(self, inst):
         """ Go to screen with previous month """
         monthlyWrkHours.calArtistLeave(self.quarter_nums[0][0], self.quarter_nums[0][1], self.active_date[0])

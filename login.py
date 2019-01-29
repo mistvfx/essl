@@ -254,7 +254,7 @@ class LoginWindow(Screen):
             ScreenManagement.sm.add_widget(userPage.UserPage(name='user'))
             ScreenManagement.sm.current = 'user'
         else:
-            kivytoast.toast('Wrong Login Credentials!', (1, 0, 0, 0.5), length_long=True)
+            kivytoast.toast('Wrong Login Credentials!', (1, 0, 0, 0.5))
 
 class ScreenManagement(ScreenManager):
     sm = ScreenManager()
