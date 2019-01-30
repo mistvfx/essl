@@ -122,9 +122,11 @@ def get_IO_info(id, date):
     cur = db.cursor()
     cur.execute("SELECT IO, MTIME, MDATE, DOOR, AccType FROM essl.`%d` WHERE MDATE = '%s' ORDER BY MTIME ASC" %(id, date))
 
-    ios = []
-    timings = []
-    doors = []
+    #ios = []
+    #timings = []
+    #doors = []
+
+    del table.io[:]; del table.time[:]; del table.door[:]; del table.accType[:]
 
     for data in cur.fetchall():
         table.io.append(data[0])

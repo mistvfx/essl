@@ -101,7 +101,8 @@ Builder.load_string("""
 def formatDate(date):
     #datetime.datetime.strptime(date, '%d.%m.%Y').date()
     dt = date.split(".")
-    return ("{}:{}:{}".format(dt[0], dt[1].zfill(2), dt[2]))
+    #return ("{}:{}:{}".format(dt[0].zfill(2), dt[1].zfill(2), dt[2]))
+    return ("{}:{}:{}".format(dt[0].zfill(2), dt[1].zfill(2), dt[2]))
 
 def formatDateTitle(date):
     global months
@@ -144,13 +145,15 @@ class DayBtn(Button, MouseOver):
     def getDayInfo(self, artistID):
         global date
         from pages import infoPopup
-        try:
+        infoPopup.InfoTabAdmin(int(artistID.split(":")[0]), formatDate(date))
+        """try:
             infoPopup.InfoTabAdmin(int(artistID.split(":")[0]), formatDate(date))
         except Exception as e:
+            print(e)
             if date == 'SELECT DATE':
                 kivytoast.toast('Select Date !', (1, 0, 0, 0.5), length_long=True)
             else:
-                kivytoast.toast('No Data Available for this date', (0, 1, 1, 0.5), length_long=True)
+                kivytoast.toast('No Data Available for this date', (0, 1, 1, 0.5), length_long=True)"""
 
 class SettingsBtn(Button, MouseOver):
     def on_hover(self):

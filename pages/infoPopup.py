@@ -63,6 +63,7 @@ Builder.load_string("""
             Label:
                 text: 'Details'
                 bold: True
+                size_hint_x: 0.45
             GridLayout:
                 cols: 4
                 size_hint: (0.55, 1)
@@ -258,12 +259,17 @@ class InfoTabAdmin(BoxLayout):
     def openPopup(self):
         popup = ModalView(size_hint=(0.85, 0.85))
         popup.add_widget(self)
-        #popup.bind(on_dismiss=self.stopClock)
         popup.open()
+
+    def formatDate(self, date):
+        allDateData = list(reversed(date.split(":")))
+        dt = (str(allDateData[0]) +"-"+ str(allDateData[1]).zfill(2) +"-"+ str(allDateData[2]))
+        return dt
 
     def popUI(self, id, date):
         from db import getInfo
         getInfo.getUserInfo(id, date)
+        getInfo.get_IO_info(id, self.formatDate(date))
 
         tab = table.DataTableAdmin()
         tab.size_hint=(0.55, 1)
