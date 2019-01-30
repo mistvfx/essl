@@ -145,15 +145,14 @@ class DayBtn(Button, MouseOver):
     def getDayInfo(self, artistID):
         global date
         from pages import infoPopup
-        infoPopup.InfoTabAdmin(int(artistID.split(":")[0]), formatDate(date))
-        """try:
+        try:
             infoPopup.InfoTabAdmin(int(artistID.split(":")[0]), formatDate(date))
         except Exception as e:
             print(e)
             if date == 'SELECT DATE':
                 kivytoast.toast('Select Date !', (1, 0, 0, 0.5), length_long=True)
             else:
-                kivytoast.toast('No Data Available for this date', (0, 1, 1, 0.5), length_long=True)"""
+                kivytoast.toast('No Data Available for this date', (0, 1, 1, 0.5), length_long=True)
 
 class SettingsBtn(Button, MouseOver):
     def on_hover(self):
