@@ -78,11 +78,6 @@ class CalendarWidgetS(RelativeLayout):
         self.add_widget(self.left_arrow)
         self.add_widget(self.right_arrow)
 
-        def callback(instance):
-            monthlyPopup.month.append(self.title)
-            monthlyPopup.workTime()
-            monthlyPopup.pop()
-
         # Title
         self.title_label = Label(text=self.title, pos_hint={"top": 1, "center_x": .5}, size_hint=(None, 0.15), halign=("center"))
         self.add_widget(self.title_label)
@@ -122,7 +117,6 @@ class CalendarWidgetS(RelativeLayout):
                     self.tbtn = ToggleBtn(text=str(day[0]), color=(0, 0, 0, 1))
                 else:
                     self.tbtn = ToggleBtn(text=str(day[0]), color=(0, 0, 0, 1))
-                    print(self.active_date, holiday)
                     for i in range(len(holiday)):
                         if self.active_date[2] == holiday[i][2]:
                             if self.active_date[1] == holiday[i][1]:
@@ -186,10 +180,8 @@ class CalendarWidgetS(RelativeLayout):
 
         if selected in selectedDates:
             selectedDates.remove(selected)
-            #print(selectedDates)
         else:
             selectedDates.append(selected)
-            #print(selectedDates)
 
         if self.as_popup:
             self.parent_popup.dismiss()

@@ -68,20 +68,20 @@ Builder.load_string("""
                     pos: self.pos
                     size: self.size
 
-<DataTable>:
-    data: root.details
-    viewclass: 'DataBox'
-    RecycleBoxLayout:
-        size_hint: (1,None)
-        height: self.minimum_height
-        spacing: 2
-        orientation: 'vertical'
-        canvas.before:
-            Color:
-                rgba: (0, 0, 0, 1)
-            Rectangle:
-                size: self.size
-                pos: self.pos
+#<DataTable>:
+#    data: root.details
+#    viewclass: 'DataBox'
+#    RecycleBoxLayout:
+#        size_hint: (1,None)
+#        height: self.minimum_height
+#        spacing: 2
+#        orientation: 'vertical'
+#        canvas.before:
+#            Color:
+#                rgba: (0, 0, 0, 1)
+#            Rectangle:
+#                size: self.size
+#                pos: self.pos
 
 """)
 class DataLbl(Label):
@@ -107,9 +107,7 @@ class DataLbl(Label):
 
 #class DataBox(BoxLayout):
 class DataBox(RecycleDataViewBehavior, BoxLayout):
-    ''' Add selection support to the Label '''
     index = None
-    #cols = 3
 
     def refresh_view_attrs(self, rv, index, data):
         ''' Catch and handle the view changes '''
@@ -139,56 +137,39 @@ class DataLblM(DataLbl):
         popup = Popup(title="TIMING FIX", content=setLayout, size_hint=(0.65, 0.65))
         popup.open()
 
-class DataTable(RecycleView):
+class DataTable(ScrollView):
     details = ListProperty(None)
     def __init__(self, **args):
         super(DataTable, self).__init__(**args)
         self.level = { '1': ['MM', 'ROTO', 'PAINT', 'CONFERENCE ROOM', 'TRAINING-1', 'IT', 'HR', 'SERVER ROOM', 'STORE'],
-                '2': ['MM', 'ROTO', 'PAINT', 'CONFERENCE ROOM', 'TRAINING-1', 'HR'],
-                '3': ['MM', 'ROTO', 'PAINT', 'CONFERENCE ROOM', 'TRAINING-1'],
-                '4': ['MM', 'ROTO', 'CONFERENCE ROOM'],
-                '5': ['ROTO', 'CONFERENCE ROOM'],
-                '6': ['MM', 'CONFERENCE ROOM', 'TRAINING-1'],
-                '7': ['ROTO', 'CONFERENCE ROOM', 'TRAINING-1']}
+                       '2': ['MM', 'ROTO', 'PAINT', 'CONFERENCE ROOM', 'TRAINING-1', 'HR'],
+                       '3': ['MM', 'ROTO', 'PAINT', 'CONFERENCE ROOM', 'TRAINING-1'],
+                       '4': ['MM', 'ROTO', 'CONFERENCE ROOM'],
+                       '5': ['ROTO', 'CONFERENCE ROOM'],
+                       '6': ['MM', 'CONFERENCE ROOM', 'TRAINING-1'],
+                       '7': ['ROTO', 'CONFERENCE ROOM', 'TRAINING-1']}
         self.size_hint=(1, 1)
         getInfo.get_IO_info(id, date)
         self.tableUI()
-        self.previous_date = 0
 
     def tableUI(self):
         global io, time, door, lvl, accType
-        del self.details[:]
 
-        #self.details = [{'text': "{}   |   {}  |   {}  |   {}".format(io[i], time[i], door[i], accType[i]), 'size_hint':(1, None)} for i in range(len(io))]
-        for i in range(len(io)):
-            if door[i] not in self.level[lvl] and door[i] != 'MAINDOOR':
-                continue
-            self.details.append({'io': {'text': "{}".format(io[i])}, 'time': {'text': "{}".format(time[i])}, 'door': {'text': "{}".format(door[i])}, 'acc_type': {'text': "{}".format(accType[i])}, 'size_hint': (1, None), 'height': 20})
-            #if door[i] in self.level[lvl] and io[i] == 'In' and door[i+1] == door[i] and io[i+1] == 'Out':
-            #    self.details.append({'text': "{}   |   {}  |   {}  |   {}".format(io[i], time[i], door[i], accType[i]), 'size_hint':(1, None), 'height':15, 'background_color':(0, 1, 0, 0.50)})
-            #elif door[i-1] in self.level[lvl] and io[i-1] == 'In' and door[i-1] == door[i] and io[i] == 'Out':
-            #    self.details.append({'text': "{}   |   {}  |   {}  |   {}".format(io[i], time[i], door[i], accType[i]), 'size_hint':(1, None), 'height':15, 'background_color':(0, 1, 0, 0.50)})
-            #elif door[i] in self.level[lvl]:
-            #    self.details.append({'text': "{}   |   {}  |   {}  |   {}".format(io[i], time[i], door[i], accType[i]), 'size_hint':(1, None), 'height':15, 'background_color':(1, 0, 0, 0.50)})
-            #else:
-            #    self.details.append({'text': "{}   |   {}  |   {}  |   {}".format(io[i], time[i], door[i], accType[i]), 'size_hint':(1, None), 'height':15})
-        del io[:]; del time[:]; del door[:]; del accType[:];
-
-        """layout = GridLayout(cols=3, spacing=5, size_hint_y=None)
+        layout = GridLayout(cols=3, spacing=2, size_hint_y=None)
         layout.bind(minimum_height=layout.setter('height'))
 
         i=1; j=1; k=1;
         while i < len(io):
-            if door[i] not in level[lvl] and door[i] != 'MAINDOOR':
+            if door[i] not in self.level[lvl] and door[i] != 'MAINDOOR':
                 i += 1; j += 1; k += 1;
                 continue
             lbl = DataLbl(text=str(io[i]), size_hint_y=None, height=40)
             try:
-                if door[i] in level[lvl] and io[i] == 'In' and door[i+1] == door[i] and io[i+1] == 'Out':
+                if door[i] in self.level[lvl] and io[i] == 'In' and door[i+1] == door[i] and io[i+1] == 'Out':
                     lbl.set_bgGreen()
-                elif door[i-1] in level[lvl] and io[i-1] == 'In' and door[i-1] == door[i] and io[i] == 'Out':
+                elif door[i-1] in self.level[lvl] and io[i-1] == 'In' and door[i-1] == door[i] and io[i] == 'Out':
                     lbl.set_bgGreen()
-                elif door[i] in level[lvl]:
+                elif door[i] in self.level[lvl]:
                     lbl.set_bgRed()
             except:
                 pass
@@ -196,11 +177,11 @@ class DataTable(RecycleView):
             while j < len(time):
                 lbl = DataLbl(text=str(time[j]), size_hint_y=None, height=40)
                 try:
-                    if door[i] in level[lvl] and io[i] == 'In' and door[i+1] == door[i] and io[i+1] == 'Out':
+                    if door[i] in self.level[lvl] and io[i] == 'In' and door[i+1] == door[i] and io[i+1] == 'Out':
                         lbl.set_bgGreen()
-                    elif door[i-1] in level[lvl] and io[i-1] == 'In' and door[i-1] == door[i] and io[i] == 'Out':
+                    elif door[i-1] in self.level[lvl] and io[i-1] == 'In' and door[i-1] == door[i] and io[i] == 'Out':
                         lbl.set_bgGreen()
-                    elif door[i] in level[lvl]:
+                    elif door[i] in self.level[lvl]:
                         lbl.set_bgRed()
                 except:
                     pass
@@ -208,11 +189,11 @@ class DataTable(RecycleView):
                 while k < len(door):
                     lbl = DataLbl(text=str(door[k]), size_hint_y=None, height=40)
                     try:
-                        if door[i] in level[lvl] and io[i] == 'In' and door[i+1] == door[i] and io[i+1] == 'Out':
+                        if door[i] in self.level[lvl] and io[i] == 'In' and door[i+1] == door[i] and io[i+1] == 'Out':
                             lbl.set_bgGreen()
-                        elif door[i-1] in level[lvl] and io[i-1] == 'In' and door[i-1] == door[i] and io[i] == 'Out':
+                        elif door[i-1] in self.level[lvl] and io[i-1] == 'In' and door[i-1] == door[i] and io[i] == 'Out':
                             lbl.set_bgGreen()
-                        elif door[i] in level[lvl]:
+                        elif door[i] in self.level[lvl]:
                             lbl.set_bgRed()
                     except:
                         pass
@@ -223,7 +204,7 @@ class DataTable(RecycleView):
                 break
             i+=1
         self.add_widget(layout)
-        del io[:]; del time[:]; del door[:];"""
+        del io[:]; del time[:]; del door[:]; del accType[:]
 
 class DataTableAdmin(ScrollView):
     def __init__(self, **args):

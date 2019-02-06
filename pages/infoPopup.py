@@ -147,9 +147,10 @@ Builder.load_string("""
                 text: 'I/O'
                 bold: True
                 background_color: (1, 1, 1, 1)
+                color: (0, 0, 0, 1)
                 canvas.before:
                     Color:
-                        rgba: (76/255, 175/255, 80/255, 1)
+                        rgba: (1, 1, 1, 1)
                     Rectangle:
                         size: self.size
                         pos: self.pos
@@ -157,9 +158,10 @@ Builder.load_string("""
                 text: 'TIME'
                 bold: True
                 background_color: (1, 1, 1, 1)
+                color: (0, 0, 0, 1)
                 canvas.before:
                     Color:
-                        rgba: (76/255, 175/255, 80/255, 1)
+                        rgba: (1, 1, 1, 1)
                     Rectangle:
                         size: self.size
                         pos: self.pos
@@ -167,19 +169,10 @@ Builder.load_string("""
                 text: 'DOOR'
                 bold: True
                 background_color: (1, 1, 1, 1)
+                color: (0, 0, 0, 1)
                 canvas.before:
                     Color:
-                        rgba: (76/255, 175/255, 80/255, 1)
-                    Rectangle:
-                        size: self.size
-                        pos: self.pos
-            Label:
-                text: 'ACCESS TYPE'
-                bold: True
-                background_color: (1, 1, 1, 1)
-                canvas.before:
-                    Color:
-                        rgba: (76/255, 175/255, 80/255, 1)
+                        rgba: (1, 1, 1, 1)
                     Rectangle:
                         size: self.size
                         pos: self.pos
@@ -226,6 +219,8 @@ class InfoTab(BoxLayout):
 
     def __init__(self, **kwargs):
         super(InfoTab, self).__init__(**kwargs)
+        #self.popInfo(date)
+        self.prev_date = '-'
         self.t1 = threading.Thread(target=self.startClock())
         self.t1.start()
         #self.popInfo()
@@ -236,6 +231,13 @@ class InfoTab(BoxLayout):
     def popInfo(self):
         #global TWH, AWH, NCH, ACH,
         global id, date
+
+        # run only if date changes
+        if date == self.prev_date:
+            return
+        else:
+            self.prev_date = date
+
         from db import getInfo
         if date == '':
             return

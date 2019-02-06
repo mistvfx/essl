@@ -124,7 +124,7 @@ class CalendarWidgetM(RelativeLayout):
 
         # Title
         self.title_label = monthBtn(text=self.title, pos_hint={"top": 1, "center_x": .5}, size_hint=(None, 0.15), halign=("center"))
-        monthlyPopup.month.append(self.title)
+        monthlyPopup.month = self.title
         self.add_widget(self.title_label)
 
         # ScreenManager
@@ -243,6 +243,7 @@ class CalendarWidgetM(RelativeLayout):
         getInfo.date = formatted_date
         userPage.date = formatted_date
         infoPopup.date = formatted_date
+        #infoPopup.InfoTab().popInfo(formatted_date)
         table.date = formatted_date
         monthlyPopup.date = formatted_date
 
@@ -278,7 +279,7 @@ class CalendarWidgetM(RelativeLayout):
         self.title_label.text = self.title
 
         # assign title to monthlyPopup
-        monthlyPopup.month.append(self.title)
+        monthlyPopup.month = self.title
 
     def go_next(self, inst):
         """ Go to screen with next month """
@@ -307,7 +308,7 @@ class CalendarWidgetM(RelativeLayout):
         self.title_label.text = self.title
 
         # assign title to monthlyPopup
-        monthlyPopup.month.append(self.title)
+        monthlyPopup.month = self.title
 
     def on_touch_move(self, touch):
         """ Switch months pages by touch move """

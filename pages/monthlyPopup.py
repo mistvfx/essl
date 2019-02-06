@@ -1,6 +1,6 @@
 import calendar
 import datetime
-from kivy.uix.popup import Popup
+from kivy.uix.modalview import ModalView
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
@@ -147,11 +147,11 @@ def calTotWorkingDays(totDays, curMonth, givMonth, curDate, givYear):
     calTotWorkingDays.officeDefault = days-hDays
     return days-hDays-calTotWorkingDays.artistLeaves
 
-def workTime():
+def workTime(month):
     StdWrkHrs = datetime.timedelta(hours=8, minutes=29, seconds=59)
-    global month, months
+    global months
 
-    mon = month[len(month)-1].split("-")
+    mon = month.split("-")
     workTime.year = int(mon[1])
     try:
         workTime.mont = int(months.index(mon[0])+1)
@@ -217,6 +217,9 @@ class MonPop(GridLayout):
 
     def __init__(self, **args):
         super(MonPop, self).__init__(**args)
+
+        self.prev_month = '-'
+
         self.cols = 5
         self.DefTotWrkHrs = datetime.timedelta(hours=10, minutes=0, seconds=0)
         self.StdWrkHrs = datetime.timedelta(hours=8, minutes=29, seconds=59)
@@ -227,7 +230,13 @@ class MonPop(GridLayout):
         self.dets = Clock.schedule_interval(lambda dt: self.popUI(), 0.5)
 
     def popUI(self):
-        workTime()
+        global month
+        if month == self.prev_month:
+            return
+        else:
+            self.prev_month = month
+
+        workTime(month)
 
         actWorkingTime = ActualWorkingTime()
         totWorkingTime = TotalWorkingTime()
@@ -286,5 +295,6 @@ class MonPop(GridLayout):
 
 def pop():
     tab = MonPop()
-    popup = Popup(title="MONTHLY INFORMATION", content=tab, size_hint=(0.95, 0.85))
+    popup = ModalView(size_hint=(0.95, 0.85))
+    popup.add_widget(tab)
     popup.open()

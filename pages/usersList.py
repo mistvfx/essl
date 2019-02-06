@@ -176,7 +176,7 @@ class MonthInfoBtn(Button, MouseOver):
         global date
         try:
             monthlyWrkHours.id.append(int(artistID.split(":")[0]))
-            monthlyPopup.month.append(formatDateTitle(date))
+            monthlyPopup.month = (formatDateTitle(date))
             monthlyPopup.workTime()
             monthlyPopup.pop()
         except Exception as e:

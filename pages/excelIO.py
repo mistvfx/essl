@@ -296,8 +296,8 @@ def exportMonth(month, year):
         monthlyWrkHours.id.append(id)
         Artist_Leaves.append(str(monthlyWrkHours.calArtistLeaveMon(int(year), int(month))))
 
-        monthlyPopup.month.append((month+"-"+year))
-        monthlyPopup.workTime()
+        monthlyPopup.month = (month+"-"+year)
+        monthlyPopup.workTime(month+"-"+year)
         Month_Std_Hours.append(formatTime(monthlyPopup.workTime.tarWorkingTime))
 
         Month_Completed_Hours.append(formatTime(monthlyWrkHours.calMonWrkHrs(year, month)))

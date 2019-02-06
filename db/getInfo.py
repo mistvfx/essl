@@ -61,7 +61,7 @@ def calTotalWorkingHours(ios, timings, doors):
 def getUserInfo(id, date):
     StdWrkHrs = datetime.timedelta(hours=8, minutes=29, seconds=59)
     formattedDate = formatDate(date)
-    #print(formattedDate)
+    #print(formattedDate, date)
     db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True, connect_timeout=1)
     cur = db.cursor()
     cur.execute("SELECT IO, MTIME, MDATE, DOOR, AccType FROM essl.`%d` WHERE MDATE = '%s' ORDER BY MTIME ASC" %(id, formattedDate))
@@ -117,7 +117,6 @@ def getUserInfo(id, date):
 
 def get_IO_info(id, date):
     #formattedDate = formatDate(date)
-    #print(formattedDate)
     db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True, connect_timeout=1)
     cur = db.cursor()
     cur.execute("SELECT IO, MTIME, MDATE, DOOR, AccType FROM essl.`%d` WHERE MDATE = '%s' ORDER BY MTIME ASC" %(id, date))

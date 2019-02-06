@@ -83,63 +83,94 @@ Builder.load_string("""
 
 <Level>:
     BoxLayout:
-        orientation: 'vertical'
-        spacing: 5
-        canvas.before:
-            Color:
-                rgba: (0, 0, 0, 1)
-            Rectangle:
-                size: self.size
-                pos: self.pos
+        orientation: 'horizontal'
+        GridLayout:
+            rows: 8
+            Label:
+                text: 'Level Information'
+            Label:
+                text: '1: [MM, ROTO, PAINT, CONFERENCE ROOM, TRAINING-1, IT, HR, SERVER ROOM, STORE]'
+                halign: 'left'
+                text_size: self.width, self.height
+            Label:
+                text: '2: [MM, ROTO, PAINT, CONFERENCE ROOM, TRAINING-1, HR]'
+                halign: 'left'
+                text_size: self.width, self.height
+            Label:
+                text: '3: [MM, ROTO, PAINT, CONFERENCE ROOM, TRAINING-1]'
+                halign: 'left'
+                text_size: self.width, self.height
+            Label:
+                text: '4: [MM, ROTO, CONFERENCE ROOM]'
+                halign: 'left'
+                text_size: self.width, self.height
+            Label:
+                text: '5: [ROTO, CONFERENCE ROOM]'
+                halign: 'left'
+                text_size: self.width, self.height
+            Label:
+                text: '6: [MM, CONFERENCE ROOM, TRAINING-1]'
+                halign: 'left'
+                text_size: self.width, self.height
+            Label:
+                text: '7: [ROTO, CONFERENCE ROOM, TRAINING-1]'
+                halign: 'left'
+                text_size: self.width, self.height
         BoxLayout:
-            orientation: 'horizontal'
+            orientation: 'vertical'
             spacing: 5
             canvas.before:
                 Color:
-                    rgba: (1, 1, 1, 1)
+                    rgba: (0, 0, 0, 1)
                 Rectangle:
                     size: self.size
                     pos: self.pos
-            Label:
-                id: curLvl
-                text: root.user_level
-                color: (0, 0, 0, 1)
             BoxLayout:
-                orientation: 'vertical'
-                Spinner:
-                    id: lvl
-                    text: 'LEVEL'
-                    values: ('1', '2', '3', '4', '5', '6', '7')
-                    font_name: 'fonts/moon-bold.otf'
-                    size_hint: (0.75, 0.5)
-                    pos_hint: {'center_x': .5, 'center_y': .5}
-                Button:
-                    id: subLvl
-                    text: 'Assign Level'
-                    size_hint: (1, 0.5)
-                    on_release: root.submitLvl(lvl.text)
-        BoxLayout:
-            orientation: 'horizontal'
-            canvas.before:
-                Color:
-                    rgba: (1, 1, 1, 1)
-                Rectangle:
-                    size: self.size
-                    pos: self.pos
-            Label:
-                text: "User Status :"
-                color: (0, 0, 0, 1)
-            Switch:
-                id: user_status
-                active_norm_pos: 1
-                on_touch_move: root.change_user_status()
+                orientation: 'horizontal'
+                spacing: 5
+                canvas.before:
+                    Color:
+                        rgba: (1, 1, 1, 1)
+                    Rectangle:
+                        size: self.size
+                        pos: self.pos
+                Label:
+                    id: curLvl
+                    text: root.user_level
+                    color: (0, 0, 0, 1)
+                BoxLayout:
+                    orientation: 'vertical'
+                    Spinner:
+                        id: lvl
+                        text: 'LEVEL'
+                        values: ('1', '2', '3', '4', '5', '6', '7')
+                        font_name: 'fonts/moon-bold.otf'
+                        size_hint: (0.75, 0.5)
+                        pos_hint: {'center_x': .5, 'center_y': .5}
+                    Button:
+                        id: subLvl
+                        text: 'Assign Level'
+                        size_hint: (1, 0.5)
+                        on_release: root.submitLvl(lvl.text)
+            BoxLayout:
+                orientation: 'horizontal'
+                canvas.before:
+                    Color:
+                        rgba: (1, 1, 1, 1)
+                    Rectangle:
+                        size: self.size
+                        pos: self.pos
+                Label:
+                    text: "User Status :"
+                    color: (0, 0, 0, 1)
+                Switch:
+                    id: user_status
+                    active_norm_pos: 1
+                    on_touch_move: root.change_user_status()
 """)
 def formatDate(date):
     Dt = date.split(".")
     return str("-".join(list(reversed(Dt))))
-
-def getTimings():
-    print(id)
 
 class SettingsTabs(TabbedPanel):
     pass
@@ -149,7 +180,9 @@ class Level(ModalView):
 
     def __init__(self, artist_id, date):
         super(Level, self).__init__()
-        self.size_hint = (0.30, 0.25)
+        self.size_hint = (0.75, 0.35)
+        global id
+        id = artist_id.split(":")[0]
         self.get_level(artist_id.split(":")[0])
 
     def get_level(self, id):
@@ -170,7 +203,6 @@ class Level(ModalView):
 
     def change_user_status(self):
         global id
-        print(id)
         db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True, connect_timeout=1)
         cur = db.cursor()
         cur.execute("UPDATE essl.user_master SET Status = 'CLOSED' WHERE ID = '%d'"%(int(id)))
