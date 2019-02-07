@@ -373,7 +373,7 @@ def exportMonth(month, year):
         Ddate = (str(year) + "-" + str(month) + "-" + str(Day))
         Cdate = datetime.datetime.strptime(Ddate, '%Y-%m-%d')
 
-        for id in artistID:
+        for id, i in zip(artistID, range(len(artistID))):
 
             cur2.execute("SELECT IO, MTIME, DOOR FROM essl.`%d` WHERE MDate = '%s' ORDER BY MTIME ASC" %(int(id), Cdate))
 
@@ -383,11 +383,13 @@ def exportMonth(month, year):
                 doors.append(dt[2])
 
             try:
-                actWrkHrs = calActualWorkingHours(ios, timings, doors, artistLvl[len(artistLvl)-1])
+                print(artistLvl[i])
+                #actWrkHrs = calActualWorkingHours(ios, timings, doors, artistLvl[len(artistLvl)-1])
+                actWrkHrs = calActualWorkingHours(ios, timings, doors, artistLvl[i])
                 if actWrkHrs == datetime.timedelta():
                     Work_Duration.append('00:00')
                 else:
-                    print(actWrkHrs)
+                    #print(actWrkHrs)
                     Work_Duration.append((datetime.datetime.min + actWrkHrs).time())
             except Exception as e:
                 actWrkHrs = datetime.timedelta()

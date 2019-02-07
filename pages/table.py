@@ -158,7 +158,7 @@ class DataTable(ScrollView):
         layout = GridLayout(cols=3, spacing=2, size_hint_y=None)
         layout.bind(minimum_height=layout.setter('height'))
 
-        i=1; j=1; k=1;
+        i=0; j=0; k=0;
         while i < len(io):
             if door[i] not in self.level[lvl] and door[i] != 'MAINDOOR':
                 i += 1; j += 1; k += 1;
@@ -228,7 +228,7 @@ class DataTableAdmin(ScrollView):
         # Make sure the height is such that there is something to scroll.
         layout.bind(minimum_height=layout.setter('height'))
 
-        i=1; j=1; k=1; l=1;
+        i=0; j=0; k=0; l=0;
         while i < len(io):
             lbl = DataLbl(text=str(io[i]), size_hint_y=None, height=40)
             try:
