@@ -31,7 +31,7 @@ def calActualWorkingHours(io, time, door, lvl):
 
     while i < len(io):
         try:
-            if door[i] in level[lvl] and io[i] == 'In' and door[i+1] == door[i] and io[i+1] == 'Out':
+            if door[i] in level[lvl] and io[i] in ['In', 'IN'] and door[i+1] == door[i] and io[i+1] in ['Out', 'OUT']:
                 sumTime += (time[i+1] - time[i])
                 i += 2
                 continue
@@ -51,9 +51,9 @@ def calTotalWorkingHours(ios, timings, doors):
     intimes = []
     outtimes = []
     for i, d, j in zip(ios, doors, range(len(ios))):
-        if d == 'MAINDOOR' and i == 'In':
+        if d == 'MAINDOOR' and i in ['In', 'IN']:
             intimes.append(timings[j])
-        elif d == 'MAINDOOR' and i == 'Out':
+        elif d == 'MAINDOOR' and i in ['Out', 'OUT']:
             outtimes.append(timings[j])
 
     return max(outtimes)-min(intimes)

@@ -165,9 +165,9 @@ class DataTable(ScrollView):
                 continue
             lbl = DataLbl(text=str(io[i]), size_hint_y=None, height=40)
             try:
-                if door[i] in self.level[lvl] and io[i] == 'In' and door[i+1] == door[i] and io[i+1] == 'Out':
+                if door[i] in self.level[lvl] and io[i] in ['In', 'IN'] and door[i+1] == door[i] and io[i+1] in ['Out', 'OUT']:
                     lbl.set_bgGreen()
-                elif door[i-1] in self.level[lvl] and io[i-1] == 'In' and door[i-1] == door[i] and io[i] == 'Out':
+                elif door[i-1] in self.level[lvl] and io[i-1] in ['In', 'IN'] and door[i-1] == door[i] and io[i] in ['Out', 'OUT']:
                     lbl.set_bgGreen()
                 elif door[i] in self.level[lvl]:
                     lbl.set_bgRed()
@@ -177,9 +177,9 @@ class DataTable(ScrollView):
             while j < len(time):
                 lbl = DataLbl(text=str(time[j]), size_hint_y=None, height=40)
                 try:
-                    if door[i] in self.level[lvl] and io[i] == 'In' and door[i+1] == door[i] and io[i+1] == 'Out':
+                    if door[i] in self.level[lvl] and io[i] in ['In', 'IN'] and door[i+1] == door[i] and io[i+1] in ['Out', 'OUT']:
                         lbl.set_bgGreen()
-                    elif door[i-1] in self.level[lvl] and io[i-1] == 'In' and door[i-1] == door[i] and io[i] == 'Out':
+                    elif door[i-1] in self.level[lvl] and io[i-1] in ['In', 'IN'] and door[i-1] == door[i] and io[i] in ['Out', 'OUT']:
                         lbl.set_bgGreen()
                     elif door[i] in self.level[lvl]:
                         lbl.set_bgRed()
@@ -189,9 +189,9 @@ class DataTable(ScrollView):
                 while k < len(door):
                     lbl = DataLbl(text=str(door[k]), size_hint_y=None, height=40)
                     try:
-                        if door[i] in self.level[lvl] and io[i] == 'In' and door[i+1] == door[i] and io[i+1] == 'Out':
+                        if door[i] in self.level[lvl] and io[i] in ['In', 'IN'] and door[i+1] == door[i] and io[i+1] in ['Out', 'OUT']:
                             lbl.set_bgGreen()
-                        elif door[i-1] in self.level[lvl] and io[i-1] == 'In' and door[i-1] == door[i] and io[i] == 'Out':
+                        elif door[i-1] in self.level[lvl] and io[i-1] in ['In', 'IN'] and door[i-1] == door[i] and io[i] in ['Out', 'OUT']:
                             lbl.set_bgGreen()
                         elif door[i] in self.level[lvl]:
                             lbl.set_bgRed()
@@ -232,9 +232,9 @@ class DataTableAdmin(ScrollView):
         while i < len(io):
             lbl = DataLbl(text=str(io[i]), size_hint_y=None, height=40)
             try:
-                if door[i] in level[lvl] and io[i] == 'In' and door[i+1] == door[i] and io[i+1] == 'Out':
+                if door[i] in level[lvl] and io[i] in ['In', 'IN'] and door[i+1] == door[i] and io[i+1] in ['Out', 'OUT']:
                     lbl.set_bgGreen()
-                elif door[i-1] in level[lvl] and io[i-1] == 'In' and door[i-1] == door[i] and io[i] == 'Out':
+                elif door[i-1] in level[lvl] and io[i-1] in ['In', 'IN'] and door[i-1] == door[i] and io[i] in ['Out', 'OUT']:
                     lbl.set_bgGreen()
                 elif door[i] in level[lvl]:
                     lbl.set_bgRed()
@@ -244,9 +244,9 @@ class DataTableAdmin(ScrollView):
             while j < len(time):
                 lbl = DataLbl(text=str(time[j]), size_hint_y=None, height=40)
                 try:
-                    if door[i] in level[lvl] and io[i] == 'In' and door[i+1] == door[i] and io[i+1] == 'Out':
+                    if door[i] in level[lvl] and io[i] in ['In', 'IN'] and door[i+1] == door[i] and io[i+1] in ['Out', 'OUT']:
                         lbl.set_bgGreen()
-                    elif door[i-1] in level[lvl] and io[i-1] == 'In' and door[i-1] == door[i] and io[i] == 'Out':
+                    elif door[i-1] in level[lvl] and io[i-1] in ['In', 'IN'] and door[i-1] == door[i] and io[i] in ['Out', 'OUT']:
                         lbl.set_bgGreen()
                     elif door[i] in level[lvl]:
                         lbl.set_bgRed()
@@ -256,9 +256,9 @@ class DataTableAdmin(ScrollView):
                 while k < len(door):
                     lbl = DataLbl(text=str(door[k]), size_hint_y=None, height=40)
                     try:
-                        if door[i] in level[lvl] and io[i] == 'In' and door[i+1] == door[i] and io[i+1] == 'Out':
+                        if door[i] in level[lvl] and io[i] in ['In', 'IN'] and door[i+1] == door[i] and io[i+1] in ['Out', 'OUT']:
                             lbl.set_bgGreen()
-                        elif door[i-1] in level[lvl] and io[i-1] == 'In' and door[i-1] == door[i] and io[i] == 'Out':
+                        elif door[i-1] in level[lvl] and io[i-1] in ['In', 'IN'] and door[i-1] == door[i] and io[i] in ['Out', 'OUT']:
                             lbl.set_bgGreen()
                         elif door[i] in level[lvl]:
                             lbl.set_bgRed()
@@ -268,9 +268,9 @@ class DataTableAdmin(ScrollView):
                     while l < len(accType):
                         lbl = DataLbl(text=str(accType[l]), size_hint_y=None, height=40)
                         try:
-                            if door[i] in level[lvl] and io[i] == 'In' and door[i+1] == door[i] and io[i+1] == 'Out':
+                            if door[i] in level[lvl] and io[i] in ['In', 'IN'] and door[i+1] == door[i] and io[i+1] in ['Out', 'OUT']:
                                 lbl.set_bgGreen()
-                            elif door[i-1] in level[lvl] and io[i-1] == 'In' and door[i-1] == door[i] and io[i] == 'Out':
+                            elif door[i-1] in level[lvl] and io[i-1] in ['In', 'IN'] and door[i-1] == door[i] and io[i] in ['Out', 'OUT']:
                                 lbl.set_bgGreen()
                             elif door[i] in level[lvl]:
                                 lbl = DataLblM(text=str(accType[l]), size_hint_y=None, height=40)

@@ -78,7 +78,7 @@ class DeleteDataDay(BoxLayout):
         cur = db.cursor()
         cur1 = db.cursor()
 
-        cur.execute("SELECT ID FROM essl.user_master WHERE Status = 'OPEN'")
+        cur.execute("SELECT ID FROM essl.user_master WHERE Status = 'OPEN' AND Name != 'ADMIN'")
         for id in cur.fetchall():
             if id[0] == 1000:
                 continue
@@ -114,7 +114,7 @@ class DeleteDataMonth(BoxLayout):
         cur = db.cursor()
         cur1 = db.cursor()
 
-        cur.execute("SELECT ID FROM essl.user_master WHERE Status = 'OPEN'")
+        cur.execute("SELECT ID FROM essl.user_master WHERE Status = 'OPEN' AND Name != 'ADMIN'")
         for id in cur.fetchall():
             if id[0] == 1000:
                 continue

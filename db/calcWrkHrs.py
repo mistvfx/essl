@@ -21,7 +21,7 @@ def calActualWorkingHours(io, time, door, lvl):
 
     while i < len(io):
         try:
-            if door[i] in level[lvl] and io[i] == 'In' and door[i+1] == door[i] and io[i+1] == 'Out':
+            if door[i] in level[lvl] and io[i] in ['In', 'IN'] and door[i+1] == door[i] and io[i+1] in ['Out', 'OUT']:
                 sumTime += (time[i+1] - time[i])
                 i += 2
                 continue
@@ -107,9 +107,9 @@ def getUserTime():
         i = 0
         while i < len(ios):
             try:
-                if doors[i] in level[lvl] and ios[i] == 'In' and doors[i+1] == doors[i] and ios[i+1] == 'Out':
+                if doors[i] in level[lvl] and ios[i] in ['In', 'IN'] and doors[i+1] == doors[i] and ios[i+1] in ['Out', 'OUT']:
                     pass
-                elif doors[i-1] in level[lvl] and ios[i-1] == 'In' and doors[i-1] == doors[i] and ios[i] == 'Out':
+                elif doors[i-1] in level[lvl] and ios[i-1] in ['In', 'IN'] and doors[i-1] == doors[i] and ios[i] in ['Out', 'OUT']:
                     pass
                 elif doors[i] in level[lvl]:
                     Calendar.reg.append(DMY)

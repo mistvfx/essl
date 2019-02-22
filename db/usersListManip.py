@@ -4,7 +4,7 @@ from pages import usersList
 def getUserInfo():
     db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True, connect_timeout=1)
     cur = db.cursor()
-    cur.execute("SELECT ID, Name, Department, Password FROM essl.user_master WHERE Status = 'OPEN' AND ID != 1000")
+    cur.execute("SELECT ID, Name, Department, Password FROM essl.user_master WHERE Status = 'OPEN' AND Name != 'ADMIN'")
 
     userData = { 'artistId': [],
                 'artistName': [],

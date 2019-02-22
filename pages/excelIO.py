@@ -63,10 +63,15 @@ def excelManip(filePath):
         door = df['Event Point'][i]
         event = df['Event Description'][i]
         try:
-            reader = reader_name.split(" ")
-            io = reader[1]
+            reader = reader_name.split(":")
         except AttributeError:
             continue
+        try:
+            if reader[1] not in ['OUT', 'IN', 'Out', 'In']:
+                reader = reader_name.split(" ")
+        except:
+            reader = reader_name.split(" ")
+        io = reader[-1]
         date = date_time.date()
         time = date_time.time()
         #print(type(time))  if str(id) != 'nan' and str(event) != 'Anti-Passback':
@@ -74,7 +79,8 @@ def excelManip(filePath):
         if str(id) != 'nan':
             try:
                 cur.execute("INSERT INTO essl.%d (IO, MTIME, MDATE, DOOR, AccType) VALUES('%s', '%s', '%s', '%s', '%s')" %(id, io, time, date, door, event))
-            except:
+            except Exception as e:
+                print(e)
                 cur.execute("INSERT INTO essl.user_master(ID, Name, Department, Password, Level) VALUES('%d','%s','%s','%d','5');" %(id, artist, dept, id))
                 cur.execute("CREATE TABLE IF NOT EXISTS essl.%d (SNum int(11) NOT NULL AUTO_INCREMENT, IO char(4) NOT NULL, MTIME time NOT NULL, MDATE date NOT NULL, DOOR varchar(45) NOT NULL, AccType varchar(50) NOT NULL, PRIMARY KEY (`SNum`))" %(id))
                 cur.execute("INSERT INTO essl.%d (IO, MTIME, MDATE, DOOR, AccType) VALUES('%s', '%s', '%s', '%s', '%s')" %(id, io, time, date, door, event))
@@ -105,9 +111,8 @@ def excelExport(date):
     absent = datetime.timedelta()
     db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True, connect_timeout=1)
     cur = db.cursor()
-    cur.execute("SELECT ID, Name, Department, Level FROM essl.user_master WHERE ID != '1000' AND Status = 'OPEN'")
+    cur.execute("SELECT ID, Name, Department, Level FROM essl.user_master WHERE Name != 'ADMIN' AND Status = 'OPEN'")
     cur1 = db.cursor()
-
     Artist_Code = []
     Artist_Name = []
     Department = []
@@ -284,7 +289,7 @@ def exportMonth(month, year):
     AH_Decimal = []
     AHD_Decimal = []
 
-    cur.execute("SELECT ID, Name, Department, Level FROM essl.user_master WHERE ID != '1000' AND Status = 'OPEN'")
+    cur.execute("SELECT ID, Name, Department, Level FROM essl.user_master WHERE Name != 'ADMIN' AND Status = 'OPEN'")
 
     for data in cur.fetchall():
         artistID.append(data[0])

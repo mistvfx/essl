@@ -78,7 +78,7 @@ class AddPermission(BoxLayout):
             db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True, connect_timeout=1)
             cur = db.cursor()
             cur1 = db.cursor()
-            cur.execute("SELECT ID FROM essl.user_master WHERE Status = 'OPEN'")
+            cur.execute("SELECT ID FROM essl.user_master WHERE Status = 'OPEN' AND Name != 'ADMIN'")
             for id in cur.fetchall():
                 if id[0] == 1000:
                     continue

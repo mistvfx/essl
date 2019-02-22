@@ -4,7 +4,7 @@ from db import getInfo, calcWrkHrs, monthlyWrkHours
 def checkCredentials(username, password):
     db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True, connect_timeout=1)
     cur = db.cursor()
-    cur.execute("SELECT ID, Name, Department, Password, Level FROM essl.user_master WHERE Status = 'OPEN' ")
+    cur.execute("SELECT ID, Name, Department, Password, Level FROM essl.user_master WHERE Status = 'OPEN'")
 
     for data in cur.fetchall():
         if username == "" or password == "":
