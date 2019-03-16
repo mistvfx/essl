@@ -62,16 +62,7 @@ def excelManip(filePath):
         date_time = df['Time'][i]
         door = df['Event Point'][i]
         event = df['Event Description'][i]
-        try:
-            reader = reader_name.split(":")
-        except AttributeError:
-            continue
-        try:
-            if reader[1] not in ['OUT', 'IN', 'Out', 'In']:
-                reader = reader_name.split(" ")
-        except:
-            reader = reader_name.split(" ")
-        io = reader[-1]
+        io = reader_name.split(":")[1].lower()
         date = date_time.date()
         time = date_time.time()
         #print(type(time))  if str(id) != 'nan' and str(event) != 'Anti-Passback':

@@ -31,7 +31,7 @@ def calActualWorkingHours(io, time, door, lvl):
 
     while i < len(io):
         try:
-            if door[i] in level[lvl] and io[i] in ['In', 'IN'] and door[i+1] == door[i] and io[i+1] in ['Out', 'OUT']:
+            if door[i] in level[lvl] and io[i].lower() == 'in' and door[i+1] == door[i] and io[i+1].lower() == 'out':
                 sumTime += (time[i+1] - time[i])
                 i += 2
                 continue
