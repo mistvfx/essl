@@ -167,7 +167,7 @@ class DataTable(ScrollView):
             try:
                 if door[i] in self.level[lvl] and io[i].lower() == 'in' and door[i+1] == door[i] and io[i+1].lower() == 'out':
                     lbl.set_bgGreen()
-                elif door[i-1] in self.level[lvl] and io[i-1] in ['In', 'IN'] and door[i-1] == door[i] and io[i] in ['Out', 'OUT']:
+                elif door[i-1] in self.level[lvl] and io[i-1].lower() == 'in' and door[i-1] == door[i] and io[i].lower() == 'out':
                     lbl.set_bgGreen()
                 elif door[i] in self.level[lvl]:
                     lbl.set_bgRed()
@@ -179,7 +179,7 @@ class DataTable(ScrollView):
                 try:
                     if door[i] in self.level[lvl] and io[i].lower() == 'in' and door[i+1] == door[i] and io[i+1].lower() == 'out':
                         lbl.set_bgGreen()
-                    elif door[i-1] in self.level[lvl] and io[i-1] in ['In', 'IN'] and door[i-1] == door[i] and io[i] in ['Out', 'OUT']:
+                    elif door[i-1] in self.level[lvl] and io[i-1].lower() == 'in' and door[i-1] == door[i] and io[i].lower() == 'out':
                         lbl.set_bgGreen()
                     elif door[i] in self.level[lvl]:
                         lbl.set_bgRed()
@@ -191,7 +191,7 @@ class DataTable(ScrollView):
                     try:
                         if door[i] in self.level[lvl] and io[i].lower() == 'in' and door[i+1] == door[i] and io[i+1].lower() == 'out':
                             lbl.set_bgGreen()
-                        elif door[i-1] in self.level[lvl] and io[i-1] in ['In', 'IN'] and door[i-1] == door[i] and io[i] in ['Out', 'OUT']:
+                        elif door[i-1] in self.level[lvl] and io[i-1].lower() == 'in' and door[i-1] == door[i] and io[i].lower() == 'out':
                             lbl.set_bgGreen()
                         elif door[i] in self.level[lvl]:
                             lbl.set_bgRed()
@@ -234,7 +234,7 @@ class DataTableAdmin(ScrollView):
             try:
                 if door[i] in level[lvl] and io[i].lower() == 'in' and door[i+1] == door[i] and io[i+1].lower() == 'out':
                     lbl.set_bgGreen()
-                elif door[i-1] in level[lvl] and io[i-1] in ['In', 'IN'] and door[i-1] == door[i] and io[i] in ['Out', 'OUT']:
+                elif door[i-1] in level[lvl] and io[i-1].lower() == 'in' and door[i-1] == door[i] and io[i].lower() == 'out':
                     lbl.set_bgGreen()
                 elif door[i] in level[lvl]:
                     lbl.set_bgRed()
@@ -246,7 +246,7 @@ class DataTableAdmin(ScrollView):
                 try:
                     if door[i] in level[lvl] and io[i].lower() == 'in' and door[i+1] == door[i] and io[i+1].lower() == 'out':
                         lbl.set_bgGreen()
-                    elif door[i-1] in level[lvl] and io[i-1] in ['In', 'IN'] and door[i-1] == door[i] and io[i] in ['Out', 'OUT']:
+                    elif door[i-1] in level[lvl] and io[i-1].lower() == 'in' and door[i-1] == door[i] and io[i].lower() == 'out':
                         lbl.set_bgGreen()
                     elif door[i] in level[lvl]:
                         lbl.set_bgRed()
@@ -258,7 +258,7 @@ class DataTableAdmin(ScrollView):
                     try:
                         if door[i] in level[lvl] and io[i].lower() == 'in' and door[i+1] == door[i] and io[i+1].lower() == 'out':
                             lbl.set_bgGreen()
-                        elif door[i-1] in level[lvl] and io[i-1] in ['In', 'IN'] and door[i-1] == door[i] and io[i] in ['Out', 'OUT']:
+                        elif door[i-1] in level[lvl] and io[i-1].lower() == 'in' and door[i-1] == door[i] and io[i].lower() == 'out':
                             lbl.set_bgGreen()
                         elif door[i] in level[lvl]:
                             lbl.set_bgRed()
@@ -270,7 +270,7 @@ class DataTableAdmin(ScrollView):
                         try:
                             if door[i] in level[lvl] and io[i].lower() == 'in' and door[i+1] == door[i] and io[i+1].lower() == 'out':
                                 lbl.set_bgGreen()
-                            elif door[i-1] in level[lvl] and io[i-1] in ['In', 'IN'] and door[i-1] == door[i] and io[i] in ['Out', 'OUT']:
+                            elif door[i-1] in level[lvl] and io[i-1].lower() == 'in' and door[i-1] == door[i] and io[i].lower() == 'out':
                                 lbl.set_bgGreen()
                             elif door[i] in level[lvl]:
                                 lbl = DataLblM(text=str(accType[l]), size_hint_y=None, height=40)

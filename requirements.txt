@@ -1,0 +1,6 @@
+kivy
+pymysql
+KivyCalendar
+pandas
+openpyxl
+xlrd

@@ -10,7 +10,7 @@ from kivy.uix.label import Label
 from kivy.uix.progressbar import ProgressBar
 from kivy.core.image import Image
 from kivy.uix.button import Button
-
+from db.essl_credentials import credentials
 from db.calcWrkHrs import calActualWorkingHours
 from db import *
 from pages import *
@@ -47,7 +47,7 @@ def formatTime(time):
     return ('{}:{}:{}'.format(hours, minutes, seconds))
 
 def excelManip(filePath):
-    db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True, connect_timeout=1)
+    db = pymysql.connect(credentials['address'], credentials['username'], credentials['password'], credentials['db'], autocommit=True, connect_timeout=1)
     cur = db.cursor()
     cur1 = db.cursor()
     print(filePath[0])
@@ -72,6 +72,7 @@ def excelManip(filePath):
                 cur.execute("INSERT INTO essl.%d (IO, MTIME, MDATE, DOOR, AccType) VALUES('%s', '%s', '%s', '%s', '%s')" %(id, io, time, date, door, event))
             except Exception as e:
                 print(e)
+                print("CREATING A ENTRY NOW")
                 cur.execute("INSERT INTO essl.user_master(ID, Name, Department, Password, Level) VALUES('%d','%s','%s','%d','5');" %(id, artist, dept, id))
                 cur.execute("CREATE TABLE IF NOT EXISTS essl.%d (SNum int(11) NOT NULL AUTO_INCREMENT, IO char(4) NOT NULL, MTIME time NOT NULL, MDATE date NOT NULL, DOOR varchar(45) NOT NULL, AccType varchar(50) NOT NULL, PRIMARY KEY (`SNum`))" %(id))
                 cur.execute("INSERT INTO essl.%d (IO, MTIME, MDATE, DOOR, AccType) VALUES('%s', '%s', '%s', '%s', '%s')" %(id, io, time, date, door, event))
@@ -100,7 +101,7 @@ def formatDate(date):
 def excelExport(date):
     StdWrkHrs = datetime.timedelta(hours=8, minutes=29, seconds=59)
     absent = datetime.timedelta()
-    db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True, connect_timeout=1)
+    db = pymysql.connect(credentials['address'], credentials['username'], credentials['password'], credentials['db'], autocommit=True, connect_timeout=1)
     cur = db.cursor()
     cur.execute("SELECT ID, Name, Department, Level FROM essl.user_master WHERE Name != 'ADMIN' AND Status = 'OPEN'")
     cur1 = db.cursor()
@@ -241,7 +242,10 @@ def excelExport(date):
             except:
                 pass
         adjusted_width = (max_length + 2) * 1.2
-        worksheet.column_dimensions[column].width = adjusted_width
+        try:
+            worksheet.column_dimensions[column].width = adjusted_width
+        except TypeError:
+            pass
 
     worksheet.conditional_formatting.add('E1:K500', rule)
     worksheet.sheet_properties.tabColor = "1072BA"
@@ -254,7 +258,7 @@ def exportMonth(month, year):
     absent = datetime.timedelta()
     totalDays = calendar.monthrange(int(year), int(month))[1]
     #Month = calendar.monthcalendar(year, month)
-    db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True, connect_timeout=1)
+    db = pymysql.connect(credentials['address'], credentials['username'], credentials['password'], credentials['db'], autocommit=True, connect_timeout=1)
     cur = db.cursor()
     cur1 = db.cursor()
     cur2 = db.cursor()

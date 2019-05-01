@@ -3,13 +3,14 @@ import datetime
 import calendar
 from db import calcWrkHrs
 from pages import Calendar
+from db.essl_credentials import credentials
 
 id = []
 
 def calMonWrkHrs(year, month):
     global id
     sumWrkHrs = datetime.timedelta()
-    db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True, connect_timeout=1)
+    db = pymysql.connect(credentials['address'], credentials['username'], credentials['password'], credentials['db'], autocommit=True, connect_timeout=1)
     cur = db.cursor()
     cur.execute("SELECT DISTINCT(MDate) from essl.`%d` WHERE YEAR(MDate) = '%d' AND MONTH(MDate) = '%d'" %(id[len(id)-1], int(year), int(month)))
     for date in cur.fetchall():
@@ -23,7 +24,7 @@ def calMonWrkHrs(year, month):
 def calMonTotWrkHrs(year, month):
     global id
     totWrkHrs = datetime.timedelta()
-    db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True, connect_timeout=1)
+    db = pymysql.connect(credentials['address'], credentials['username'], credentials['password'], credentials['db'], autocommit=True, connect_timeout=1)
     cur = db.cursor()
     cur1 = db.cursor()
     cur2 = db.cursor()
@@ -56,7 +57,7 @@ def calArtistLeave(year, month, d):
     holidays = getHolidays()
     actualWorkingDays = []
 
-    db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True, connect_timeout=1)
+    db = pymysql.connect(credentials['address'], credentials['username'], credentials['password'], credentials['db'], autocommit=True, connect_timeout=1)
     cur = db.cursor()
     cur1 = db.cursor()
     cur.execute("SELECT DISTINCT(MDate) from essl.`%d` WHERE YEAR(MDate) = '%d' AND MONTH(MDate) = '%d'" %(id[len(id)-1], int(year), int(month)))
@@ -96,7 +97,7 @@ def calArtistLeaveMon(year, month):
     holidays = getHolidays()
     actualWorkingDays = []
 
-    db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True, connect_timeout=1)
+    db = pymysql.connect(credentials['address'], credentials['username'], credentials['password'], credentials['db'], autocommit=True, connect_timeout=1)
     cur = db.cursor()
     cur.execute("SELECT DISTINCT(MDate) from essl.`%d` WHERE YEAR(MDate) = '%d' AND MONTH(MDate) = '%d'" %(id[len(id)-1], int(year), int(month)))
     for date in cur.fetchall():
@@ -127,7 +128,7 @@ def ArtistLeaveDates(year, month, id):
     sundays = []
     holidays = []
 
-    db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True, connect_timeout=1)
+    db = pymysql.connect(credentials['address'], credentials['username'], credentials['password'], credentials['db'], autocommit=True, connect_timeout=1)
     cur = db.cursor()
 
     Month = calendar.monthcalendar(year, month)
@@ -159,9 +160,16 @@ def ArtistLeaveDates(year, month, id):
     return leave_dates
 
 def getHolidays():
-    db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True, connect_timeout=1)
+    db = pymysql.connect(credentials['address'], credentials['username'], credentials['password'], credentials['db'], autocommit=True, connect_timeout=1)
     cur = db.cursor()
-    cur.execute("SELECT * FROM essl.month_details")
+    try:
+        cur.execute("SELECT * FROM essl.month_details")
+    except:
+        cursor = db.cursor()
+        cursor.execute(
+            "CREATE TABLE IF NOT EXISTS month_details(ID INT AUTO_INCREMENT,DAY INT NOT NULL, MONTH INT NOT NULL, "
+            "YEAR INT NOT NULL, DETAIL VARCHAR(225) NOT NULL, PRIMARY KEY (ID));")
+        cur.execute("SELECT * FROM essl.month_details")
 
     holidays = []
 

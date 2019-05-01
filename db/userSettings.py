@@ -11,6 +11,7 @@ from kivy.uix.label import Label
 from kivy.graphics import *
 from kivy.properties import *
 import re
+from db.essl_credentials import credentials
 
 from pages import Dialog, infoPopup, kivytoast
 
@@ -186,7 +187,7 @@ class Level(ModalView):
         self.get_level(artist_id.split(":")[0])
 
     def get_level(self, id):
-        db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True, connect_timeout=1)
+        db = pymysql.connect(credentials['address'], credentials['username'], credentials['password'], credentials['db'], autocommit=True, connect_timeout=1)
         cur = db.cursor()
         cur.execute("SELECT Level FROM essl.user_master WHERE ID = '%d'"%(int(id)))
         self.user_level = 'Current Level : {}'.format(cur.fetchone()[0])
@@ -195,7 +196,7 @@ class Level(ModalView):
 
     def submitLvl(self, lvl):
         global id
-        db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True, connect_timeout=1)
+        db = pymysql.connect(credentials['address'], credentials['username'], credentials['password'], credentials['db'], autocommit=True, connect_timeout=1)
         cur = db.cursor()
         cur.execute("UPDATE essl.user_master SET Level = '%d' WHERE ID = '%d'"%(int(lvl), int(id)))
         cur.close()
@@ -203,7 +204,7 @@ class Level(ModalView):
 
     def change_user_status(self):
         global id
-        db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True, connect_timeout=1)
+        db = pymysql.connect(credentials['address'], credentials['username'], credentials['password'], credentials['db'], autocommit=True, connect_timeout=1)
         cur = db.cursor()
         cur.execute("UPDATE essl.user_master SET Status = 'CLOSED' WHERE ID = '%d'"%(int(id)))
         cur.close()
@@ -217,7 +218,7 @@ class RemTime(FloatLayout):
         self.data = [IO, Time, Door, AccType]
 
     def remTime(self):
-        db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True, connect_timeout=1)
+        db = pymysql.connect(credentials['address'], credentials['username'], credentials['password'], credentials['db'], autocommit=True, connect_timeout=1)
         cur = db.cursor()
         try:
             cur.execute("DELETE FROM essl.%d WHERE IO = '%s' AND MTIME = '%s' AND MDATE = '%s' AND DOOR = '%s' AND AccType = '%s'"%(int(self.id), self.data[0], self.data[1], self.date, self.data[2], self.data[3]))
@@ -241,7 +242,7 @@ class TimingFix(BoxLayout):
         self.io = io
 
     def Time(self, time):
-        db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True, connect_timeout=1)
+        db = pymysql.connect(credentials['address'], credentials['username'], credentials['password'], credentials['db'], autocommit=True, connect_timeout=1)
         cur = db.cursor()
         try:
             cur.execute("INSERT INTO essl.%d (IO, MTIME, MDATE, DOOR, AccType) VALUES('%s', '%s', '%s', '%s', 'REGULARIZATION')" %(int(self.id), self.io, time, self.date, self.door))
@@ -270,7 +271,7 @@ class Permission(AnchorLayout):
         if time == '':
             kivytoast.toast('Invalid Hours !!', (1, 0, 0, 0.5), length_long=True)
         else:
-            db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True, connect_timeout=1)
+            db = pymysql.connect(credentials['address'], credentials['username'], credentials['password'], credentials['db'], autocommit=True, connect_timeout=1)
             cur = db.cursor()
             cur.execute("INSERT INTO essl.`leave_details` (ID, from_date, to_date, Reason, Status, app_date) VALUES('%d', '%s', '%s', '%s', 'PE', '%s')" %(int(self.data[0]), self.data[1], self.data[1], time, self.data[1]))
             cur.close()

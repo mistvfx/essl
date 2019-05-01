@@ -1,6 +1,7 @@
 import smtplib
 import pymysql
 import email.message
+from db.essl_credentials import credentials
 
 def send_mail(data):
     ID = data[0]
@@ -9,7 +10,7 @@ def send_mail(data):
     TYPE = data[3]
     REASON = data[4]
 
-    db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True, connect_timeout=1)
+    db = pymysql.connect(credentials['address'], credentials['username'], credentials['password'], credentials['db'], autocommit=True, connect_timeout=1)
     cur = db.cursor()
     cur.execute("SELECT Name, Department, email FROM essl.`user_master` WHERE ID = '%s'"%(ID))
     db_data = cur.fetchone()
@@ -727,7 +728,7 @@ def send_reply(NAME, EMAIL):
     print("Reply sent")
 
 def accepted_mail(id, from_date):
-    db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True, connect_timeout=1)
+    db = pymysql.connect(credentials['address'], credentials['username'], credentials['password'], credentials['db'], autocommit=True, connect_timeout=1)
     cur = db.cursor()
     cur.execute("SELECT Name, email FROM essl.`user_master` WHERE ID = '%s'"%(id))
     db_data = cur.fetchone()
@@ -1078,7 +1079,7 @@ def accepted_mail(id, from_date):
     print("Accept Reply Sent")
 
 def declined_mail(id, from_date):
-    db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True, connect_timeout=1)
+    db = pymysql.connect(credentials['address'], credentials['username'], credentials['password'], credentials['db'], autocommit=True, connect_timeout=1)
     cur = db.cursor()
     cur.execute("SELECT Name, email FROM essl.`user_master` WHERE ID = '%s'"%(id))
     db_data = cur.fetchone()

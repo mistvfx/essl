@@ -7,6 +7,7 @@ from kivy.uix.textinput import TextInput
 from kivy.uix.tabbedpanel import TabbedPanel
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.floatlayout import FloatLayout
+from db.essl_credentials import credentials
 from KivyCalendar import DatePicker
 from kivy.uix.spinner import Spinner
 from kivy.uix.carousel import Carousel
@@ -74,7 +75,7 @@ class DeleteDataDay(BoxLayout):
         self.add_widget(delBtn)
 
     def deleteAllData(self, delDate):
-        db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True, connect_timeout=1)
+        db = pymysql.connect(credentials['address'], credentials['username'], credentials['password'], credentials['db'], autocommit=True, connect_timeout=1)
         cur = db.cursor()
         cur1 = db.cursor()
 
@@ -110,7 +111,7 @@ class DeleteDataMonth(BoxLayout):
         self.add_widget(delBtn)
 
     def deleteAllData(self, month, year):
-        db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True, connect_timeout=1)
+        db = pymysql.connect(credentials['address'], credentials['username'], credentials['password'], credentials['db'], autocommit=True, connect_timeout=1)
         cur = db.cursor()
         cur1 = db.cursor()
 

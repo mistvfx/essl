@@ -1,8 +1,9 @@
 import pymysql
 from pages import usersList
+from db.essl_credentials import credentials
 
 def getUserInfo():
-    db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True, connect_timeout=1)
+    db = pymysql.connect(credentials['address'], credentials['username'], credentials['password'], credentials['db'], autocommit=True, connect_timeout=1)
     cur = db.cursor()
     cur.execute("SELECT ID, Name, Department, Password FROM essl.user_master WHERE Status = 'OPEN' AND Name != 'ADMIN'")
 
@@ -22,7 +23,7 @@ def getUserInfo():
     return userData
 
 def checkMail(id):
-    db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True, connect_timeout=1)
+    db = pymysql.connect(credentials['address'], credentials['username'], credentials['password'], credentials['db'], autocommit=True, connect_timeout=1)
     cur = db.cursor()
     cur.execute("SELECT email FROM essl.`user_master` WHERE ID = '%d'"%(int(id)))
     if cur.fetchone()[0] == None:
@@ -35,7 +36,7 @@ def checkMail(id):
         return 1
 
 def submit_email(id, email):
-    db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True, connect_timeout=1)
+    db = pymysql.connect(credentials['address'], credentials['username'], credentials['password'], credentials['db'], autocommit=True, connect_timeout=1)
     cur = db.cursor()
     try:
         cur.execute("UPDATE essl.`user_master` SET email = '%s' WHERE ID = '%d'"%(email, int(id)))

@@ -167,7 +167,9 @@ class ExcelImport(Button, MouseOver):
         popupLayout = BoxLayout(orientation='vertical')
         buttonLayout = BoxLayout(orientation='horizontal', size_hint=(1, 0.1))
 
-        file = FileChooserListView(path='/home/')
+        from pathlib import Path
+        home = str(Path.home())
+        file = FileChooserListView(path=home)
         popupLayout.add_widget(file)
         popupLayout.add_widget(buttonLayout)
 
@@ -192,8 +194,17 @@ class ExcelExport(Spinner, MouseOver):
     def callexcel(self, text, date):
         if text == 'DAY':
             excelIO.excelExport(date)
+            #try:
+            #    excelIO.excelExport(date)
+            #except Exception as e:
+            #    from pages import kivytoast
+            #    kivytoast.toast(str(e), (1, 0, 0, 0.5), length_long=True)
         if text == 'MONTH':
-            excelIO.exportMonth(date.split(".")[1].zfill(2), date.split(".")[2].zfill(2))
+            try:
+                excelIO.exportMonth(date.split(".")[1].zfill(2), date.split(".")[2].zfill(2))
+            except:
+                from pages import kivytoast
+                kivytoast.toast('Please Select Date / Error', (1, 0, 0, 0.5), length_long=True)
 
     def on_hover(self):
         self.background_color = (1, 0, 1, 0.5)

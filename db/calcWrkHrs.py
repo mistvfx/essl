@@ -1,6 +1,7 @@
 import pymysql
 import datetime
 from pages import Calendar
+from db.essl_credentials import credentials
 from db import monthlyWrkHours
 
 id = [0]*1
@@ -37,7 +38,7 @@ def calActualWorkingHours(io, time, door, lvl):
     return sumTime
 
 def calMon(id, date):
-    db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True, connect_timeout=1)
+    db = pymysql.connect(credentials['address'], credentials['username'], credentials['password'], credentials['db'], autocommit=True, connect_timeout=1)
     cur = db.cursor()
 
     cur.execute("SELECT IO, MTIME, DOOR FROM essl.`%d` WHERE MDATE = '%s' ORDER BY MTIME ASC" %(id, date))
@@ -65,7 +66,7 @@ def calMon(id, date):
 
 def getUserTime():
     StdWrkHrs = datetime.timedelta(hours=8, minutes=29, seconds=59)
-    db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True, connect_timeout=1)
+    db = pymysql.connect(credentials['address'], credentials['username'], credentials['password'], credentials['db'], autocommit=True, connect_timeout=1)
     cur = db.cursor()
     cur.execute("SELECT DISTINCT(MDATE) FROM essl.`%d` ORDER BY MDATE ASC" %(id[int(len(id)-1)]))
     cur1 = db.cursor()

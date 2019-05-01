@@ -2,9 +2,16 @@ import pymysql
 from db import getInfo, calcWrkHrs, monthlyWrkHours
 
 def checkCredentials(username, password):
-    db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True, connect_timeout=1)
+    from db.essl_credentials import credentials
+    db = pymysql.connect(credentials['address'], credentials['username'], credentials['password'], credentials['db'], autocommit=True, connect_timeout=1)
     cur = db.cursor()
-    cur.execute("SELECT ID, Name, Department, Password, Level FROM essl.user_master WHERE Status = 'OPEN'")
+    try:
+        cur.execute("SELECT ID, Name, Department, Password, Level FROM essl.user_master WHERE Status = 'OPEN'")
+    except pymysql.err.ProgrammingError:
+        cursor = db.cursor()
+        cursor.execute("CREATE TABLE IF NOT EXISTS user_master(ID INT, Name VARCHAR(225) NOT NULL, Department VARCHAR(50), Password VARCHAR(225) NOT NULL, Level CHAR NOT NULL DEFAULT '5', email VARCHAR(225), Status VARCHAR(10) NOT NULL DEFAULT 'OPEN', PRIMARY KEY (ID));")
+        cursor.execute("INSERT INTO essl.user_master VALUES(9989, 'ADMIN', 'ADMIN', 9899, '1', 'mett@mistvfx.local', 'OPEN')")
+        cur.execute("SELECT ID, Name, Department, Password, Level FROM essl.user_master WHERE Status = 'OPEN'")
 
     for data in cur.fetchall():
         if username == "" or password == "":
@@ -36,4 +43,4 @@ def checkCredentials(username, password):
     return 0
 
 
-#db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True, connect_timeout=1)
+#db = pymysql.connect(credentials['address'], credentials['username'], credentials['password'], credentials['db'], autocommit=True, connect_timeout=1)

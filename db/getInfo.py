@@ -3,6 +3,7 @@ from pages import table, infoPopup
 from kivy.uix.popup import Popup
 from kivy.uix.modalview import ModalView
 from kivy.uix.button import Button
+from db.essl_credentials import credentials
 import datetime
 
 id = [0]*1
@@ -51,9 +52,9 @@ def calTotalWorkingHours(ios, timings, doors):
     intimes = []
     outtimes = []
     for i, d, j in zip(ios, doors, range(len(ios))):
-        if d == 'MAINDOOR' and i in ['In', 'IN']:
+        if d == 'MAINDOOR' and i.lower() == 'in':
             intimes.append(timings[j])
-        elif d == 'MAINDOOR' and i in ['Out', 'OUT']:
+        elif d == 'MAINDOOR' and i.lower() == 'out':
             outtimes.append(timings[j])
 
     return max(outtimes)-min(intimes)
@@ -62,7 +63,7 @@ def getUserInfo(id, date):
     StdWrkHrs = datetime.timedelta(hours=8, minutes=29, seconds=59)
     formattedDate = formatDate(date)
     #print(formattedDate, date)
-    db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True, connect_timeout=1)
+    db = pymysql.connect(credentials['address'], credentials['username'], credentials['password'], credentials['db'], autocommit=True, connect_timeout=1)
     cur = db.cursor()
     cur.execute("SELECT IO, MTIME, MDATE, DOOR, AccType FROM essl.`%d` WHERE MDATE = '%s' ORDER BY MTIME ASC" %(id, formattedDate))
 
@@ -117,7 +118,7 @@ def getUserInfo(id, date):
 
 def get_IO_info(id, date):
     #formattedDate = formatDate(date)
-    db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True, connect_timeout=1)
+    db = pymysql.connect(credentials['address'], credentials['username'], credentials['password'], credentials['db'], autocommit=True, connect_timeout=1)
     cur = db.cursor()
     cur.execute("SELECT IO, MTIME, MDATE, DOOR, AccType FROM essl.`%d` WHERE MDATE = '%s' ORDER BY MTIME ASC" %(id, date))
 
@@ -136,7 +137,7 @@ def get_IO_info(id, date):
 def openPopup(ua):
     global id, date
 
-    db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True, connect_timeout=1)
+    db = pymysql.connect(credentials['address'], credentials['username'], credentials['password'], credentials['db'], autocommit=True, connect_timeout=1)
     cur = db.cursor()
     cur.execute("SELECT Name FROM essl.user_master WHERE ID = '%d'"%(id[len(id)-1]))
     name = cur.fetchone()

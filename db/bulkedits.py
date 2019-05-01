@@ -8,6 +8,7 @@ from kivy.uix.boxlayout import BoxLayout
 from KivyCalendar import DatePicker
 from kivy.lang import Builder
 import re
+from db.essl_credentials import credentials
 
 from pages import Dialog, kivytoast
 
@@ -75,7 +76,7 @@ class AddPermission(BoxLayout):
         if hours == '' or self.department == 'DEPARTMENT' or self.department == '':
             kivytoast.toast('Please Enter Valid Details !', (1, 0, 0, 0.5))
         elif self.department == 'ALL':
-            db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True, connect_timeout=1)
+            db = pymysql.connect(credentials['address'], credentials['username'], credentials['password'], credentials['db'], autocommit=True, connect_timeout=1)
             cur = db.cursor()
             cur1 = db.cursor()
             cur.execute("SELECT ID FROM essl.user_master WHERE Status = 'OPEN' AND Name != 'ADMIN'")
@@ -88,7 +89,7 @@ class AddPermission(BoxLayout):
             db.close()
             kivytoast.toast('Added Permission Time', (0, 1, 0, 0.5), length_long=True)
         else:
-            db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True, connect_timeout=1)
+            db = pymysql.connect(credentials['address'], credentials['username'], credentials['password'], credentials['db'], autocommit=True, connect_timeout=1)
             cur = db.cursor()
             cur1 = db.cursor()
             cur.execute("SELECT ID FROM essl.user_master WHERE Status = 'OPEN' AND Department = '%s'"%(self.department))

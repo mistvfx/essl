@@ -9,6 +9,7 @@ from kivy.properties import NumericProperty, ReferenceListProperty
 from kivy.uix.popup import Popup
 from kivy.uix.boxlayout import BoxLayout
 from datetime import datetime
+from db.essl_credentials import credentials
 from kivy.lang import Builder
 
 
@@ -253,7 +254,7 @@ import pymysql
 
 def paintDates():
     global holiday, halfday
-    db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True, connect_timeout=1)
+    db = pymysql.connect(credentials['address'], credentials['username'], credentials['password'], credentials['db'], autocommit=True, connect_timeout=1)
     cur = db.cursor()
     cur.execute("SELECT DAY, MONTH, YEAR, DETAIL FROM essl.month_details")
 
@@ -286,7 +287,7 @@ def setup():
                 pop.dismiss()
         global selectedDates
         if instance.text == 'SAVE':
-            db = pymysql.connect("10.10.5.60", "mcheck", "mcheck@123", "essl", autocommit=True, connect_timeout=1)
+            db = pymysql.connect(credentials['address'], credentials['username'], credentials['password'], credentials['db'], autocommit=True, connect_timeout=1)
             cur = db.cursor()
             closePopBtn = Button(text="OK", size_hint=(1, 0.25))
             closePopBtn.bind(on_release=call)

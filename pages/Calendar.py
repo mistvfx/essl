@@ -239,6 +239,7 @@ class CalendarWidgetM(RelativeLayout):
 
         self.active_date[0] = int(inst.text)
         formatted_date = "{}:{}:{}".format(str(self.active_date[0]).zfill(2), str(self.active_date[1]).zfill(2), self.active_date[2])
+        print(formatted_date)
 
         getInfo.date = formatted_date
         userPage.date = formatted_date
