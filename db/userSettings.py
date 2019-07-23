@@ -26,7 +26,7 @@ Builder.load_string("""
     Spinner:
         text: 'DOOR'
         font_name: 'fonts/moon-bold.otf'
-        values: ('IT', 'MM', 'PAINT', 'ROTO', 'HR', 'CONFERENCE ROOM', 'MAINDOOR', 'TRAINING-1', 'SERVER ROOM', 'ASLAM SIR', 'BACKDOOR')
+        values: ('IT', 'MM', 'PAINT', 'ROTO', 'HR', 'CONFERENCE ROOM', 'TRAINING-1', 'SERVER ROOM', 'ASLAM SIR', 'BACKDOOR')
         size_hint: (0.65, 0.25)
         pos_hint: {'center_x': .5, 'center_y': .5}
         on_text: root.Dept(self.text)

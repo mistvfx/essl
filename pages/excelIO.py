@@ -62,12 +62,15 @@ def excelManip(filePath):
         date_time = df['Time'][i]
         door = df['Event Point'][i]
         event = df['Event Description'][i]
-        io = reader_name.split(":")[1].lower()
+        try:
+            io = reader_name.split(":")[1].lower()
+        except:
+            continue
         date = date_time.date()
         time = date_time.time()
         #print(type(time))  if str(id) != 'nan' and str(event) != 'Anti-Passback':
 
-        if str(id) != 'nan':
+        if str(id) != 'nan' and door != 'MAINDOOR':
             try:
                 cur.execute("INSERT INTO essl.%d (IO, MTIME, MDATE, DOOR, AccType) VALUES('%s', '%s', '%s', '%s', '%s')" %(id, io, time, date, door, event))
             except Exception as e:

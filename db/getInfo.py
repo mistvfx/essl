@@ -48,16 +48,16 @@ def calActualWorkingHours(io, time, door, lvl):
     return sumTime
 
 def calTotalWorkingHours(ios, timings, doors):
-    #times = datetime.timedelta()
-    intimes = []
-    outtimes = []
-    for i, d, j in zip(ios, doors, range(len(ios))):
-        if d == 'MAINDOOR' and i.lower() == 'in':
-            intimes.append(timings[j])
-        elif d == 'MAINDOOR' and i.lower() == 'out':
-            outtimes.append(timings[j])
+    # #times = datetime.timedelta()
+    # intimes = []
+    # outtimes = []
+    # for i, d, j in zip(ios, doors, range(len(ios))):
+    #     if d == 'MAINDOOR' and i.lower() == 'in':
+    #         intimes.append(timings[j])
+    #     elif d == 'MAINDOOR' and i.lower() == 'out':
+    #         outtimes.append(timings[j])
 
-    return max(outtimes)-min(intimes)
+    return max(timings)-min(timings)
 
 def getUserInfo(id, date):
     StdWrkHrs = datetime.timedelta(hours=8, minutes=29, seconds=59)
