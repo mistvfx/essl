@@ -26,7 +26,7 @@ Builder.load_string("""
     Spinner:
         text: 'DOOR'
         font_name: 'fonts/moon-bold.otf'
-        values: ('IT', 'MM', 'PAINT', 'ROTO', 'HR', 'CONFERENCE ROOM', 'TRAINING-1', 'SERVER ROOM', 'ASLAM SIR', 'BACKDOOR')
+        values: ('IT', 'MM', 'PAINT', 'ROTO', 'HR', 'CONFERENCEROOM', 'TRAINING', 'SERVER', 'ASLAM SIR', 'BACKDOOR')
         size_hint: (0.65, 0.25)
         pos_hint: {'center_x': .5, 'center_y': .5}
         on_text: root.Dept(self.text)
@@ -90,31 +90,31 @@ Builder.load_string("""
             Label:
                 text: 'Level Information'
             Label:
-                text: '1: [MM, ROTO, PAINT, CONFERENCE ROOM, TRAINING-1, IT, HR, SERVER ROOM, STORE]'
+                text: '1: [MM, ROTO, PAINT, CONFERENCEROOM, TRAINING, IT, HR, SERVER, STORE]'
                 halign: 'left'
                 text_size: self.width, self.height
             Label:
-                text: '2: [MM, ROTO, PAINT, CONFERENCE ROOM, TRAINING-1, HR]'
+                text: '2: [MM, ROTO, PAINT, CONFERENCEROOM, TRAINING, HR]'
                 halign: 'left'
                 text_size: self.width, self.height
             Label:
-                text: '3: [MM, ROTO, PAINT, CONFERENCE ROOM, TRAINING-1]'
+                text: '3: [MM, ROTO, PAINT, CONFERENCEROOM, TRAINING]'
                 halign: 'left'
                 text_size: self.width, self.height
             Label:
-                text: '4: [MM, ROTO, CONFERENCE ROOM]'
+                text: '4: [MM, ROTO, CONFERENCEROOM]'
                 halign: 'left'
                 text_size: self.width, self.height
             Label:
-                text: '5: [ROTO, CONFERENCE ROOM]'
+                text: '5: [ROTO, CONFERENCEROOM]'
                 halign: 'left'
                 text_size: self.width, self.height
             Label:
-                text: '6: [MM, CONFERENCE ROOM, TRAINING-1]'
+                text: '6: [MM, CONFERENCEROOM, TRAINING]'
                 halign: 'left'
                 text_size: self.width, self.height
             Label:
-                text: '7: [ROTO, CONFERENCE ROOM, TRAINING-1]'
+                text: '7: [ROTO, CONFERENCEROOM, TRAINING]'
                 halign: 'left'
                 text_size: self.width, self.height
         BoxLayout:

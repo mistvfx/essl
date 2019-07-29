@@ -11,13 +11,13 @@ def getDayMonthYear(date):
 def calActualWorkingHours(io, time, door, lvl):
     global id
     sumTime = datetime.timedelta()
-    level = { '1': ['MM', 'ROTO', 'PAINT', 'CONFERENCE ROOM', 'TRAINING-1', 'IT', 'HR', 'SERVER ROOM', 'STORE'],
-            '2': ['MM', 'ROTO', 'PAINT', 'CONFERENCE ROOM', 'TRAINING-1', 'HR'],
-            '3': ['MM', 'ROTO', 'PAINT', 'CONFERENCE ROOM', 'TRAINING-1'],
-            '4': ['MM', 'ROTO', 'CONFERENCE ROOM'],
-            '5': ['ROTO', 'CONFERENCE ROOM'],
-            '6': ['MM', 'CONFERENCE ROOM', 'TRAINING-1'],
-            '7': ['ROTO', 'CONFERENCE ROOM', 'TRAINING-1']}
+    level = { '1': ['MM', 'ROTO', 'PAINT', 'CONFERENCEROOM', 'TRAINING', 'IT', 'HR', 'SERVER', 'STORE'],
+            '2': ['MM', 'ROTO', 'PAINT', 'CONFERENCEROOM', 'TRAINING', 'HR'],
+            '3': ['MM', 'ROTO', 'PAINT', 'CONFERENCEROOM', 'TRAINING'],
+            '4': ['MM', 'ROTO', 'CONFERENCEROOM'],
+            '5': ['ROTO', 'CONFERENCEROOM'],
+            '6': ['MM', 'CONFERENCEROOM', 'TRAINING'],
+            '7': ['ROTO', 'CONFERENCEROOM', 'TRAINING']}
     i = 0
 
     while i < len(io):
@@ -97,13 +97,13 @@ def getUserTime():
         else:
             Calendar.leaves.append(DMY)
 
-        level = { '1': ['MM', 'ROTO', 'PAINT', 'CONFERENCE ROOM', 'TRAINING-1', 'IT', 'HR', 'SERVER ROOM', 'STORE'],
-                '2': ['MM', 'ROTO', 'PAINT', 'CONFERENCE ROOM', 'TRAINING-1', 'HR'],
-                '3': ['MM', 'ROTO', 'PAINT', 'CONFERENCE ROOM', 'TRAINING-1'],
-                '4': ['MM', 'ROTO', 'CONFERENCE ROOM'],
-                '5': ['ROTO', 'CONFERENCE ROOM'],
-                '6': ['MM', 'CONFERENCE ROOM', 'TRAINING-1'],
-                '7': ['ROTO', 'CONFERENCE ROOM', 'TRAINING-1']}
+        level = { '1': ['MM', 'ROTO', 'PAINT', 'CONFERENCEROOM', 'TRAINING', 'IT', 'HR', 'SERVER', 'STORE'],
+                '2': ['MM', 'ROTO', 'PAINT', 'CONFERENCEROOM', 'TRAINING', 'HR'],
+                '3': ['MM', 'ROTO', 'PAINT', 'CONFERENCEROOM', 'TRAINING'],
+                '4': ['MM', 'ROTO', 'CONFERENCEROOM'],
+                '5': ['ROTO', 'CONFERENCEROOM'],
+                '6': ['MM', 'CONFERENCEROOM', 'TRAINING'],
+                '7': ['ROTO', 'CONFERENCEROOM', 'TRAINING']}
 
         i = 0
         while i < len(ios):

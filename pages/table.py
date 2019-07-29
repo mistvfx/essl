@@ -141,13 +141,13 @@ class DataTable(ScrollView):
     details = ListProperty(None)
     def __init__(self, **args):
         super(DataTable, self).__init__(**args)
-        self.level = { '1': ['MM', 'ROTO', 'PAINT', 'CONFERENCE ROOM', 'TRAINING-1', 'IT', 'HR', 'SERVER ROOM', 'STORE'],
-                       '2': ['MM', 'ROTO', 'PAINT', 'CONFERENCE ROOM', 'TRAINING-1', 'HR'],
-                       '3': ['MM', 'ROTO', 'PAINT', 'CONFERENCE ROOM', 'TRAINING-1'],
-                       '4': ['MM', 'ROTO', 'CONFERENCE ROOM'],
-                       '5': ['ROTO', 'CONFERENCE ROOM'],
-                       '6': ['MM', 'CONFERENCE ROOM', 'TRAINING-1'],
-                       '7': ['ROTO', 'CONFERENCE ROOM', 'TRAINING-1']}
+        self.level = { '1': ['MM', 'ROTO', 'PAINT', 'CONFERENCEROOM', 'TRAINING', 'IT', 'HR', 'SERVER', 'STORE'],
+                       '2': ['MM', 'ROTO', 'PAINT', 'CONFERENCEROOM', 'TRAINING', 'HR'],
+                       '3': ['MM', 'ROTO', 'PAINT', 'CONFERENCEROOM', 'TRAINING'],
+                       '4': ['MM', 'ROTO', 'CONFERENCEROOM'],
+                       '5': ['ROTO', 'CONFERENCEROOM'],
+                       '6': ['MM', 'CONFERENCEROOM', 'TRAINING'],
+                       '7': ['ROTO', 'CONFERENCEROOM', 'TRAINING']}
         self.size_hint=(1, 1)
         getInfo.get_IO_info(id, date)
         self.tableUI()
@@ -160,7 +160,7 @@ class DataTable(ScrollView):
 
         i=0; j=0; k=0;
         while i < len(io):
-            if door[i] not in self.level[lvl] and door[i] != 'MAINDOOR':
+            if door[i] not in self.level[lvl]:
                 i += 1; j += 1; k += 1;
                 continue
             lbl = DataLbl(text=str(io[i]), size_hint_y=None, height=40)
@@ -216,13 +216,13 @@ class DataTableAdmin(ScrollView):
 
     def tableUI(self):
         global io, time, door, accType
-        level = { '1': ['MM', 'ROTO', 'PAINT', 'CONFERENCE ROOM', 'TRAINING-1', 'IT', 'HR', 'SERVER ROOM', 'STORE'],
-                '2': ['MM', 'ROTO', 'PAINT', 'CONFERENCE ROOM', 'TRAINING-1', 'HR'],
-                '3': ['MM', 'ROTO', 'PAINT', 'CONFERENCE ROOM', 'TRAINING-1'],
-                '4': ['MM', 'ROTO', 'CONFERENCE ROOM'],
-                '5': ['ROTO', 'CONFERENCE ROOM'],
-                '6': ['MM', 'CONFERENCE ROOM', 'TRAINING-1'],
-                '7': ['ROTO', 'CONFERENCE ROOM', 'TRAINING-1']}
+        level = { '1': ['MM', 'ROTO', 'PAINT', 'CONFERENCEROOM', 'TRAINING', 'IT', 'HR', 'SERVER', 'STORE'],
+                '2': ['MM', 'ROTO', 'PAINT', 'CONFERENCEROOM', 'TRAINING', 'HR'],
+                '3': ['MM', 'ROTO', 'PAINT', 'CONFERENCEROOM', 'TRAINING'],
+                '4': ['MM', 'ROTO', 'CONFERENCEROOM'],
+                '5': ['ROTO', 'CONFERENCEROOM'],
+                '6': ['MM', 'CONFERENCEROOM', 'TRAINING'],
+                '7': ['ROTO', 'CONFERENCEROOM', 'TRAINING']}
         #print(io)
         layout = GridLayout(cols=4, spacing=5, size_hint_y=None)
         # Make sure the height is such that there is something to scroll.
